@@ -11,7 +11,7 @@ function eia_register_admin_menus() {
     // Menú Principal
     add_menu_page(
         'WP EIA',
-        'EIA',
+        'EIA DEV',
         'manage_options',
         'wp-eia',
         'render_main', // Función callback para la página principal

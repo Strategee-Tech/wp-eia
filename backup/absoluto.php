@@ -473,7 +473,7 @@ function wpil_get_all_images_in_uploads( $subfolder = '', $check_attachments = n
 
     $attachment_paths = array();
     // Solo necesitamos obtener los attachments si $check_attachments no es null
-    if ( $check_attachments !== null ) {
+    if ( $check_attachments !== null ) { 
         $results = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'", ARRAY_A );
         foreach ( $results as $row ) {
             $attachment_paths[ $row['meta_value'] ] = $row['post_id'];

@@ -350,8 +350,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
                 $wpdb->esc_like($subfolder) . '%'
             ),
             ARRAY_A
-        );
-
+        ); 
 
         echo "<pre>";
         print_r($results);

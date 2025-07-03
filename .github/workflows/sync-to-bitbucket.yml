@@ -27,5 +27,6 @@ jobs:
           # Construye la URL de Bitbucket con el token de acceso para autenticación HTTPS
           BITBUCKET_REPO_URL="https://x-token-auth:${BITBUCKET_APP_PASSWORD}@bitbucket.org/mktautomation/eia-plugin.git"
           # Empuja todas las ramas y tags, sobrescribiendo el remoto
+          git remote add bitbucket $BITBUCKET_REPO_URL
           git push bitbucket --all --force
           git push bitbucket --tags --force

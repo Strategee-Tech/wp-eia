@@ -22,7 +22,7 @@ function wpil_add_admin_menu() {
     );
 }
 
-// --- NUEVO: Registrar el endpoint de la API REST para el CSV ---
+// --- NUEVO: Registrar el endpoi de la API REST para el CSV ---
 add_action( 'rest_api_init', 'wpil_register_csv_export_route' );
 
 function wpil_register_csv_export_route() {

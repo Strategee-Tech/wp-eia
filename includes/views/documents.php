@@ -49,7 +49,7 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
     <p>Aquí puedes ver un listado de documentos de la carpeta especificada dentro de `wp-content/uploads/`.</p>
 
     <form method="get" action="" id='form-filter'>
-        <input type="hidden" name="page" value="wpil-image-lister" />
+        <input type="hidden" name="page" value="documents" />
         <?php if ( ! empty( $orderby ) ) : ?>
             <input type="hidden" name="orderby" value="<?php echo esc_attr( $orderby ); ?>" />
         <?php endif; ?>
@@ -97,7 +97,7 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
                     $new_order = ( $current_orderby === $column_id && $current_order === 'asc' ) ? 'desc' : 'asc';
                     $class = ( $current_orderby === $column_id ) ? 'sorted ' . $current_order : 'sortable ' . $new_order;
                     $query_args = array(
-                        'page'      => 'wpil-image-lister',
+                        'page'      => 'documents',
                         'orderby'   => $column_id,
                         'order'     => $new_order,
 						'status'	=> $status == true ? '0' : '1',

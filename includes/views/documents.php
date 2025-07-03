@@ -381,6 +381,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 				if ( $check_attachments !== null ) {
 					$relative_path_for_db = ltrim( $relative_path, '/' );
 					if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
+						echo "entro";
 						$is_attachment = true;
 						$attachment_id = $attachment_paths[ $relative_path_for_db ];
 					}

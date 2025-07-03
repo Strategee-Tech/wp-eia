@@ -15,11 +15,10 @@ $selected_folder = trim( $selected_folder, '/' );
 // Obtener los parámetros de ordenación
 $orderby = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'size_bytes';
 $order   = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : 'desc'; // Por defecto ascendente
-$showMiniatures = isset( $_GET['miniatures'] ) ? true : false; // Por defecto ascendente
 
 
 // Obtener las imágenes y las estadísticas
-$images     = wpil_get_all_documents_in_uploads( $selected_folder, $status, $orderby, $order, $showMiniatures );
+$images     = wpil_get_all_documents_in_uploads( $selected_folder, $status, $orderby, $order);
 $delete_all = isset($_GET['delete_all']) ? 1 : 0;
 
 if( $delete_all && !empty($images)) {
@@ -323,7 +322,7 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
  * @param string $order            Dirección de ordenación (asc o desc).
  * @return array Lista de arrays de imágenes.
  */
-function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments = null, $orderby = 'size_bytes', $order = 'desc', $show_miniatures = false ) {
+function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments = null, $orderby = 'size_bytes', $order = 'desc' ) {
 	
     global $wpdb;
 	
@@ -336,9 +335,9 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
         $start_path .= trailingslashit( $subfolder );
     }
 
-    $all_images = array();
+    $all_images 			= array();
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
-    $attachment_paths = array();
+    $attachment_paths       = array();
     // Solo necesitamos obtener los attachments si $check_attachments no es null
     if ( $check_attachments !== null ) {
         $results = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'", ARRAY_A );

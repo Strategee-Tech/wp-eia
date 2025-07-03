@@ -454,7 +454,7 @@ function wpil_display_image_list_page() {
  * @param string $order            Dirección de ordenación (asc o desc).
  * @return array Lista de arrays de imágenes.
  */
-function wpil_get_all_images_in_uploads( $subfolder = '', $check_attachments = null, $orderby = 'size_bytes', $order = 'desc', $show_miniatures = false ) {
+function wpil_get_all_images_in_uploads( $subfolder = '', $check_attachments = true, $orderby = 'size_bytes', $order = 'desc', $show_miniatures = false ) {
 	
     global $wpdb;
 	
@@ -474,9 +474,26 @@ function wpil_get_all_images_in_uploads( $subfolder = '', $check_attachments = n
     $attachment_paths = array();
     // Solo necesitamos obtener los attachments si $check_attachments no es null
     if ( $check_attachments !== null ) {
-        $results = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'", ARRAY_A );
+
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, meta_value
+                 FROM {$wpdb->postmeta}
+                 WHERE meta_key = '_wp_attached_file'
+                   AND meta_value LIKE %s",
+                $wpdb->esc_like($subfolder) . '%'
+            ),
+            ARRAY_A
+        );
+
+
+        echo "<pre>";
+        print_r($results);
+        // die(); 
+
+        //$results = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'", ARRAY_A );
         foreach ( $results as $row ) {
-            $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
+            // $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
         }
     }
 

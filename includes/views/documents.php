@@ -381,7 +381,6 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 				if ( $check_attachments !== null ) {
 					$relative_path_for_db = ltrim( $relative_path, '/' );
 					if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
-						echo "entro";
 						$is_attachment = true;
 						$attachment_id = $attachment_paths[ $relative_path_for_db ];
 					}
@@ -403,7 +402,6 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 					 AND post_status = 'publish'",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				);
-				
 				$en_contenido = $wpdb->get_var($query);
 				$en_programa  = $wpdb->get_var($programas);
 				if($en_contenido || $en_programa){
@@ -420,7 +418,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 					'attachment_id'   => $attachment_id,
 					'modified_date'   => date( 'Y-m-d H:i:s', $file->getMTime() ),
 					'url'             => $base_upload_url . $relative_path,
-					//'en_contenido'	  => $en_contenido
+					'en_contenido'	  => $en_contenido
 				);
             }
         }

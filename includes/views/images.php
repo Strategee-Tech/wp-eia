@@ -25,6 +25,7 @@ get_all_images_in_uploads($selected_folder, $showAttachment, $orderby, $order, $
 
 
 
+<h2>Imágenes</h2>
 
 
 

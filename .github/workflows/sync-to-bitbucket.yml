@@ -1,0 +1,31 @@
+name: Sincronizar de GitHub a Bitbucket
+
+on:
+  push:
+    branches:
+      - main # O la rama que uses como principal
+      - '*'  # Sincroniza todas las ramas al empujar
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Esencial para un mirror completo (incluye historial)
+
+      - name: Configurar Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "github-actions-bot@users.noreply.github.com"
+
+      - name: Añadir remoto de Bitbucket y empujar (mirror)
+        env:
+          BITBUCKET_APP_PASSWORD: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+        run: |
+          # Construye la URL de Bitbucket con el token de acceso para autenticación HTTPS
+          BITBUCKET_REPO_URL="https://x-token-auth:${BITBUCKET_APP_PASSWORD}@bitbucket.org/mktautomation/eia-plugin.git
+          # Empuja todas las ramas y tags, sobrescribiendo el remoto
+          git push bitbucket-mirror --all --force
+          git push bitbucket-mirror --tags --force

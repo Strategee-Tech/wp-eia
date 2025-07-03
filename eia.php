@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function eia_admin_notice() {
     ?>
     <div class="notice notice-success is-dismissible">
-        <p>Bienvenido al EIA Plugin</p>
+        <p>Bienvenido al EIA Plugin sync</p>
     </div>
     <?php
 }

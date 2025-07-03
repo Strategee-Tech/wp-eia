@@ -1,0 +1,50 @@
+# bitbucket-pipelines.yml
+pipelines:
+  default: # Se ejecuta para cualquier rama si no hay una coincidencia específica
+    - step:
+        name: Sincronizar Bitbucket a GitHub (Default)
+        image: atlassian/default-image:latest # Imagen base de Docker con herramientas comunes
+        script:
+          - echo "No se ejecuta para esta rama en default, usa ramas específicas."
+          - echo "Asegúrate de configurar branches: en tu pipeline para la rama 'main' y '*'"
+
+  branches:
+    main: # Este pipeline se ejecuta cuando hay un push a la rama 'main'
+      - step:
+          name: Sincronizar Bitbucket a GitHub (Main Branch)
+          image: atlassian/default-image:latest # Contiene Git
+          script:
+            - git config user.name "Bitbucket Pipelines Bot"
+            - git config user.email "pipelines-bot@bitbucket.org"
+            
+            # Construye la URL de GitHub con el token para autenticación HTTPS
+            # ¡Asegúrate que VictorZRC/wp-eia.git sea TU repositorio de GitHub!
+            - GH_REPO_URL="https://oauth2:${GITHUB_TOKEN}@github.com/VictorZRC/wp-eia.git"
+            
+            # Añade el remoto de GitHub
+            - git remote add github-mirror $GH_REPO_URL
+            
+            # Empuja todas las ramas y tags, sobrescribiendo el remoto de GitHub
+            # ¡Usamos --force porque estamos haciendo un mirror completo!
+            - git push github-mirror --all --force
+            - git push github-mirror --tags --force
+            
+    '*': # Este pipeline se ejecuta para cualquier otra rama diferente de 'main'
+      - step:
+          name: Sincronizar Bitbucket a GitHub (Otras Ramas)
+          image: atlassian/default-image:latest
+          script:
+            - git config user.name "Bitbucket Pipelines Bot"
+            - git config user.email "pipelines-bot@bitbucket.org"
+            
+            # Construye la URL de GitHub con el token para autenticación HTTPS
+            - GH_REPO_URL="https://oauth2:${GITHUB_TOKEN}@github.com/VictorZRC/wp-eia.git"
+            
+            # Añade el remoto de GitHub
+            - git remote add github-mirror $GH_REPO_URL
+            
+            # Empuja solo la rama actual que disparó el pipeline
+            # $BITBUCKET_BRANCH es una variable de entorno de Bitbucket Pipelines
+            - git push github-mirror $BITBUCKET_BRANCH --force 
+            # También empuja los tags si el push actual tiene nuevos tags
+            - git push github-mirror --tags --force

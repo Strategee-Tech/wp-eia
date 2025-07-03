@@ -351,14 +351,9 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
             ),
             ARRAY_A
         ); 
-
-        echo "<pre>";
-        print_r($results);
-
-        //$results = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'", ARRAY_A );
-        // foreach ( $results as $row ) {
-        //     $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
-        // }
+        foreach ( $results as $row ) {
+            $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
+        }
     }
 
     if ( ! is_dir( $start_path ) ) {

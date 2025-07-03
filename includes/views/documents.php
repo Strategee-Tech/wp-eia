@@ -378,16 +378,25 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 				}
 				
 				$query = $wpdb->prepare(
-						"SELECT COUNT(*) 
-						 FROM $wpdb->posts
-						 WHERE post_content LIKE %s 
-						 AND post_status = 'publish'
-						 AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-						'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
-					);
+					"SELECT COUNT(*) 
+				 	FROM $wpdb->posts
+				 	WHERE post_content LIKE %s 
+				 	AND post_status = 'publish'
+				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
+				);
+
+				$programas = $wpdb->prepare(
+					"SELECT COUNT(*) 
+					 FROM {$wpdb->prefix}learnpress_courses
+					 WHERE post_content LIKE %s 
+					 AND post_status = 'publish'",
+					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
+				);
 				
 				$en_contenido = $wpdb->get_var($query);
-				if($en_contenido){
+				$en_programa  = $wpdb->get_var($programas);
+				if($en_contenido || $en_programa){
 					continue;
 				}
 

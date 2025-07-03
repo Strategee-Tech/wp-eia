@@ -15,23 +15,20 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
 	
     global $wpdb;
 	
-    $upload_dir_info  = wp_upload_dir();
-    $base_upload_path = trailingslashit( $upload_dir_info['basedir'] );
-    $base_upload_url  = trailingslashit( $upload_dir_info['baseurl'] );
+    $upload_dir_info    = wp_upload_dir();
+    $base_upload_path   = trailingslashit( $upload_dir_info['basedir'] );
+    $base_upload_url    = trailingslashit( $upload_dir_info['baseurl'] );
 
-
-    
-
-    $start_path = $base_upload_path;
+    $start_path         = $base_upload_path;
     if ( ! empty( $subfolder ) ) {
-        $start_path .= trailingslashit( $subfolder );
+        $start_path    .= trailingslashit( $subfolder );
     }
 
 
 
-    $all_images = array();
+    $all_images         = array();
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
-    $attachment_paths = array();
+    $attachment_paths   = array();
 
     // Solo necesitamos obtener los attachments si $check_attachments no es null
     if ( $check_attachments ) {

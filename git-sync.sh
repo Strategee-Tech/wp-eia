@@ -11,7 +11,7 @@ COMMIT_MESSAGE=$1 # El primer argumento pasado al script será el mensaje del co
 
 # Si no se proporciona un mensaje de commit, usa uno por defecto
 if [ -z "$COMMIT_MESSAGE" ]; then
-  COMMIT_MESSAGE="Actualización automática desde script"
+  COMMIT_MESSAGE="feature/images"
   echo "ADVERTENCIA: No se proporcionó un mensaje de commit. Usando el mensaje por defecto: \"$COMMIT_MESSAGE\""
 fi
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * 3. Función para obtener todas las imágenes del directorio de uploads o de una subcarpeta específica.
- * Excluye miniaturas y filtra opcionalmente por si están vinculadas o no a attachments.
+ * Excluye miniaturas y filtra opcionalmente por si están vinculadas o no a attachments .
  *
  * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-imagenes-api').
  * @param bool|null $check_attachments Si es true, muestra solo imágenes vinculadas a un attachment.

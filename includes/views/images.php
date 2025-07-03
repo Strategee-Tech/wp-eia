@@ -61,11 +61,13 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
     }
 
 
+    echo "<pre>";
     print_r($base_upload_path);
     print_r($base_upload_url);
     print_r($upload_dir_info);
     print_r($subfolder);
     print_r($start_path);
+    echo "</pre>";
     die();
 
     $all_images = array();

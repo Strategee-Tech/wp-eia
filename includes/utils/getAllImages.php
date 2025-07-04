@@ -41,12 +41,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     );
 
 
-    echo '<pre>';
-    print_r($results);
-    echo '</pre>';
-    
-
-
     foreach ( $results as $row ) {
         $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
     }
@@ -66,13 +60,20 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             if ( $file->isFile() ) {
 				$ext = strtolower($file->getExtension());
 
-        		if (!in_array($ext, $not_allowed_extensions)) continue;
+        		if (in_array($ext, $not_allowed_extensions)) continue;
 
                 $filename        = $file->getFilename();
                 $extension       = strtolower( $file->getExtension() );
 				$relative_path   = str_replace( $base_upload_path, '', $file->getPathname() );
 				$file_size_bytes = $file->getSize();
 				$attachment_id   = null;
+				
+                $dimensions = 'N/A';
+                $image_info = @getimagesize( $file->getPathname() );
+                if ( $image_info !== false ) {
+                    $dimensions = $image_info[0] . 'x' . $image_info[1];
+                }
+
 
 				// Realizar la verificación de attachment solo si es necesario (cuando $check_attachments no es null)
                 $relative_path_for_db = ltrim( $relative_path, '/' );
@@ -93,6 +94,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'full_path'       => $file->getPathname(),
 					'relative_path'   => $relative_path,
 					'filename'        => $filename,
+                    'dimensions'      => $dimensions,
 					'size_bytes'      => $file_size_bytes,
 					'size_kb'         => $file_size_bytes / 1024,
 					'attachment_id'   => $attachment_id,

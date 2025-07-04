@@ -430,7 +430,11 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 
 				foreach ($posts as $post) {
 
-					echo '<pre>' . htmlspecialchars(print_r($post->meta_value, true)) . '</pre>';
+					if (!is_string($post->meta_value){
+						echo "no es string";
+					}
+
+					//echo '<pre>' . htmlspecialchars(print_r($post->meta_value, true)) . '</pre>';
 
 					// echo "<pre>";
 					// print_r($post->meta_value);

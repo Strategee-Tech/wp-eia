@@ -404,7 +404,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 				); 
 
                 $post_meta_query = "
-                    SELECT COUNT(*) 
+                    SELECT wpostmeta.post_id, wpostmeta.meta_value
                     FROM {$wpdb->prefix}postmeta AS wpostmeta
                     JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
                     WHERE wpostmeta.meta_key = '_elementor_data'
@@ -416,7 +416,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 				$en_contenido = $wpdb->get_var($query);
 				$en_programa  = $wpdb->get_var($programas);
  
-				if($en_contenido || $en_programa || $en_postmeta){
+				if($en_contenido || $en_programa || !empty($en_postmeta)){
 					continue;
 				}
 

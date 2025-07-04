@@ -125,6 +125,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                         $to_delete = true;
                     }
 
+
                     echo 'filename: ' . $filenamewithfolder . '<br>';
                     echo 'in_content: ' . $in_content . '<br>';
                     echo 'programas: ' . $programas . '<br>';  
@@ -142,7 +143,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                                     //     continue;
                             } else {
                                 $to_delete = true;
-                                break;
                                 echo "<br>";
                                 echo "archivo no encontrado: $filenamewithfolder";
                             }

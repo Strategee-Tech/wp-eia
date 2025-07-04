@@ -128,7 +128,7 @@ foreach ( $all_images as $image ) {
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
                         <td>
                             <?php
-                            if($image['to_delete']){
+                            if($image['to_delete'] !== false){
                                 if($image['attachment_id']){    
                                     echo '<span class="dashicons dashicons-trash" style="color: red;"></span> ID: ' . esc_html( $image['attachment_id'] );						
                                 }else{

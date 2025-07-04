@@ -4,7 +4,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getAllImages.php';
-require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getSortableImageHeader.php';
+//require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getSortableImageHeader.php';
 
 ?>
 

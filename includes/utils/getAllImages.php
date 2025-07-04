@@ -26,7 +26,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     }
 
     $all_images         = array();
-    $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
+    $allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
     $attachment_paths   = array();
 
 
@@ -62,7 +62,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 				$ext = strtolower($file->getExtension());
 
                 //SI NO ES UNA IMAGEN, LO DESCARTAMOS
-        		if (!in_array($ext, $not_allowed_extensions)) continue;
+        		if (!in_array($ext, $allowed_extensions)) continue;
 
                 $filename        = $file->getFilename();
                 $extension       = strtolower( $file->getExtension() );

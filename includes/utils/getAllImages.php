@@ -49,11 +49,11 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 		    SELECT post_id, meta_value 
 		    FROM {$wpdb->prefix}postmeta AS wpostmeta
 		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-		    WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css')
+		    WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
 		    AND wpost.post_status = 'publish'
 		");
 
-    echo '<pre>' . htmlspecialchars(print_r($posts, true)) . '</pre>';
+    // echo '<pre>' . htmlspecialchars(print_r($posts, true)) . '</pre>';
 
     if ( ! is_dir( $start_path ) ) {
         return array();
@@ -123,29 +123,21 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                     $programas = $wpdb->get_var($programas);
                     if($in_content == 0 && $programas == 0){
                         $to_delete = true;
+
                         foreach ($posts as $post) {
-                            if (strpos($post->meta_value, $filenamewithfolder) !== false) {
+                            if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment_id) {
                                 $to_delete = false;
                                 break;
                                 echo "<br>";
-                                echo "archivo encontrado: $filenamewithfolder";
-                                // } else if(strpos($post->meta_value, $relative_path) !== false) {
-                                    //     //echo "<br>";
-                                    //     //echo "archivo encontrado: $filenamewithfolder";
-                                    //     $aux_post = true;
-                                    //     continue;
-                            } else {
-                                $to_delete = true;
-                                echo "<br>";
-                                echo "archivo no encontrado: $filenamewithfolder";
-                            }
+                                echo "archivo encontrado: $filenamewithfolder";continue;
+                            } 
                         }
                     }
 
 
-                    echo 'filename: ' . $filenamewithfolder . '<br>';
-                    echo 'in_content: ' . $in_content . '<br>';
-                    echo 'programas: ' . $programas . '<br>';  
+                    // echo 'filename: ' . $filenamewithfolder . '<br>';
+                    // echo 'in_content: ' . $in_content . '<br>';
+                    // echo 'programas: ' . $programas . '<br>';  
 
 
 

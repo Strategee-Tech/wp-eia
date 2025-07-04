@@ -376,7 +376,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 
 
 		echo "<pre>";
-		print_r($posts);
+		print_r(count($posts));
 		echo "</pre>";
 		die(); 
 		

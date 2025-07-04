@@ -90,8 +90,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
                 $to_delete = false;
 
-
-
                 $in_content_query = $wpdb->prepare(
 					"SELECT COUNT(*) 
 				 	FROM $wpdb->posts
@@ -112,7 +110,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                 if(!$is_thumbnail){
                     $in_content = $wpdb->get_var($in_content_query);
                     $programas = $wpdb->get_var($programas);
-                    if(!$in_content || !$programas){
+                    if(empty($in_content) || empty($programas)){
                         $to_delete = true;
                     }
                 }

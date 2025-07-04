@@ -266,13 +266,11 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 				$is_attachment   = false;
 				$attachment_id   = null;
 
-				// Realizar la verificación de attachment solo si es necesario (cuando $check_attachments no es null)
-				if ( $check_attachments !== null ) {
-					$relative_path_for_db = ltrim( $relative_path, '/' );
-					if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
-						$is_attachment = true;
-						$attachment_id = $attachment_paths[ $relative_path_for_db ];
-					}
+				// Realizar la verificación de si attachment
+				$relative_path_for_db = ltrim( $relative_path, '/' );
+				if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
+					$is_attachment = true;
+					$attachment_id = $attachment_paths[ $relative_path_for_db ];
 				}
 				
 				$query = $wpdb->prepare(

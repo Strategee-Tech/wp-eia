@@ -1,7 +1,4 @@
 <?php
-/**
- * 2. Función que renderiza la página de administración
- */
 
 // Verificar permisos
 if ( ! current_user_can( 'manage_options' ) ) {
@@ -9,38 +6,21 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 // Obtener la carpeta seleccionada del parámetro GET o usar un valor por defecto    
 $selected_folder = isset( $_GET['wpil_folder'] ) ? sanitize_text_field( wp_unslash( $_GET['wpil_folder'] ) ) : sanitize_text_field( wp_unslash( '2025/06' ) );
-$status  		 = isset( $_GET['status']) ? false: true;	
 $selected_folder = trim( $selected_folder, '/' );
 
 // Obtener los parámetros de ordenación
 $orderby = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'size_bytes';
-$order   = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : 'desc'; // Por defecto ascendente
+$order   = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : 'desc'; // Por defecto descendente
 
 
-// Obtener las imágenes y las estadísticas
-$images     = wpil_get_all_documents_in_uploads( $selected_folder, $status, $orderby, $order);
-$delete_all = isset($_GET['delete_all']) ? 1 : 0;
+// Obtener los documentos y las estadísticas
+$documents = wpil_get_all_documents_in_uploads( $selected_folder, $orderby, $order);
 
-if( $delete_all && !empty($images)) {
-	foreach( $images as $image ) {
-		if( $image['en_contenido'] ) {
-			continue;
-		}
-		if (file_exists($image['full_path'])) {
-			unlink($image['full_path']);
-		} else {
-			echo 'Archivo no eliminado'. $image['full_path'];
-		}
-	}
-	$clean_url = remove_query_arg( 'delete_all' );
-	wp_redirect( esc_url_raw( $clean_url ) );
-	exit;
-}
 
-global $wpdb;
+global $wpdb; //para hacer consultas a la base de datos
 
-$total_files      = count( $images );
-$total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
+$total_files      = count( $documents );
+$total_size_bytes = array_sum( array_column( $documents, 'size_bytes' ) );
 
 ?>
 <div class="wrap">
@@ -68,11 +48,6 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
         <p class="submit">
             <input type="submit" name="submit" id="submit" class="button button-secondary" value="Mostrar Documentos">
             <input type="button" id="send_urls_button" class="button button-primary" value="Enviar URLs por POST">
-            <input type="button" id="export_csv_button" class="button button-primary" value="Descargar CSV">
-			
-			<?php if(!$status && $showMiniatures): ?>
-            	<input type="button" id="btn-delete-all" class="button button-primary" value="Eliminar Todos">
-			<?php endif; ?>
         </p>
     </form>
 
@@ -92,14 +67,13 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
                 <th>Nombre del Archivo</th>
                 <?php
                 // Función auxiliar para generar cabeceras ordenables
-                function wpil_get_sortable_header_docs( $column_id, $column_title, $current_orderby, $current_order, $selected_folder, $status ) {
+                function wpil_get_sortable_header_docs( $column_id, $column_title, $current_orderby, $current_order, $selected_folder ) {
                     $new_order = ( $current_orderby === $column_id && $current_order === 'asc' ) ? 'desc' : 'asc';
                     $class = ( $current_orderby === $column_id ) ? 'sorted ' . $current_order : 'sortable ' . $new_order;
                     $query_args = array(
                         'page'      => 'documents',
                         'orderby'   => $column_id,
-                        'order'     => $new_order,
-						'status'	=> $status == true ? '0' : '1',
+                        'order'     => $new_order, 
                     );
                     if ( ! empty( $selected_folder ) ) {
                         $query_args['wpil_folder'] = $selected_folder;
@@ -114,34 +88,34 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
                     </th>
                     <?php
                 }
-                wpil_get_sortable_header_docs( 'size_bytes', 'Tamaño (KB)', $orderby, $order, $selected_folder, $status );
-                wpil_get_sortable_header_docs( 'is_attachment', 'Vinculado a Attachment', $orderby, $order, $selected_folder, $status );
-                wpil_get_sortable_header_docs( 'modified_date', 'Fecha de Modificación', $orderby, $order, $selected_folder, $status );
+                wpil_get_sortable_header_docs( 'size_bytes', 'Tamaño (KB)', $orderby, $order, $selected_folder );
+                wpil_get_sortable_header_docs( 'is_attachment', 'Vinculado a Attachment', $orderby, $order, $selected_folder );
+                wpil_get_sortable_header_docs( 'modified_date', 'Fecha de Modificación', $orderby, $order, $selected_folder );
                 ?>
                 <th>URL</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            if ( empty( $images ) ) :
+            if ( empty( $documents ) ) :
                 ?>
                 <tr>
-                    <td colspan="7">No se encontraron imágenes en el directorio especificado.</td>
+                    <td colspan="7">No se encontraron documentos en el directorio especificado.</td>
                 </tr>
                 <?php
             else :
-                foreach ( $images as $image ) :
+                foreach ( $documents as $document ) :
                     ?>
                     <tr>
-                        <td><?php echo esc_html( $image['relative_path'] ); ?></td>
-                        <td><?php echo esc_html( $image['filename'] ); ?></td>
-                        <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
+                        <td><?php echo esc_html( $document['relative_path'] ); ?></td>
+                        <td><?php echo esc_html( $document['filename'] ); ?></td>
+                        <td><?php echo esc_html( number_format( $document['size_kb'], 2 ) ); ?></td>
                         <td>
                             <?php
-                            if ( $image['is_attachment'] ) {								
-                                echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $image['attachment_id'] ) . ')';
+                            if ( $document['is_attachment'] ) {								
+                                echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $document['attachment_id'] ) . ')';
                             } else {
-								if( !$image['en_contenido'] ) {
+								if( !$document['en_contenido'] ) {
                                 	echo '<span class="dashicons dashicons-no-alt" style="color: red;"></span> No Content';									
 								} else {
                                 	echo '<span class="dashicons dashicons-no-alt" style="color: green;"></span> En contenido';									
@@ -149,8 +123,8 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
                             }
                             ?>
                         </td>
-                        <td><?php echo esc_html( $image['modified_date'] ); ?></td>
-                        <td><a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank"><?php echo esc_url( $image['url'] ); ?></a></td>
+                        <td><?php echo esc_html( $document['modified_date'] ); ?></td>
+                        <td><a href="<?php echo esc_url( $document['url'] ); ?>" target="_blank"><?php echo esc_url( $document['url'] ); ?></a></td>
                     </tr>
                     <?php
                 endforeach;
@@ -218,111 +192,21 @@ $total_size_bytes = array_sum( array_column( $images, 'size_bytes' ) );
             button.disabled = false;
         });
     });
-    // --- FIN DEL SCRIPT JAVASCRIPT ---
-
-    // --- SCRIPT JAVASCRIPT PARA DESCARGAR CSV ---
-    document.getElementById('export_csv_button').addEventListener('click', function() {
-        var button = this;
-        button.value = 'Generando CSV...';
-        button.disabled = true;
-
-        var folder = document.getElementById('wpil_folder').value;
-        var orderbyInput = document.querySelector('input[name="orderby"]');
-        var orderInput = document.querySelector('input[name="order"]');
-
-        var orderby = orderbyInput ? orderbyInput.value : '';
-        var order = orderInput ? orderInput.value : 'asc';
-
-        // Construir la URL del endpoint REST para el CSV
-        var csvApiEndpoint = '<?php echo esc_url_raw( rest_url( 'wp-image-lister/v1/export-csv' ) ); ?>';
-        var params = new URLSearchParams({
-            folder: folder,
-            orderby: orderby,
-            order: order
-        });
-
-        // --- CAMBIO CLAVE AQUÍ: Obtener y añadir el nonce ---
-        var nonce = '<?php echo wp_create_nonce( 'wp_rest' ); ?>'; // Genera el nonce en PHP
-        // Los nonces para GET se suelen pasar como parámetro de URL
-        // Opcional, pero recomendado si tienes problemas de cookie/sesión con el WAF/CSP
-        // params.append('_wpnonce', nonce); // Si prefieres pasarlo en la URL
-
-        fetch(csvApiEndpoint + '?' + params.toString(), {
-            method: 'GET', // Método GET
-            headers: {
-                // Envía el nonce en la cabecera X-WP-Nonce
-                'X-WP-Nonce': nonce
-            }
-        })
-        // --- FIN DEL CAMBIO CLAVE ---
-        .then(response => {
-            if (!response.ok) {
-                // Si el estado HTTP no es 2xx, el servidor rechazó la solicitud (ej. por permisos)
-                // Importante: Si la API de WordPress devuelve un JSON de error, puedes leerlo aquí
-                return response.json().then(err => {
-                    throw new Error('Error al obtener el CSV de la API: ' + response.status + ' ' + response.statusText + ' - ' + (err.message || 'Error desconocido'));
-                });
-            }
-            return response.json(); // Esperamos una respuesta JSON
-        })
-        .then(data => {
-            if (data.success && data.csv_data) {
-                var blob = new Blob([data.csv_data], { type: 'text/csv;charset=utf-8;' });
-                var link = document.createElement('a');
-                if (link.download !== undefined) {
-                    var url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', data.filename || 'image_list.csv');
-
-                    link.style.visibility = 'hidden';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                } else {
-                    alert('Su navegador no soporta la descarga automática. Por favor, guarde el contenido manualmente: \n' + data.csv_data);
-                }
-                console.log('CSV generado y descarga iniciada.');
-            } else {
-                alert('Error: No se pudo generar el CSV. ' + (data.message || 'Respuesta inesperada de la API.'));
-            }
-        })
-        .catch(error => {
-            console.error('Error al descargar el CSV:', error);
-            alert('Error al descargar el CSV. Consulta la consola para más detalles. Posiblemente un problema de permisos o de conexión: ' + error.message); // Muestra el mensaje de error completo
-        })
-        .finally(() => {
-            button.value = 'Descargar CSV';
-            button.disabled = false;
-        });
-    });
-	
-	document.addEventListener('DOMContentLoaded', () => {
-		const deleteBtn = document.getElementById('btn-delete-all');
-		if(deleteBtn) {
-			deleteBtn.addEventListener('click', ()=>{
-				if(!confirm( 'Deseas eliminar todos los registros de la lista actual?') ) return;
-				window.location.href = `${window.location.href}&delete_all=1`;
-			})
-		}
-	})
-    // --- FIN DEL SCRIPT JAVASCRIPT PARA DESCARGAR CSV ---    </script>
+    // --- FIN DEL SCRIPT JAVASCRIPT PARA ENVIAR LAS URLS---  
+</script>
 <?php
 
 
 /**
- * 3. Función para obtener todas las imágenes del directorio de uploads o de una subcarpeta específica.
+ * Función para obtener todos las documentos del directorio de uploads o de una subcarpeta específica.
  * Excluye miniaturas y filtra opcionalmente por si están vinculadas o no a attachments.
  *
- * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-imagenes-api').
- * @param bool|null $check_attachments Si es true, muestra solo imágenes vinculadas a un attachment.
- * Si es false, muestra solo imágenes NO vinculadas a un attachment.
- * Si es null, muestra todas las imágenes (sin filtrar por attachment).
+ * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-documentos-api').
  * @param string $orderby          Columna por la que ordenar (size_bytes, is_attachment, modified_date).
  * @param string $order            Dirección de ordenación (asc o desc).
- * @return array Lista de arrays de imágenes.
+ * @return array Lista de arrays de documentos.
  */
-function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments = true, $orderby = 'size_bytes', $order = 'desc' ) {
+function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_bytes', $order = 'desc' ) {
 	
     global $wpdb;
 	
@@ -335,26 +219,23 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
         $start_path .= trailingslashit( $subfolder );
     }
 
-    $all_images 			= array();
+    $all_documents 			= array();
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
     $attachment_paths       = array();
-    // Solo necesitamos obtener los attachments si $check_attachments no es null
-    if ( $check_attachments !== null ) {
-
-    	$results = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT post_id, meta_value
-                 FROM {$wpdb->postmeta}
-                 WHERE meta_key = '_wp_attached_file'
-                   AND meta_value LIKE %s",
-                $wpdb->esc_like($subfolder) . '%'
-            ),
-            ARRAY_A
-        ); 
-        foreach ( $results as $row ) {
-            $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
-        }
+	$results = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT post_id, meta_value
+             FROM {$wpdb->postmeta}
+             WHERE meta_key = '_wp_attached_file'
+               AND meta_value LIKE %s",
+            $wpdb->esc_like($subfolder) . '%'
+        ),
+        ARRAY_A
+    ); 
+    foreach ( $results as $row ) {
+        $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
     }
+
 
     if ( ! is_dir( $start_path ) ) {
         return array();
@@ -450,7 +331,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 					continue;
 				}
 
-				$all_images[] = array(
+				$all_documents[] = array(
 					'full_path'       => $file->getPathname(),
 					'relative_path'   => $relative_path,
 					'filename'        => $filename,
@@ -469,8 +350,8 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
         return array();
     }
 
-    if ( ! empty( $orderby ) && ! empty( $all_images ) ) {
-        usort( $all_images, function( $a, $b ) use ( $orderby, $order ) {
+    if ( ! empty( $orderby ) && ! empty( $all_documents ) ) {
+        usort( $all_documents, function( $a, $b ) use ( $orderby, $order ) {
             $value_a = null;
             $value_b = null;
 
@@ -502,5 +383,5 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
             }
         });
     }
-    return $all_images;
+    return $all_documents;
 }

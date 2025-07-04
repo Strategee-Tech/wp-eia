@@ -53,6 +53,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 		    AND wpost.post_status = 'publish'
 		");
 
+    echo "<pre>";
+    print_r($posts);
+    echo "</pre>";
+
     if ( ! is_dir( $start_path ) ) {
         return array();
     }
@@ -126,8 +130,8 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                         foreach ($posts as $post) {
                             if (strpos($post->meta_value, $filenamewithfolder) !== false) {
                                 $to_delete = false;
-                                //echo "<br>";
-                                //echo "archivo encontrado: $filenamewithfolder";
+                                echo "<br>";
+                                echo "archivo encontrado: $filenamewithfolder";
                                 // } else if(strpos($post->meta_value, $relative_path) !== false) {
                                     //     //echo "<br>";
                                     //     //echo "archivo encontrado: $filenamewithfolder";
@@ -136,8 +140,8 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                             } else {
                                 $to_delete = true;
                                 break;
-                                //echo "<br>";
-                                //echo "archivo no encontrado: $filenamewithfolder";
+                                echo "<br>";
+                                echo "archivo no encontrado: $filenamewithfolder";
                             }
                         }
                     }

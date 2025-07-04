@@ -71,7 +71,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 				$attachment_id   = null;
                 $is_thumbnail    = false;
 
-                if ( preg_match( '/-\d+x\d+\./', $filename ) && !in_array( $extension, $allowed_extensions ) ) {
+                if ( preg_match( '/-\d+x\d+\./', $filename ) ) {
 					$is_thumbnail = true;
 				}
 				

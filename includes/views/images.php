@@ -89,7 +89,7 @@ foreach ( $all_images as $image ) {
 
 <p>
     <strong>Archivos encontrados:</strong> <?php echo number_format( $total_files ); ?><br>
-    <strong>Peso Total:</strong> <?php echo size_format( $total_size_bytes ); ?>
+    <strong>Peso Total:</strong> <?php echo size_format( $total_size_bytes ); ?><br>
     <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?>
 </p>
 

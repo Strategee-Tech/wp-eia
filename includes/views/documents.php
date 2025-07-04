@@ -374,12 +374,6 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 		    AND wpost.post_status = 'publish'
 		");
 
-
-		echo "<pre>";
-		print_r(count($posts));
-		echo "</pre>";
-		die(); 
-		
         foreach ( $iterator as $file ) {
             if ( $file->isFile() ) {
 				$ext = strtolower($file->getExtension());
@@ -438,6 +432,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 
 					echo "<pre>";
 					print_r($post->meta_value);
+					echo "</pre>";
 					// die(); 
 			        if (stripos($post->meta_value, $filename) !== false) {
 			           	echo "archivo encontrado: $filename";

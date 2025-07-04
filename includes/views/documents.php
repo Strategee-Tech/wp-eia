@@ -56,7 +56,7 @@ $total_size_bytes = array_sum( array_column( $documents, 'size_bytes' ) );
     <h2>Listado de Documentos <?php echo ! empty( $selected_folder ) ? 'en: `' . esc_html( $selected_folder ) . '`' : ' (todas)'; ?></h2>
 
     <p>
-        <strong>Archivos encontrados:</strong> <?php echo number_format( $total_files ); ?><br>
+        <strong>Archivos encontrados que se pueden eliminar:</strong> <?php echo number_format( $total_files ); ?><br>
         <strong>Peso Total:</strong> <?php echo size_format( $total_size_bytes ); ?>
     </p>
 

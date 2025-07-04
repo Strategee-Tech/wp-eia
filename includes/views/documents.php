@@ -374,7 +374,10 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 		    AND wpost.post_status = 'publish'
 		");
 
-		// $filenames[] = 'Captura-de-pantalla-2023-09-08-a-las-7.15.36-p.m-e1694218714455.jpg';
+
+		echo "<pre>";
+		print_r($posts);
+		die(); 
 		
         foreach ( $iterator as $file ) {
             if ( $file->isFile() ) {

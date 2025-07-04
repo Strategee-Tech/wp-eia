@@ -114,7 +114,7 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
                     <tr>
                         <td><?php echo esc_html( $image['relative_path'] ); ?></td>
                         <td><?php echo esc_html( $image['filename'] ); ?></td>
-                        <td><?php echo esc_html( $image['dimensions'] );  echo $image['is_miniature'] == 1 ? 'Min' : '' ?>  </td>
+                        <td><?php echo esc_html( $image['dimensions'] );  echo $image['is_thumbnail'] == 1 ? ' (Thumbnail)' : '' ?>  </td>
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
                         <td>
                             <?php
@@ -128,7 +128,7 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
                                 if ( $image['attachment_id'] ) {								
                                     echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> ID: ' . esc_html( $image['attachment_id'] );
                                 } else {
-                                    echo '<span class="dashicons dashicons-no-alt" style="color: green;"></span> En contenido';									
+                                    echo '<span class="dashicons dashicons-yes-alt" style="color: yellow;"></span> No ID';									
                                 }
                             }
                             ?>

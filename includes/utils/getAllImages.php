@@ -36,7 +36,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             $wpdb->esc_like($subfolder) . '%'
         ),
         ARRAY_A
-    ); 
+    );
+
+
+    
     foreach ( $results as $row ) {
         $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
     }

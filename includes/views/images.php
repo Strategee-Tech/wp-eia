@@ -22,7 +22,7 @@ $showMiniatures             = isset( $_GET['miniatures'] ) ? 1 : 0;
 $showAttachment             = isset( $_GET['attachment'] ) ? 1 : 0;
 $delete_all                 = isset($_GET['delete_all']) ? 1 : 0;
 
-//$all_images = get_all_images_in_uploads($selected_folder, $showAttachment, $orderby, $order, $showMiniatures);
+$all_images = get_all_images_in_uploads($selected_folder, $showAttachment, $orderby, $order, $showMiniatures);
 
 ?>
 

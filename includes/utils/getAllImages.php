@@ -83,8 +83,34 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                     $attachment_id = $attachment_paths[ $relative_path_for_db ];
                 }
 
-                $to_delete = $attachment_id ? false : true;
-                
+                $to_delete = false;
+
+
+
+                $in_content_query = $wpdb->prepare(
+					"SELECT COUNT(*) 
+				 	FROM $wpdb->posts
+				 	WHERE post_content LIKE %s 
+				 	AND post_status = 'publish'
+				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
+				);
+                $in_content = $wpdb->get_var($in_content_query);
+                if(!$in_content){
+                    $to_delete = true;
+                }
+
+                $programas = $wpdb->prepare(
+					"SELECT COUNT(*) 
+					 FROM {$wpdb->prefix}learnpress_courses
+					 WHERE post_content LIKE %s 
+					 AND post_status = 'publish'",
+					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
+				); 
+                $programas = $wpdb->get_var($programas);
+                if(!$programas){
+                    $to_delete = true;
+                }
 
                 $all_images[] = array(
 					'full_path'       => $file->getPathname(),

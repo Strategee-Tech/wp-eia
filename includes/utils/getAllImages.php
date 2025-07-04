@@ -32,7 +32,16 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
 
     // Solo necesitamos obtener los attachments si $check_attachments no es null
     if ( $check_attachments ) {
-        $results = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file'", ARRAY_A );
+    	$results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, meta_value
+                 FROM {$wpdb->postmeta}
+                 WHERE meta_key = '_wp_attached_file'
+                   AND meta_value LIKE %s",
+                $wpdb->esc_like($subfolder) . '%'
+            ),
+            ARRAY_A
+        ); 
         foreach ( $results as $row ) {
             $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
         }
@@ -80,6 +89,7 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
 						'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 					);
 				
+                    
 				$en_contenido = $wpdb->get_var($query);
 				if($en_contenido){
 					continue;

@@ -45,6 +45,13 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
     }
 
+    $posts = $wpdb->get_results("
+		    SELECT post_id, meta_value 
+		    FROM {$wpdb->prefix}postmeta AS wpostmeta
+		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+		    WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css')
+		    AND wpost.post_status = 'publish'
+		");
 
     if ( ! is_dir( $start_path ) ) {
         return array();
@@ -113,7 +120,31 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                     if($in_content == 0 || $programas == 0){
                         $to_delete = true;
                     }
+                    if($in_content == 0 && $programas == 0){
+                        $filenamewithfolder = str_replace('/', '\/', $relative_path);
+                        foreach ($posts as $post) {
+                            if (strpos($post->meta_value, $filenamewithfolder) !== false) {
+                                $to_delete = false;
+                                //echo "<br>";
+                                //echo "archivo encontrado: $filenamewithfolder";
+                                // } else if(strpos($post->meta_value, $relative_path) !== false) {
+                                    //     //echo "<br>";
+                                    //     //echo "archivo encontrado: $filenamewithfolder";
+                                    //     $aux_post = true;
+                                    //     continue;
+                            } else {
+                                $to_delete = true;
+                                break;
+                                //echo "<br>";
+                                //echo "archivo no encontrado: $filenamewithfolder";
+                            }
+                        }
+                    }
+
+
+
                 }
+
 
                 $all_images[] = array(
 					'full_path'       => $file->getPathname(),

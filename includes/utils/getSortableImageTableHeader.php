@@ -5,7 +5,7 @@ function getSortableImageTableHeader( $column_id, $column_title, $current_orderb
     $new_order = ( $current_orderby === $column_id && $current_order === 'asc' ) ? 'desc' : 'asc';
     $class = ( $current_orderby === $column_id ) ? 'sorted ' . $current_order : 'sortable ' . $new_order;
     $query_args = array(
-        'page'      => 'wpil-image-lister',
+        'page'      => 'images',
         'orderby'   => $column_id,
         'order'     => $new_order,
         'status'	=> $status == true ? '0' : '1',

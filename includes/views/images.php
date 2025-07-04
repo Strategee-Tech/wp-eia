@@ -11,7 +11,7 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getSortableImageTableHeader.php
 <H1>Gestion y Optimización de Imágenes</H1>
 
 <?php
-$selected_folder            = isset( $_GET['wpil_folder'] ) ? sanitize_text_field( wp_unslash( $_GET['wpil_folder'] ) ) : sanitize_text_field( wp_unslash( '2025/06' ) );
+$selected_folder            = isset( $_GET['folder'] ) ? sanitize_text_field( wp_unslash( $_GET['folder'] ) ) : sanitize_text_field( wp_unslash( '2025/06' ) );
 $selected_folder            = trim( $selected_folder, '/' );
 
 $orderby                    = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'size_bytes';
@@ -43,10 +43,12 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
 
     <table class="form-table">
         <tr>
-            <th scope="row"><label for="wpil_folder">Carpeta a Mostrar:</label></th>
+            <th scope="row"><label for="folder">Carpeta a Mostrar:</label></th>
             <td>
-                <input type="text" id="wpil_folder" name="wpil_folder" value="<?php echo esc_attr( $selected_folder ); ?>" class="regular-text" placeholder="Ej: 2024/06 o mis-imagenes-api" />
-                <p class="description">Introduce la subcarpeta dentro de `wp-content/uploads/` (ej: `2024/06` o `mis-imagenes-api`). Déjalo vacío para listar todas las imágenes.</p>
+                <input type="text" id="folder" name="folder" value="<?php echo esc_attr( $selected_folder ); ?>" class="regular-text" placeholder="Ej: 2024/06 o mis-imagenes-api" />
+                <p class="description">
+                    Introduce la subcarpeta dentro de `wp-content/uploads/` (ej: `2024/06` o `mis-imagenes-api`).
+                </p>
             </td>
         </tr>
     </table>

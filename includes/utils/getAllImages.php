@@ -25,11 +25,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         $start_path    .= trailingslashit( $subfolder );
     }
 
-    echo '<pre>';
-    print_r($results);
-    echo '</pre>';
-    die();
-
     $all_images         = array();
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
     $attachment_paths   = array();

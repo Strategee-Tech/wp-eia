@@ -4,7 +4,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getAllImages.php';
-//require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getSortableImageHeader.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getSortableImageTableHeader.php';
 
 ?>
 
@@ -21,6 +21,7 @@ $order                      = isset( $_GET['order'] ) ? sanitize_text_field( wp_
 $showMiniatures             = isset( $_GET['miniatures'] ) ? 1 : 0;
 $showAttachment             = isset( $_GET['attachment'] ) ? 1 : 0;
 $delete_all                 = isset($_GET['delete_all']) ? 1 : 0;
+
 
 
 $all_images = get_all_images_in_uploads($selected_folder, $orderby, $order, $showMiniatures);

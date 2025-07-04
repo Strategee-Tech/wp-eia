@@ -69,6 +69,11 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 				$relative_path   = str_replace( $base_upload_path, '', $file->getPathname() );
 				$file_size_bytes = $file->getSize();
 				$attachment_id   = null;
+                $is_thumbnail    = false;
+
+                if ( preg_match( '/-\d+x\d+\./', $filename ) && in_array( $extension, $allowed_extensions ) ) {
+					$is_thumbnail = true;
+				}
 				
                 //OBTENEMOS LAS DIMENSIONES DE LA IMAGEN
                 $dimensions = 'N/A';
@@ -96,8 +101,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				);
                 $in_content = $wpdb->get_var($in_content_query);
-                if(!$in_content){
-                    $to_delete = true;
+                if(!$is_thumbnail){
+                    if(!$in_content){
+                        $to_delete = true;
+                    }
                 }
 
                 $programas = $wpdb->prepare(
@@ -107,9 +114,11 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					 AND post_status = 'publish'",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
-                $programas = $wpdb->get_var($programas);
-                if(!$programas){
-                    $to_delete = true;
+                if(!$is_thumbnail){
+                    $programas = $wpdb->get_var($programas);
+                    if(!$programas){
+                        $to_delete = true;
+                    }
                 }
 
                 $all_images[] = array(
@@ -123,6 +132,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'modified_date'   => date( 'Y-m-d H:i:s', $file->getMTime() ),
 					'url'             => $base_upload_url . $relative_path,
                     'to_delete'       => $to_delete,
+                    'is_thumbnail'    => $is_thumbnail,
 				);
             }
         }

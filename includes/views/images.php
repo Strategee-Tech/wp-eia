@@ -33,7 +33,7 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
 ?>
 
 <form method="get" action="" id='form-filter'>
-    <input type="hidden" name="page" value="wpil-image-lister" />
+    <input type="hidden" name="page" value="images" />
     <?php if ( ! empty( $orderby ) ) : ?>
         <input type="hidden" name="orderby" value="<?php echo esc_attr( $orderby ); ?>" />
     <?php endif; ?>

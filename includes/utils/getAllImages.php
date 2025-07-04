@@ -60,7 +60,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             if ( $file->isFile() ) {
 				$ext = strtolower($file->getExtension());
 
-        		if (in_array($ext, $not_allowed_extensions)) continue;
+        		if (!in_array($ext, $not_allowed_extensions)) continue;
 
                 $filename        = $file->getFilename();
                 $extension       = strtolower( $file->getExtension() );

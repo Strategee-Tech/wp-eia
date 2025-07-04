@@ -374,19 +374,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 		    AND wpost.post_status = 'publish'
 		");
 
-		$filenames[] = 'Captura-de-pantalla-2023-09-08-a-las-7.15.36-p.m-e1694218714455.jpg';
-
-        foreach ($posts as $post) {
-		    foreach ($filenames as $file) {
-		        if (strpos($post->meta_value, $file) !== false) {
-		           	echo "encontrado";
-		        }
-		    }
-		}
-
-		echo "<pre>";
-		print_r($posts);
-		die(); 
+		// $filenames[] = 'Captura-de-pantalla-2023-09-08-a-las-7.15.36-p.m-e1694218714455.jpg';
 		
         foreach ( $iterator as $file ) {
             if ( $file->isFile() ) {
@@ -440,6 +428,14 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
  
 				if($en_contenido || $en_programa){
 					continue;
+				}
+
+				foreach ($posts as $post) {
+			        if (strpos($post->meta_value, $filename) !== false) {
+			           	echo "archivo encontrado: $filename";
+			        } else {
+			        	continue;
+			        }
 				}
 
 				$all_images[] = array(

@@ -138,7 +138,7 @@ foreach ( $all_images as $image ) {
                                 if ( $image['attachment_id'] ) {								
                                     echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> ID: ' . esc_html( $image['attachment_id'] );
                                 } else {
-                                    echo '<span class="dashicons dashicons-yes-alt" style="color: yellow;"></span> No ID';									
+                                    echo '<span class="dashicons dashicons-yes-alt" style="color: orange;"></span> No ID';									
                                 }
                             }
                             ?>

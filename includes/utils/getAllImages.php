@@ -53,9 +53,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 		    AND wpost.post_status = 'publish'
 		");
 
-    echo "<pre>";
-    print_r($posts);
-    echo "</pre>";
+    echo '<pre>' . htmlspecialchars(print_r($posts, true)) . '</pre>';
 
     if ( ! is_dir( $start_path ) ) {
         return array();

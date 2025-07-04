@@ -128,8 +128,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                             if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment_id) {
                                 $to_delete = false;
                                 break;
-                                echo "<br>";
-                                echo "archivo encontrado: $filenamewithfolder";continue;
                             } 
                         }
                     }

@@ -88,7 +88,7 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
                 <?php
                 // Función auxiliar para generar cabeceras ordenables
                 getSortableImageTableHeader( 'size_bytes', 'Tamaño (KB)', $orderby, $order, $selected_folder, $status, $showMiniatures );
-                getSortableImageTableHeader( 'is_attachment', 'Vinculado a Attachment', $orderby, $order, $selected_folder, $status, $showMiniatures );
+                getSortableImageTableHeader( 'attachment_id', 'Vinculado a Attachment', $orderby, $order, $selected_folder, $status, $showMiniatures );
                 getSortableImageTableHeader( 'modified_date', 'Fecha de Modificación', $orderby, $order, $selected_folder, $status, $showMiniatures );
                 ?>
                 <th>URL</th>

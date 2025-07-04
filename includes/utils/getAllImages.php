@@ -110,10 +110,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                     $value_a = $a['size_bytes'];
                     $value_b = $b['size_bytes'];
                     break;
-                case 'attachment_id':
-                    $value_a = (int) $a['attachment_id'];
-                    $value_b = (int) $b['attachment_id'];
-                    break;
                 case 'modified_date':
                     $value_a = strtotime( $a['modified_date'] );
                     $value_b = strtotime( $b['modified_date'] );

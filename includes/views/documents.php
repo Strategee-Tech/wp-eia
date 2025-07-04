@@ -428,11 +428,20 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 					continue;
 				}
 
+				$aux_post = false;
 				foreach ($posts as $post) {
 			        if (strpos($post->meta_value, $filename) !== false) {
-			           	// echo "archivo encontrado: $filename";
+			        	echo "<br>";
+			           	echo "archivo encontrado: $filename";
+			           	$aux_post = true;
 			        	continue;
+			        } else {	
+			        	echo "<br>";
+			           	echo "archivo no encontrado: $filename";
 			        }
+				}
+				if($aux_post) {
+					continue;
 				}
 
 				$all_images[] = array(

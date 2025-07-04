@@ -118,11 +118,15 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
                         <td>
                             <?php
-                            if ( $image['attachment_id'] ) {								
-                                echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $image['attachment_id'] ) . ')';
-                            } else {
-                                if( !$image['en_contenido'] ) {
-                                    echo '<span class="dashicons dashicons-no-alt" style="color: red;"></span> No Content';									
+                            if($image['to_delete']){
+                                if($image['attachment_id']){    
+                                    echo '<span class="dashicons dashicons-trash" style="color: red;"></span> ID: ' . esc_html( $image['attachment_id'] );						
+                                }else{
+                                    echo '<span class="dashicons dashicons-trash" style="color: yellow;"></span> No Vinculado';						
+                                }						
+                            }else{
+                                if ( $image['attachment_id'] ) {								
+                                    echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $image['attachment_id'] ) . ')';
                                 } else {
                                     echo '<span class="dashicons dashicons-no-alt" style="color: green;"></span> En contenido';									
                                 }

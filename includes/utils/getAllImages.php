@@ -29,7 +29,9 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
     $attachment_paths   = array();
 
-    $results = $wpdb->get_results(
+
+    //BUSCAMOS TODOS LOS ATTACHTMENT EN EL FOLDER ACTUAL Y LLENAMOS EL ARRAY attachment_paths
+    $attachments_in_folder = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT post_id, meta_value
                 FROM {$wpdb->postmeta}
@@ -39,11 +41,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         ),
         ARRAY_A
     );
-
-
-    foreach ( $results as $row ) {
-        $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
+    foreach ( $attachments_in_folder as $attachment ) {
+        $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
     }
+
 
     if ( ! is_dir( $start_path ) ) {
         return array();
@@ -60,6 +61,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             if ( $file->isFile() ) {
 				$ext = strtolower($file->getExtension());
 
+                //SI NO ES UNA IMAGEN, LO DESCARTAMOS
         		if (!in_array($ext, $not_allowed_extensions)) continue;
 
                 $filename        = $file->getFilename();
@@ -68,27 +70,21 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 				$file_size_bytes = $file->getSize();
 				$attachment_id   = null;
 				
+                //OBTENEMOS LAS DIMENSIONES DE LA IMAGEN
                 $dimensions = 'N/A';
                 $image_info = @getimagesize( $file->getPathname() );
                 if ( $image_info !== false ) {
                     $dimensions = $image_info[0] . 'x' . $image_info[1];
                 }
 
-
-				// Realizar la verificación de attachment solo si es necesario (cuando $check_attachments no es null)
+                //LLENAMOS EL ATTACHMENT ID BUSCANDO EN attachment_paths
                 $relative_path_for_db = ltrim( $relative_path, '/' );
                 if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
                     $attachment_id = $attachment_paths[ $relative_path_for_db ];
                 }
-				
-				$query = $wpdb->prepare(
-                    "SELECT COUNT(*) 
-                        FROM $wpdb->posts
-                        WHERE post_content LIKE %s 
-                        AND post_status = 'publish'
-                        AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-                    '%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
-                );
+
+                $to_delete = $attachment_id ? false : true;
+                
 
                 $all_images[] = array(
 					'full_path'       => $file->getPathname(),
@@ -100,7 +96,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'attachment_id'   => $attachment_id,
 					'modified_date'   => date( 'Y-m-d H:i:s', $file->getMTime() ),
 					'url'             => $base_upload_url . $relative_path,
-					//'en_contenido'	  => $en_contenido
+                    'to_delete'       => $to_delete,
 				);
             }
         }

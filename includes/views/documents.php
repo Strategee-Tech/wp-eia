@@ -47,7 +47,7 @@ $total_size_bytes = array_sum( array_column( $documents, 'size_bytes' ) );
         </table>
         <p class="submit">
             <input type="submit" name="submit" id="submit" class="button button-secondary" value="Mostrar Documentos">
-            <input type="button" id="send_urls_button" class="button button-primary" value="Enviar URLs por POST">
+            <input type="button" id="send_urls_button" class="button button-primary" value="Enviar URLs por POST para eliminar">
         </p>
     </form>
 

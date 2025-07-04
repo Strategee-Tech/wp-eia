@@ -65,35 +65,29 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                 $extension       = strtolower( $file->getExtension() );
 				$relative_path   = str_replace( $base_upload_path, '', $file->getPathname() );
 				$file_size_bytes = $file->getSize();
-				$is_attachment   = false;
 				$attachment_id   = null;
 
 				// Realizar la verificación de attachment solo si es necesario (cuando $check_attachments no es null)
-				if ( $check_attachments ) {
-					$relative_path_for_db = ltrim( $relative_path, '/' );
-					if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
-						$is_attachment = true;
-						$attachment_id = $attachment_paths[ $relative_path_for_db ];
-					}
-				}
+                $relative_path_for_db = ltrim( $relative_path, '/' );
+                if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
+                    $attachment_id = $attachment_paths[ $relative_path_for_db ];
+                }
 				
 				$query = $wpdb->prepare(
-						"SELECT COUNT(*) 
-						 FROM $wpdb->posts
-						 WHERE post_content LIKE %s 
-						 AND post_status = 'publish'
-						 AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-						'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
-					);
-                    
+                    "SELECT COUNT(*) 
+                        FROM $wpdb->posts
+                        WHERE post_content LIKE %s 
+                        AND post_status = 'publish'
+                        AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+                    '%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
+                );
 
-				$all_images[] = array(
+                $all_images[] = array(
 					'full_path'       => $file->getPathname(),
 					'relative_path'   => $relative_path,
 					'filename'        => $filename,
 					'size_bytes'      => $file_size_bytes,
 					'size_kb'         => $file_size_bytes / 1024,
-					'is_attachment'   => $is_attachment,
 					'attachment_id'   => $attachment_id,
 					'modified_date'   => date( 'Y-m-d H:i:s', $file->getMTime() ),
 					'url'             => $base_upload_url . $relative_path,
@@ -116,9 +110,9 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                     $value_a = $a['size_bytes'];
                     $value_b = $b['size_bytes'];
                     break;
-                case 'is_attachment':
-                    $value_a = (int) $a['is_attachment'];
-                    $value_b = (int) $b['is_attachment'];
+                case 'attachment_id':
+                    $value_a = (int) $a['attachment_id'];
+                    $value_b = (int) $b['attachment_id'];
                     break;
                 case 'modified_date':
                     $value_a = strtotime( $a['modified_date'] );

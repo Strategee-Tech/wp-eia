@@ -114,7 +114,7 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
                         <td>
                             <?php
-                            if ( $image['is_attachment'] ) {								
+                            if ( $image['attachment_id'] ) {								
                                 echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $image['attachment_id'] ) . ')';
                             } else {
                                 if( !$image['en_contenido'] ) {

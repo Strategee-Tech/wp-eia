@@ -50,7 +50,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 		    FROM {$wpdb->prefix}postmeta AS wpostmeta
 		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
 		    WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
-		    AND wpost.post_status = 'publish'
+		    AND wpost.post_status IN('publish', 'private')
 		");
 
     // echo '<pre>' . htmlspecialchars(print_r($posts, true)) . '</pre>';
@@ -103,7 +103,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					"SELECT COUNT(*) 
 				 	FROM $wpdb->posts
 				 	WHERE post_content LIKE %s 
-				 	AND post_status = 'publish'
+				 	AND post_status IN ('publish', 'private')
 				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				);

@@ -13,6 +13,8 @@
 function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $order = 'desc', $show_miniatures = 0 ) {
 	
     global $wpdb;
+
+
 	
     $upload_dir_info    = wp_upload_dir();
     $base_upload_path   = trailingslashit( $upload_dir_info['basedir'] );
@@ -22,6 +24,11 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     if ( ! empty( $subfolder ) ) {
         $start_path    .= trailingslashit( $subfolder );
     }
+
+    echo '<pre>';
+    print_r($results);
+    echo '</pre>';
+    die();
 
     $all_images         = array();
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
@@ -42,7 +49,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     echo '<pre>';
     print_r($results);
     echo '</pre>';
-    die();
+    
 
 
     foreach ( $results as $row ) {

@@ -412,7 +412,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
                     AND wpost.post_status = 'publish'
                     LIMIT 1
                 "; 
-                $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, '%'.$filename.'%')); 
+                $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, '%/'.$filename.'%')); 
 				$en_contenido = $wpdb->get_var($query);
 				$en_programa  = $wpdb->get_var($programas);
  

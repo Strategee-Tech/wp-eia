@@ -403,20 +403,20 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
 
-                // $post_meta_query = "
-                //     SELECT COUNT(*) 
-                //     FROM {$wpdb->prefix}postmeta AS wpostmeta
-                //     JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-                //     WHERE wpostmeta.meta_key = '_elementor_data'
-                //     AND wpostmeta.meta_value LIKE %s
-                //     AND wpost.post_status = 'publish'
-                //     LIMIT 1
-                // "; 
-                // $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, '%'.$filename.'%')); 
+                $post_meta_query = "
+                    SELECT COUNT(*) 
+                    FROM {$wpdb->prefix}postmeta AS wpostmeta
+                    JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+                    WHERE wpostmeta.meta_key = '_elementor_data'
+                    AND wpostmeta.meta_value LIKE %s
+                    AND wpost.post_status = 'publish'
+                    LIMIT 1
+                "; 
+                $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, '%'.$filename.'%')); 
 				$en_contenido = $wpdb->get_var($query);
 				$en_programa  = $wpdb->get_var($programas);
  
-				if($en_contenido || $en_programa){
+				if($en_contenido || $en_programa || $en_postmeta){
 					continue;
 				}
 

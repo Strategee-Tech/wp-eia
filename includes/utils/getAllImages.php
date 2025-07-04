@@ -27,21 +27,18 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
     $attachment_paths   = array();
 
-    // Solo necesitamos obtener los attachments si $check_attachments no es null
-    if ( $check_attachments ) {
-    	$results = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT post_id, meta_value
-                 FROM {$wpdb->postmeta}
-                 WHERE meta_key = '_wp_attached_file'
-                   AND meta_value LIKE %s",
-                $wpdb->esc_like($subfolder) . '%'
-            ),
-            ARRAY_A
-        ); 
-        foreach ( $results as $row ) {
-            $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
-        }
+    $results = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT post_id, meta_value
+                FROM {$wpdb->postmeta}
+                WHERE meta_key = '_wp_attached_file'
+                AND meta_value LIKE %s",
+            $wpdb->esc_like($subfolder) . '%'
+        ),
+        ARRAY_A
+    ); 
+    foreach ( $results as $row ) {
+        $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
     }
 
     if ( ! is_dir( $start_path ) ) {

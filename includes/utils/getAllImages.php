@@ -88,12 +88,7 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
 						 AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
 						'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 					);
-				
-
-				$en_contenido = $wpdb->get_var($query);
-				if($en_contenido){
-					continue;
-				}
+                    
 
 				$all_images[] = array(
 					'full_path'       => $file->getPathname(),

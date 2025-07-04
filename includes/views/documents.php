@@ -430,9 +430,11 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 
 				foreach ($posts as $post) {
 
-					echo "<pre>";
-					print_r($post->meta_value);
-					echo "</pre>";
+					echo '<pre>' . htmlspecialchars(print_r($post->meta_value, true)) . '</pre>';
+
+					// echo "<pre>";
+					// print_r($post->meta_value);
+					// echo "</pre>";
 					// die(); 
 			        if (stripos($post->meta_value, $filename) !== false) {
 			           	echo "archivo encontrado: $filename";

@@ -116,15 +116,20 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
 
+                
                 if(!$is_thumbnail){
+                    $filenamewithfolder = str_replace('/', '\/', $relative_path);
                     $in_content = $wpdb->get_var($in_content_query);
                     $programas = $wpdb->get_var($programas);
                     if($in_content == 0 && $programas == 0){
                         $to_delete = true;
                     }
 
+                    echo 'filename: ' . $filenamewithfolder . '<br>';
+                    echo 'in_content: ' . $in_content . '<br>';
+                    echo 'programas: ' . $programas . '<br>';  
+
                     if($to_delete == false){
-                        $filenamewithfolder = str_replace('/', '\/', $relative_path);
                         foreach ($posts as $post) {
                             if (strpos($post->meta_value, $filenamewithfolder) !== false) {
                                 $to_delete = false;

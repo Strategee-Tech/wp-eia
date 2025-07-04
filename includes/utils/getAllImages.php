@@ -39,7 +39,12 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     );
 
 
-    
+    echo '<pre>';
+    print_r($results);
+    echo '</pre>';
+    die();
+
+
     foreach ( $results as $row ) {
         $attachment_paths[ $row['meta_value'] ] = $row['post_id'];
     }

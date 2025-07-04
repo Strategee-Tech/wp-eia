@@ -525,7 +525,7 @@ function wpil_get_all_images_in_uploads( $subfolder = '', $check_attachments = n
 					}
 				}
 				
-                if ( in_array( $extension, $allowed_extensions ) ) {
+                if ( !in_array( $extension, $allowed_extensions ) ) {
                     $relative_path   = str_replace( $base_upload_path, '', $file->getPathname() );
                     $file_size_bytes = $file->getSize();
 

@@ -402,7 +402,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 					 AND post_status = 'publish'",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
-                
+
                 $post_meta_query = "
                     SELECT COUNT(*) 
                     FROM {$wpdb->prefix}postmeta AS wpostmeta
@@ -411,7 +411,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
                     AND wpostmeta.meta_value LIKE %s
                     AND wpost.post_status = 'publish'
                 "; 
-                $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, $filename)); 
+                $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, '%'.$filename.'%')); 
 				$en_contenido = $wpdb->get_var($query);
 				$en_programa  = $wpdb->get_var($programas);
  

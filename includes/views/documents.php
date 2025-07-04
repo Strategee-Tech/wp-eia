@@ -365,6 +365,19 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
             new RecursiveDirectoryIterator( $start_path, RecursiveDirectoryIterator::SKIP_DOTS ),
             RecursiveIteratorIterator::SELF_FIRST
         );
+
+        $posts = $wpdb->get_results("
+		    SELECT post_id, meta_value 
+		    FROM {$wpdb->prefix}postmeta AS wpostmeta
+		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+		    WHERE wpostmeta.meta_key = '_elementor_data'
+		    AND wpost.post_status = 'publish'
+		");
+
+
+		echo "<pre>";
+		print_r($posts);
+		die(); 
 		
         foreach ( $iterator as $file ) {
             if ( $file->isFile() ) {

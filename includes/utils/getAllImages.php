@@ -134,6 +134,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                         foreach ($posts as $post) {
                             if (strpos($post->meta_value, $filenamewithfolder) !== false) {
                                 $to_delete = false;
+                                break;
                                 echo "<br>";
                                 echo "archivo encontrado: $filenamewithfolder";
                                 // } else if(strpos($post->meta_value, $relative_path) !== false) {

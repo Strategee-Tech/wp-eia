@@ -406,7 +406,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
                 $post_meta_query = "
                     SELECT wpostmeta.post_id, wpostmeta.meta_value
                     FROM {$wpdb->prefix}postmeta AS wpostmeta
-                    JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+                    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
                     WHERE wpostmeta.meta_key = '_elementor_data'
                     AND wpostmeta.meta_value LIKE %s
                     AND wpost.post_status = 'publish'

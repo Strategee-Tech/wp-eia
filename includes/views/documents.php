@@ -435,11 +435,16 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 			        	//echo "<br>";
 			           	//echo "archivo encontrado: $filenamewithfolder";
 			           	$aux_post = true;
-			        	continue;
-			        } else {	
+                        continue;
+                    // } else if(strpos($post->meta_value, $relative_path) !== false) {
+                    //     //echo "<br>";
+                    //     //echo "archivo encontrado: $filenamewithfolder";
+                    //     $aux_post = true;
+                    //     continue;
+			        } else {
 			        	//echo "<br>";
 			           	//echo "archivo no encontrado: $filenamewithfolder";
-			        }
+                    }
 				}
 				if($aux_post) {
 					continue;

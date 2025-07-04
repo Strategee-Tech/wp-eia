@@ -5,13 +5,12 @@
  *
  * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-imagenes-api').
  * @param bool|null $check_attachments Si es true, muestra solo imágenes vinculadas a un attachment.
- * Si es false, muestra solo imágenes NO vinculadas a un attachment.
- * Si es null, muestra todas las imágenes (sin filtrar por attachment).
  * @param string $orderby          Columna por la que ordenar (size_bytes, is_attachment, modified_date).
  * @param string $order            Dirección de ordenación (asc o desc).
+ * @param bool $show_miniatures    Si es true, muestra miniaturas.
  * @return array Lista de arrays de imágenes.
  */
-function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $orderby = 'size_bytes', $order = 'desc', $show_miniatures = 0 ) {
+function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $order = 'desc', $show_miniatures = 0 ) {
 	
     global $wpdb;
 	
@@ -23,8 +22,6 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
     if ( ! empty( $subfolder ) ) {
         $start_path    .= trailingslashit( $subfolder );
     }
-
-
 
     $all_images         = array();
     $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );

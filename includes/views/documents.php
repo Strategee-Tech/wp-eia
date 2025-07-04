@@ -430,7 +430,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $check_attachments 
 
 				foreach ($posts as $post) {
 
-					if (!is_string($post->meta_value){
+					if (!is_string($post->meta_value)){
 						echo "no es string";
 					}
 

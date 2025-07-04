@@ -1,6 +1,6 @@
 <?php
 /**
- * 3. Función para obtener todas las imágenes del directorio de uploads o de una subcarpeta específica.
+ * Función para obtener todas las imágenes del directorio de uploads o de una subcarpeta específica.
  * Excluye miniaturas y filtra opcionalmente por si están vinculadas o no a attachments .
  *
  * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-imagenes-api').
@@ -89,7 +89,7 @@ function get_all_images_in_uploads( $subfolder = '', $check_attachments = 0, $or
 						'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 					);
 				
-                    
+
 				$en_contenido = $wpdb->get_var($query);
 				if($en_contenido){
 					continue;

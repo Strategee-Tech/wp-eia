@@ -96,7 +96,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 				 	WHERE post_content LIKE %s 
 				 	AND post_status = 'publish'
 				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-					'%' . $wpdb->esc_like($relative_path) . '%'
+					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				);
 
                 $programas = $wpdb->prepare(
@@ -104,7 +104,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					 FROM {$wpdb->prefix}learnpress_courses
 					 WHERE post_content LIKE %s 
 					 AND post_status = 'publish'",
-					'%' . $wpdb->esc_like($relative_path) . '%'
+					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
 
                 if(!$is_thumbnail){

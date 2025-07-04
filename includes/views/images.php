@@ -30,6 +30,15 @@ $all_images = get_all_images_in_uploads($selected_folder, $orderby, $order, $sho
 $total_files      = count( $all_images );
 $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
 
+$thumbnail_count = 0;
+foreach ( $all_images as $image ) {
+    // Asegúrate de que el índice 'is_thumbnail' exista y sea true
+    // Podrías necesitar ajustar 'is_thumbnail' si tu campo se llama diferente
+    if ( isset( $image['is_thumbnail'] ) && $image['is_thumbnail'] === true ) {
+        $thumbnail_count++;
+    }
+}
+
 ?>
 
 <form method="get" action="" id='form-filter'>
@@ -81,6 +90,7 @@ $total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
 <p>
     <strong>Archivos encontrados:</strong> <?php echo number_format( $total_files ); ?><br>
     <strong>Peso Total:</strong> <?php echo size_format( $total_size_bytes ); ?>
+    <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?>
 </p>
 
     <table class="wp-list-table widefat fixed striped">

@@ -108,7 +108,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					 AND post_status = 'publish'",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
-                
+
                 if(!$is_thumbnail){
                     $in_content = $wpdb->get_var($in_content_query);
                     $programas = $wpdb->get_var($programas);

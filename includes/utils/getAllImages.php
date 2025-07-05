@@ -220,7 +220,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     return array(
         'all_images' => $all_images,
-        'all_thumbnails' => $new_all_thumbnails,
+        'all_thumbnails' => $all_thumbnails,
         'all_scaleds_names' => $all_scaleds_names,
         'all_delete_names' => $all_delete_names
     );

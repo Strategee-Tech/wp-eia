@@ -124,7 +124,7 @@ foreach ( $all_images[0] as $image ) {
                 </tr>
             <?php
             else :
-                foreach ( $all_images as $image ) :
+                foreach ( $all_images[0] as $image ) :
             ?>
                     <tr>
                         <td><?php echo esc_html( $image['relative_path'] ); ?></td>

@@ -75,7 +75,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         		if (!in_array($ext, $allowed_extensions)) continue;
 
                 $filename        = $file->getFilename();
-                $extension       = strtolower( $file->getExtension() );
 				$relative_path   = str_replace( $base_upload_path, '', $file->getPathname() );
 				$file_size_bytes = $file->getSize();
 				$attachment_id   = null;

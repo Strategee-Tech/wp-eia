@@ -131,7 +131,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					"SELECT COUNT(*) 
 					 FROM {$wpdb->prefix}learnpress_courses
 					 WHERE post_content LIKE %s 
-					 AND post_status = 'publish'",
+					 AND post_status IN ('publish', 'private')",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
 
@@ -166,8 +166,8 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
                 if(!isThumbnail($filename)){
                     $all_images[] = $newImage;
-                } else {
                     $original_data = get_original_data_from_thumbnail($base_upload_url . $relative_path);
+                } else {
                     $all_thumbnails[] = $newImage;
                 }
             }

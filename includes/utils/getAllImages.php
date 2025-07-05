@@ -210,16 +210,13 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     }
 
     echo '<pre>' . htmlspecialchars(print_r($all_thumbnails, true)) . '</pre>';
-    $new_all_thumbnails = array();
-    foreach ($all_thumbnails as $thumbnail) {
+    foreach ($all_thumbnails as &$thumbnail) {
         $original_thumbnail_name = get_original_data_from_thumbnail($thumbnail['url']);
-        if(in_array($original_thumbnail_name['name_clean'], $all_delete_names)){
-            echo 'original_thumbnail_name: ' . $original_thumbnail_name['name_clean'] . "\n" . '<br>';
-            echo 'thumbnail: ' . $thumbnail['filename'] . "\n" . '<br>';
+        if(in_array($original_thumbnail_name['name_clean'], $all_delete_names) || $thumbnail['to_delete'] == false){
             $thumbnail['to_delete'] = true;
         }
-        $new_all_thumbnails[] = $thumbnail;
     }
+    unset($thumbnail);
 
     return array(
         'all_images' => $all_images,

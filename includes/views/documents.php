@@ -5,7 +5,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
     wp_die( __( 'No tienes suficientes permisos para acceder a esta página.', 'wp-image-lister' ) );
 }
 // Obtener la carpeta seleccionada del parámetro GET o usar un valor por defecto    
-$selected_folder = isset( $_GET['wpil_folder'] ) ? sanitize_text_field( wp_unslash( $_GET['wpil_folder'] ) ) : sanitize_text_field( wp_unslash( '2025/06' ) );
+$selected_folder = isset( $_GET['wpil_folder'] ) ? sanitize_text_field( wp_unslash( $_GET['wpil_folder'] ) ) : sanitize_text_field( wp_unslash( date('Y').'/'. date('m') ) );
 $selected_folder = trim( $selected_folder, '/' );
 
 // Obtener los parámetros de ordenación

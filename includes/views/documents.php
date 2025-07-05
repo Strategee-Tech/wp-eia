@@ -288,18 +288,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 					 WHERE post_content LIKE %s 
 					 AND post_status IN('publish','private')",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
-				); 
-
-                // $post_meta_query = "
-                //     SELECT wpostmeta.post_id, wpostmeta.meta_value
-                //     FROM {$wpdb->prefix}postmeta AS wpostmeta
-                //     LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-                //     WHERE wpostmeta.meta_key = '_elementor_data'
-                //     AND wpostmeta.meta_value LIKE %s
-                //     AND wpost.post_status = 'publish'
-                //     LIMIT 1
-                // "; 
-                // $en_postmeta  = $wpdb->get_var($wpdb->prepare($post_meta_query, '%/'.$filename.'%')); 
+				);  
 				$en_contenido = $wpdb->get_var($query);
 				$en_programa  = $wpdb->get_var($programas);
  
@@ -310,20 +299,10 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 				$filenamewithfolder = str_replace('/', '\/', $relative_path);
 				$aux_post = false;
 				foreach ($posts as $post) {
-			        if (strpos($post->meta_value, $filenamewithfolder) !== false) {
-			        	//echo "<br>";
-			           	//echo "archivo encontrado: $filenamewithfolder";
+			        if (strpos($post->meta_value, $filenamewithfolder) !== false) { 
 			           	$aux_post = true;
-                        continue;
-                    // } else if(strpos($post->meta_value, $relative_path) !== false) {
-                    //     //echo "<br>";
-                    //     //echo "archivo encontrado: $filenamewithfolder";
-                    //     $aux_post = true;
-                    //     continue;
-			        } else {
-			        	//echo "<br>";
-			           	//echo "archivo no encontrado: $filenamewithfolder";
-                    }
+                        continue; 
+			        } 
 				}
 				if($aux_post) {
 					continue;

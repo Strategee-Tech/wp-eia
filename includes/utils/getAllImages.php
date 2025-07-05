@@ -25,6 +25,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     $all_images         = array();
     $all_thumbnails     = array();
+    $all_delete_names   = array();
     $all_scaleds_names  = array();
     $attachment_paths   = array();
 
@@ -166,7 +167,9 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
                 if(!isThumbnail($filename)){
                     $all_images[] = $newImage;
-                    $original_data = get_original_data_from_thumbnail($base_upload_url . $relative_path);
+                    if($to_delete){
+                        $all_delete_names[] = $filename;
+                    }
                 } else {
                     $all_thumbnails[] = $newImage;
                 }
@@ -207,10 +210,21 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             }
         });
     }
+
+    $new_all_thumbnails = array();
+    foreach ($all_thumbnails as $thumbnail) {
+        $original_thumbnail_name = get_original_data_from_thumbnail($thumbnail['url']);
+        if(in_array($original_thumbnail_name['name_clean'], $all_delete_names)){
+            $thumbnail['to_delete'] = true;
+        }
+        $new_all_thumbnails[] = $thumbnail;
+    }
+
     return array(
         'all_images' => $all_images,
-        'all_thumbnails' => $all_thumbnails,
-        'all_scaleds_names' => $all_scaleds_names
+        'all_thumbnails' => $new_all_thumbnails,
+        'all_scaleds_names' => $all_scaleds_names,
+        'all_delete_names' => $all_delete_names
     );
 }
 ?>

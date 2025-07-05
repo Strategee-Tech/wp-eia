@@ -44,6 +44,13 @@ foreach ( $all_images['all_images'] as $image ) {
     }
 }
 
+$thumbnail_to_delete_count = 0;
+foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
+    if( isset($thumbnail['to_delete']) && $thumbnail['to_delete'] === true) {
+        $thumbnail_to_delete_count++;
+    }
+}
+
 ?>
 
 <form method="get" action="" id='form-filter'>
@@ -99,8 +106,8 @@ foreach ( $all_images['all_images'] as $image ) {
     <strong>Espacio Imágenes Liberado:</strong> <?php echo size_format( $to_delete_count ); ?><br>
     <br>
     <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?><br>
-    <strong>Miniaturas para eliminar:</strong> <?php echo number_format( $thumbnail_count ); ?><br>
-    <strong>Espacio Miniaturas Liberado:</strong> <?php echo size_format( $to_delete_count ); ?><br>
+    <strong>Miniaturas para eliminar:</strong> <?php echo number_format( $thumbnail_to_delete_count ); ?><br>
+    <strong>Espacio Miniaturas Liberado:</strong> <?php echo size_format( $thumbnail_to_delete_count ); ?><br>
 </p>
 
     <table class="wp-list-table widefat fixed striped">

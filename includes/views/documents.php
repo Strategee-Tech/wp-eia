@@ -219,7 +219,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
     }
 
     $all_documents 			= array();
-    $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
+    $not_allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'json');
     $attachment_paths       = array();
 	$results = $wpdb->get_results(
         $wpdb->prepare(

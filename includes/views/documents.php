@@ -24,8 +24,7 @@ $total_size_bytes = array_sum( array_column( $documents, 'size_bytes' ) );
 
 ?>
 <div class="wrap">
-    <h1>Gestor de Documentos de Uploads</h1>
-    <p>Aquí puedes ver un listado de documentos de la carpeta especificada dentro de `wp-content/uploads/`.</p>
+    <h1>Gestión y Optimización Documentos</h1>
 
     <form method="get" action="" id='form-filter'>
         <input type="hidden" name="page" value="documents" />

@@ -4,18 +4,16 @@
  * Excluye miniaturas y filtra opcionalmente por si están vinculadas o no a attachments .
  *
  * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-imagenes-api').
- * @param bool|null $check_attachments Si es true, muestra solo imágenes vinculadas a un attachment.
  * @param string $orderby          Columna por la que ordenar (size_bytes, is_attachment, modified_date).
  * @param string $order            Dirección de ordenación (asc o desc).
- * @param bool $show_miniatures    Si es true, muestra miniaturas.
  * @return array Lista de arrays de imágenes.
  */
-function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $order = 'desc', $show_miniatures = 0 ) {
+function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $order = 'desc' ) {
+
+    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 	
     global $wpdb;
 
-
-	
     $upload_dir_info    = wp_upload_dir();
     $base_upload_path   = trailingslashit( $upload_dir_info['basedir'] );
     $base_upload_url    = trailingslashit( $upload_dir_info['baseurl'] );
@@ -26,8 +24,11 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     }
 
     $all_images         = array();
-    $allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
+    $all_thumbnails     = array();
     $attachment_paths   = array();
+
+    //Todas la extensiones permitidas en 
+    $allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
 
 
     //BUSCAMOS TODOS LOS ATTACHTMENT EN EL FOLDER ACTUAL Y LLENAMOS EL ARRAY attachment_paths
@@ -45,7 +46,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
     }
 
-    $posts = $wpdb->get_results("
+    $AllPostsWithAttachtment = $wpdb->get_results("
 		    SELECT post_id, meta_value 
 		    FROM {$wpdb->prefix}postmeta AS wpostmeta
 		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
@@ -78,11 +79,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 				$relative_path   = str_replace( $base_upload_path, '', $file->getPathname() );
 				$file_size_bytes = $file->getSize();
 				$attachment_id   = null;
-                $is_thumbnail    = false;
-
-                if ( preg_match( '/-\d+x\d+\./', $filename ) ) {
-					$is_thumbnail = true;
-				}
 				
                 //OBTENEMOS LAS DIMENSIONES DE LA IMAGEN
                 $dimensions = 'N/A';
@@ -116,34 +112,22 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				); 
 
-                
-                if(!$is_thumbnail){
+                if(!isThumbnail($filename)){
                     $filenamewithfolder = str_replace('/', '\/', $relative_path);
                     $in_content = $wpdb->get_var($in_content_query);
                     $programas = $wpdb->get_var($programas);
                     if($in_content == 0 && $programas == 0){
                         $to_delete = true;
-
-                        foreach ($posts as $post) {
+                        foreach ($AllPostsWithAttachtment as $post) {
                             if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment_id) {
                                 $to_delete = false;
                                 break;
                             } 
                         }
                     }
-
-
-                    // echo 'filename: ' . $filenamewithfolder . '<br>';
-                    // echo 'in_content: ' . $in_content . '<br>';
-                    // echo 'programas: ' . $programas . '<br>';  
-
-
-
-
                 }
 
-
-                $all_images[] = array(
+                $newImage = array(
 					'full_path'       => $file->getPathname(),
 					'relative_path'   => $relative_path,
 					'filename'        => $filename,
@@ -154,10 +138,17 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'modified_date'   => date( 'Y-m-d H:i:s', $file->getMTime() ),
 					'url'             => $base_upload_url . $relative_path,
                     'to_delete'       => $to_delete,
-                    'is_thumbnail'    => $is_thumbnail,
+                    'is_thumbnail'    => isThumbnail($filename)
 				);
+
+                if(!isThumbnail($filename)){
+                    $all_images[] = $newImage;
+                } else {
+                    $all_thumbnails[] = $newImage;
+                }
             }
         }
+
     } catch ( UnexpectedValueException $e ) {
         error_log( 'WPIL Error iterating directory: ' . $e->getMessage() . ' for path: ' . $start_path );
         return array();
@@ -192,6 +183,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             }
         });
     }
-    return $all_images;
+    return array($all_images, $all_thumbnails);
 }
 ?>

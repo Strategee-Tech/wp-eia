@@ -27,12 +27,12 @@ $delete_all                 = isset($_GET['delete_all']) ? 1 : 0;
 $all_images = get_all_images_in_uploads($selected_folder, $orderby, $order, $showMiniatures);
 
 
-$total_files      = count( $all_images );
-$total_size_bytes = array_sum( array_column( $all_images, 'size_bytes' ) );
+$total_files      = count( $all_images[0] );
+$total_size_bytes = array_sum( array_column( $all_images[0], 'size_bytes' ) );
 
 $thumbnail_count = 0;
 $to_delete_count = 0;
-foreach ( $all_images as $image ) {
+foreach ( $all_images[0] as $image ) {
     // Asegúrate de que el índice 'is_thumbnail' exista y sea true
     // Podrías necesitar ajustar 'is_thumbnail' si tu campo se llama diferente
     if ( isset( $image['is_thumbnail'] ) && $image['is_thumbnail'] === true ) {

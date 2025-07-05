@@ -4,9 +4,6 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 ?>
-<pre>
-<?php print_r($all_images['all_scaleds_names']); ?>
-</pre>
 
 <?php 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getAllImages.php';

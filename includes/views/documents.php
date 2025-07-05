@@ -251,7 +251,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 		    FROM {$wpdb->prefix}postmeta AS wpostmeta
 		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
 		    WHERE wpostmeta.meta_key IN('_elementor_data','enclosure')
-		    AND wpost.post_status IN('publish','private')
+		    AND wpost.post_status IN('publish','private','draft')
 		");
 
         foreach ( $iterator as $file ) {
@@ -276,7 +276,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 					"SELECT COUNT(*) 
 				 	FROM $wpdb->posts
 				 	WHERE post_content LIKE %s 
-				 	AND post_status IN('publish','private')
+				 	AND post_status IN('publish','private','draft')
 				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				);
@@ -285,7 +285,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 					"SELECT COUNT(*) 
 					 FROM {$wpdb->prefix}learnpress_courses
 					 WHERE post_content LIKE %s 
-					 AND post_status IN('publish','private')",
+					 AND post_status IN('publish','private','draft')",
 					'%' . $wpdb->esc_like($base_upload_url . $relative_path) . '%'
 				);  
 				$en_contenido = $wpdb->get_var($query);

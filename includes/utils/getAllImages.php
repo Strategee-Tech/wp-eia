@@ -84,7 +84,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
 					//echo "Original limpio: " . $original_filename . "\n";
 					$all_scaleds_names[] = $original_filename;
-                    echo $original_filename . "\n";
+                    echo $original_filename . "\n" . '<br>';
 				}
 			}
 		}

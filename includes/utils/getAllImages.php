@@ -85,8 +85,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
 					//echo "Original limpio: " . $original_filename . "\n";
 					$all_scaleds_names[] = $original_filename;
-                    echo 'scaled_filename: ' . $filename . "\n" . '<br>';
-                    echo 'original_filename: ' . $original_filename . "\n" . '<br>';
 				}
 			}
 		}
@@ -211,6 +209,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         });
     }
 
+    echo '<pre>' . htmlspecialchars(print_r($all_thumbnails, true)) . '</pre>';
     $new_all_thumbnails = array();
     foreach ($all_thumbnails as $thumbnail) {
         $original_thumbnail_name = get_original_data_from_thumbnail($thumbnail['url']);

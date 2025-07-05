@@ -30,14 +30,9 @@ $all_images = get_all_images_in_uploads($selected_folder, $orderby, $order, $sho
 $total_files      = count( $all_images[0] );
 $total_size_bytes = array_sum( array_column( $all_images[0], 'size_bytes' ) );
 
-$thumbnail_count = 0;
+$thumbnail_count =  count($all_images[1]);
 $to_delete_count = 0;
 foreach ( $all_images[0] as $image ) {
-    // Asegúrate de que el índice 'is_thumbnail' exista y sea true
-    // Podrías necesitar ajustar 'is_thumbnail' si tu campo se llama diferente
-    if ( isset( $image['is_thumbnail'] ) && $image['is_thumbnail'] === true ) {
-        $thumbnail_count++;
-    }
     if( isset($image['to_delete']) && $image['to_delete'] === true) {
         $to_delete_count++;
     }
@@ -94,7 +89,7 @@ foreach ( $all_images[0] as $image ) {
 <p>
     <strong>Archivos encontrados:</strong> <?php echo number_format( $total_files ); ?><br>
     <strong>Peso Total:</strong> <?php echo size_format( $total_size_bytes ); ?><br>
-    <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?>
+    <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?><br>
     <strong>Archivos encontrados para eliminar:</strong> <?php echo number_format( $to_delete_count ); ?>
 </p>
 

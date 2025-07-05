@@ -3,6 +3,12 @@ if ( ! current_user_can( 'manage_options' ) ) {
     wp_die( __( 'No tienes suficientes permisos para acceder a esta página.', 'wp-image-lister' ) );
 }
 
+?>
+<pre>
+<?php print_r($all_images['all_scaleds_names']); ?>
+</pre>
+
+<?php 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getAllImages.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getSortableImageTableHeader.php';
 
@@ -27,12 +33,12 @@ $delete_all                 = isset($_GET['delete_all']) ? 1 : 0;
 $all_images = get_all_images_in_uploads($selected_folder, $orderby, $order, $showMiniatures);
 
 
-$total_files      = count( $all_images[0] );
-$total_size_bytes = array_sum( array_column( $all_images[0], 'size_bytes' ) );
+$total_files      = count( $all_images['all_images'] );
+$total_size_bytes = array_sum( array_column( $all_images['all_images'], 'size_bytes' ) );
 
-$thumbnail_count =  count($all_images[1]);
+$thumbnail_count =  count($all_images['all_thumbnails']);
 $to_delete_count = 0;
-foreach ( $all_images[0] as $image ) {
+foreach ( $all_images['all_images'] as $image ) {
     if( isset($image['to_delete']) && $image['to_delete'] === true) {
         $to_delete_count++;
     }
@@ -87,10 +93,14 @@ foreach ( $all_images[0] as $image ) {
 <h2>Listado de Imágenes <?php echo ! empty( $selected_folder ) ? 'en: `' . esc_html( $selected_folder ) . '`' : ' (todas)'; ?></h2>
 
 <p>
-    <strong>Archivos encontrados:</strong> <?php echo number_format( $total_files ); ?><br>
-    <strong>Peso Total:</strong> <?php echo size_format( $total_size_bytes ); ?><br>
+    <strong>Imagenes Encontradas:</strong> <?php echo number_format( $total_files ); ?><br>
+    <strong>Peso Total de Imágenes:</strong> <?php echo size_format( $total_size_bytes ); ?><br>
+    <strong>Imagenes para eliminar:</strong> <?php echo number_format( $to_delete_count ); ?><br>
+    <strong>Espacio Imágenes Liberado:</strong> <?php echo size_format( $to_delete_count ); ?><br>
+    <br>
     <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?><br>
-    <strong>Archivos encontrados para eliminar:</strong> <?php echo number_format( $to_delete_count ); ?>
+    <strong>Miniaturas para eliminar:</strong> <?php echo number_format( $thumbnail_count ); ?><br>
+    <strong>Espacio Miniaturas Liberado:</strong> <?php echo size_format( $to_delete_count ); ?><br>
 </p>
 
     <table class="wp-list-table widefat fixed striped">
@@ -112,14 +122,14 @@ foreach ( $all_images[0] as $image ) {
         
         <tbody>
             <?php
-            if ( empty( $all_images ) ) :
+            if ( empty( $all_images['all_images'] ) ) :
             ?>
                 <tr>
                     <td colspan="7">No se encontraron imágenes en el directorio especificado.</td>
                 </tr>
             <?php
             else :
-                foreach ( $all_images[0] as $image ) :
+                foreach ( $all_images['all_images'] as $image ) :
             ?>
                     <tr>
                         <td><?php echo esc_html( $image['relative_path'] ); ?></td>

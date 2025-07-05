@@ -25,6 +25,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     $all_images         = array();
     $all_thumbnails     = array();
+    $all_scaleds_names  = array();
     $attachment_paths   = array();
 
     //Todas la extensiones permitidas en 
@@ -65,6 +66,27 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             new RecursiveDirectoryIterator( $start_path, RecursiveDirectoryIterator::SKIP_DOTS ),
             RecursiveIteratorIterator::SELF_FIRST
         );
+
+        //BUSCAMOS TODOS LOS SCALED EN EL FOLDER ACTUAL Y LLENAMOS EL ARRAY all_scaleds_names
+        foreach ( $iterator as $file ) {
+            if ( $file->isFile() ) {
+                $filename = $file->getFilename();
+				// Detectar si contiene '-scaled'
+				if (strpos($filename, '-scaled') !== false) {
+					$pathinfo = pathinfo($filename);
+					//echo "Path antes de limpiar: " . $pathinfo['filename'] . "\n";
+
+					// Eliminar solo '-scaled' al final del nombre (antes de la extensión)
+					$name_clean = str_replace('-scaled', '', $pathinfo['filename']);
+
+					// Reconstruir el nombre original
+					$original_filename = $name_clean . '.' . $pathinfo['extension'];
+
+					//echo "Original limpio: " . $original_filename . "\n";
+					$all_scaleds_names[] = $original_filename;
+				}
+			}
+		}
 		
         foreach ( $iterator as $file ) {
 
@@ -142,7 +164,11 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
                 if(!isThumbnail($filename)){
                     $all_images[] = $newImage;
+                    if(($filename)){
+                        $all_scaleds_names[] = $filename;
+                    }
                 } else {
+                    $original_data = get_original_data_from_thumbnail($base_upload_url . $relative_path);
                     $all_thumbnails[] = $newImage;
                 }
             }
@@ -182,6 +208,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             }
         });
     }
-    return array($all_images, $all_thumbnails);
+    return array(
+        'all_images' => $all_images,
+        'all_thumbnails' => $all_thumbnails,
+        'all_scaleds_names' => $all_scaleds_names
+    );
 }
 ?>

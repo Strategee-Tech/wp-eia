@@ -250,7 +250,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 		    SELECT post_id, meta_value 
 		    FROM {$wpdb->prefix}postmeta AS wpostmeta
 		    LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-		    WHERE wpostmeta.meta_key = '_elementor_data'
+		    WHERE wpostmeta.meta_key IN('_elementor_data','enclosure')
 		    AND wpost.post_status IN('publish','private')
 		");
 

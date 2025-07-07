@@ -38,6 +38,9 @@ function optimization_files($request) {
 
 // Función de validación de permisos con autenticación básica
 function basic_auth_permission_check($request) {
+	// require_once(dirname(ABSPATH) . '../credentials.php');
+
+
     // Verificar si el encabezado 'Authorization' está presente
     $auth_header = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
 
@@ -54,6 +57,7 @@ function basic_auth_permission_check($request) {
 
 
     echo "<pre>";
+    print_r(dirname(ABSPATH) . '../credentials.php');
     print_r($username);
     print_r($password);
     die(); 

@@ -147,7 +147,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                             }
                             ?>
                         </td>
-                        <td><?php echo esc_html( $image['modified_date'] ); ?></td>
+                        <td><?php echo esc_html( $image['alt'] ); ?></td>
                         <td><a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank"><?php echo esc_url( $image['url'] ); ?></a></td>
                     </tr>
                     <?php

@@ -25,11 +25,6 @@ function wpil_register_csv_export_route() {
 
 function regenerate_metadata($request) {
     $attachment_id = $request->get_param('attachment_id');
-
-
-    
-    
-    
     try {
         $attachment = get_post( $attachment_id );
         if ( $attachment && $attachment->post_type === 'attachment' ) {

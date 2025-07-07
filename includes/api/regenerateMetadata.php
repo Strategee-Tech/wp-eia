@@ -10,7 +10,7 @@ function wpil_register_csv_export_route() {
         },
         'args' => array(
             'attachment_id' => array(
-                'required'          => true,
+                'required'          => '__return_true',
                 'type'              => 'string',
                 'sanitize_callback' => 'sanitize_text_field',
                 'description'       => 'ID del attachment.',

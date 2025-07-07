@@ -15,8 +15,8 @@ function optimization_files($request) {
     $params = $request->get_params();
 
     // Imprimir todos los parámetros para depuración
-    echo "<pre>";
-    print_r($params);
+    //echo "<pre>";
+    //print_r($params);
 
     // Validar si se envió el ID del post
 	if (empty($params['post_id'])) {
@@ -35,20 +35,20 @@ function optimization_files($request) {
 		$where       = array('ID' => $post->ID);
 
 		// Agrega solo si no está vacío
-		if (!empty($params['guid'])) {
-			$update_data['guid'] = $params['guid'];
-		}
 		if (!empty($params['title'])) {
 			$update_data['post_title'] = $params['title'];
 		}
-		if (!empty($params['slug'])) {
-			$update_data['post_name'] = $params['slug'];
-		} 
 		if (!empty($params['description'])) {
 			$update_data['post_content'] = $params['description'];
 		} 
 		if (!empty($params['legend'])) {
 			$update_data['post_excerpt'] = $params['legend'];
+		} 
+		if (!empty($params['guid'])) {
+			$update_data['guid'] = $params['guid'];
+		}
+		if (!empty($params['slug'])) {
+			$update_data['post_name'] = $params['slug'];
 		} 
 		//$update_data['post_mime_type'] = 'image/webp';
 
@@ -62,8 +62,66 @@ function optimization_files($request) {
 			update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
 		}
 		//update_post_meta($post_id, '_wp_attached_file', $folder.$slug.'.webp');
+
+		if (!empty($params['old_url']) && !empty($params['new_url'])) {
+
+			$old_url = $params['old_url'];
+			$new_url = $params['new_url'];
+
+			//actualizar post_content de una imagen dentro de una pagina
+			//parametros: old_url, new_url
+			$wpdb->query(
+			    $wpdb->prepare(
+			        "UPDATE {$wpdb->posts} 
+			        SET post_content = REPLACE(post_content, %s, %s) 
+			        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+			        $old_url,
+			        $new_url,
+			        '%' . basename($old_url) . '%'
+			    )
+			);
+
+			// Tabla de Yoast SEO
+			$tabla_yoast_seo_links = $wpdb->prefix . 'yoast_seo_links';
+			$tabla_indexable 	   = $wpdb->prefix . 'yoast_indexable';
+			 
+			// Obtener el indexable_id desde wp_yoast_seo_links
+			$indexable_id = $wpdb->get_var(
+			    $wpdb->prepare(
+			        "SELECT indexable_id FROM $tabla_yoast_seo_links 
+			         WHERE post_id = %d AND type = %s LIMIT 1",
+			        $post->ID,
+			        'image-in'
+			    )
+			);
+
+			if ($indexable_id) { 
+			    $wpdb->query(
+				    $wpdb->prepare(
+				        "UPDATE $tabla_indexable 
+				        SET open_graph_image = %s,
+				        twitter_image     = %s
+				        WHERE id = %d",
+				        $new_url,     // %s → open_graph_image
+				        $new_url,     // %s → twitter_image
+				        $indexable_id // %d → id
+				    )
+				);
+
+			    $wpdb->query(
+				    $wpdb->prepare(
+				        "UPDATE $tabla_yoast_seo_links
+				        SET url = %s
+				        WHERE post_id = %d AND url = %s AND type = %s",
+				        $new_url,
+				        $post->ID,
+				        $old_url,
+				        'image-in'
+				    )
+				);
+			}
+		}
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
-    
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
     }

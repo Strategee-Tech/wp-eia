@@ -57,9 +57,9 @@ function basic_auth_permission_check($request) {
 
 
     echo "<pre>";
-    print_r(dirname(ABSPATH) . '../credentials.php');
-    print_r($username);
-    print_r($password);
+    print_r(dirname(ABSPATH) . '/credentials.php');
+    // print_r($username);
+    // print_r($password);
     die(); 
 
     // Validar las credenciales con las que se han enviado

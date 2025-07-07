@@ -125,7 +125,17 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
             ?>
                     <tr>
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
-                        <td><?php echo esc_html( $image['filename'] ); ?></td>
+                        <td>
+                            <span 
+                                class="edit-attachment-trigger"
+                                data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
+                                data-attachment-title="<?php echo esc_attr( $image['title'] ); ?>"
+                                data-attachment-alt="<?php echo esc_attr( $image['alt'] ); ?>"
+                                data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
+                            >
+                                <?php echo esc_html( $image['filename'] ); ?>
+                            </span>
+                        </td>
                         <td><?php echo esc_html( $image['dimensions'] );  echo $image['is_thumbnail'] == 1 ? ' (Thumbnail)' : '' ?>  </td>
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
                         <td>
@@ -157,6 +167,184 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
     </table>
 
 </div>
+
+
+<div id="edit-metadata-modal" style="display: none; background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
+        <h3>Editar Metadatos de Archivo</h3>
+        <p>ID del adjunto: <span id="modal-attachment-id"></span></p>
+        <form id="edit-metadata-form">
+            <p>
+                <label for="modal-title">Título:</label><br>
+                <input type="text" id="modal-title" name="title" style="width: 100%;" />
+            </p>
+            <p>
+                <label for="modal-alt">Texto Alternativo (Alt):</label><br>
+                <input type="text" id="modal-alt" name="alt" style="width: 100%;" />
+            </p>
+            <p>
+                <label for="modal-description">Descripción:</label><br>
+                <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
+            </p>
+            <p>
+                <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
+                <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
+                <span id="save-status-message" style="margin-left: 10px;"></span>
+            </p>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+// admin-media-editor.js (Asegúrate de que este script esté encolado solo en tu página de administración)
+
+document.addEventListener('DOMContentLoaded', function() {
+    const editTriggers = document.querySelectorAll('.edit-attachment-trigger');
+    const modal = document.getElementById('edit-metadata-modal');
+    const modalAttachmentIdSpan = document.getElementById('modal-attachment-id');
+    const form = document.getElementById('edit-metadata-form');
+    const inputTitle = document.getElementById('modal-title');
+    const inputAlt = document.getElementById('modal-alt');
+    const inputDescription = document.getElementById('modal-description');
+    const saveBtn = document.getElementById('save-metadata-btn');
+    const cancelBtn = document.getElementById('cancel-metadata-btn');
+    const statusMessage = document.getElementById('save-status-message');
+
+    let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
+
+    // URL de la API REST de WordPress.
+    // Esto debería venir de wp_localize_script desde PHP para seguridad y portabilidad.
+    // Ejemplo si lo pasas desde PHP: const restApiBaseUrl = yourPluginVar.restApiUrl;
+    // const nonce = yourPluginVar.nonce;
+    const restApiBaseUrl = window.location.origin + '/wp-json/api/v1'; // Ajusta esto si tu base de la API es diferente
+    const nonce = 'TU_NONCE_GENERADO_EN_PHP'; // <--- ¡IMPORTANTE! Genera esto con wp_create_nonce('wp_rest') en PHP y pásalo via wp_localize_script
+
+
+    editTriggers.forEach(trigger => {
+        trigger.addEventListener('click', async function() {
+            currentAttachmentId = this.dataset.attachmentId;
+            const currentTitle = this.dataset.currentTitle;
+            const currentAlt = this.dataset.currentAlt;
+
+            modalAttachmentIdSpan.textContent = currentAttachmentId;
+            inputTitle.value = currentTitle;
+            inputAlt.value = currentAlt;
+            inputDescription.value = 'Cargando descripción...'; // Mensaje provisional
+
+            modal.style.display = 'flex'; // Muestra el modal
+
+            // Cargar la descripción (ya que no la tenemos en los atributos data-)
+            try {
+                // Hacemos una llamada GET para obtener todos los metadatos (incluida la descripción)
+                // Se asume que tienes una ruta para obtener los detalles de un adjunto.
+                // Si no, tendrás que crear una ruta REST API que devuelva los metadatos completos de un adjunto,
+                // incluyendo 'description' que es post_content de la entrada de tipo 'attachment'.
+                const detailsResponse = await fetch(`${window.location.origin}/wp-json/wp/v2/media/${currentAttachmentId}`, {
+                    headers: {
+                        'X-WP-Nonce': nonce
+                    }
+                });
+                if (!detailsResponse.ok) {
+                    throw new Error('No se pudieron cargar los detalles del adjunto.');
+                }
+                const details = await detailsResponse.json();
+
+                // WordPress REST API para medios devuelve 'description' como 'description.raw'
+                // y 'title' como 'title.raw'. Alt text es 'alt_text'.
+                inputTitle.value = details.title.raw || '';
+                inputAlt.value = details.alt_text || '';
+                inputDescription.value = details.description.raw || '';
+
+            } catch (error) {
+                console.error('Error al cargar detalles del adjunto:', error);
+                inputDescription.value = 'No se pudo cargar la descripción.';
+            }
+        });
+    });
+
+    // Cierra el modal al hacer clic en Cancelar
+    cancelBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+        statusMessage.textContent = ''; // Limpia el mensaje de estado
+    });
+
+    // Cierra el modal si se hace clic fuera del contenido (en el fondo oscuro)
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            statusMessage.textContent = '';
+        }
+    });
+
+
+    // Manejar el envío del formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+        saveBtn.disabled = true; // Deshabilita el botón mientras se guarda
+        statusMessage.textContent = 'Guardando...';
+        statusMessage.style.color = 'blue';
+
+        const updatedData = {
+            title: inputTitle.value,
+            alt: inputAlt.value,
+            description: inputDescription.value
+        };
+
+        try {
+            // Llamada a la API REST de WordPress para actualizar el adjunto
+            // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
+            // URL: /wp-json/wp/v2/media/{id}
+            const response = await fetch(`${window.location.origin}/wp-json/wp/v2/media/${currentAttachmentId}`, {
+                method: 'POST', // Las actualizaciones en la API REST de WP suelen ser POST o PUT
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': nonce // ¡Crucial para la autenticación!
+                },
+                body: JSON.stringify({
+                    title: updatedData.title,
+                    alt_text: updatedData.alt, // Para el alt text, el campo es 'alt_text' en la API
+                    description: updatedData.description
+                    // No necesitas enviar 'id' en el body, ya está en la URL
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error desconocido al guardar.');
+            }
+
+            const result = await response.json();
+            console.log('Adjunto actualizado:', result);
+            statusMessage.textContent = 'Guardado exitoso!';
+            statusMessage.style.color = 'green';
+
+            // Opcional: Actualizar la tabla visible en el DOM
+            const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
+            if (row) {
+                // Asumiendo el orden de las columnas: Alt y Title
+                row.children[4].textContent = updatedData.title; // Columna 'Alt'
+                row.children[5].textContent = updatedData.alt;   // Columna 'Title'
+            }
+
+            // Opcional: Cerrar el modal después de un breve retraso
+            setTimeout(() => {
+                modal.style.display = 'none';
+                statusMessage.textContent = '';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Error al guardar metadatos:', error);
+            statusMessage.textContent = `Error: ${error.message}`;
+            statusMessage.style.color = 'red';
+        } finally {
+            saveBtn.disabled = false; // Habilita el botón de nuevo
+        }
+    });
+});
+</script>
 
 
 

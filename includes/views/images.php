@@ -236,33 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
             inputDescription.value = currentDescription;
 
             modal.style.display = 'flex'; // Muestra el modal
-
-            // Cargar la descripción (ya que no la tenemos en los atributos data-)
-            try {
-                // Hacemos una llamada GET para obtener todos los metadatos (incluida la descripción)
-                // Se asume que tienes una ruta para obtener los detalles de un adjunto.
-                // Si no, tendrás que crear una ruta REST API que devuelva los metadatos completos de un adjunto,
-                // incluyendo 'description' que es post_content de la entrada de tipo 'attachment'.
-                const detailsResponse = await fetch(`${window.location.origin}/wp-json/wp/v2/media/${currentAttachmentId}`, {
-                    headers: {
-                        'X-WP-Nonce': nonce
-                    }
-                });
-                if (!detailsResponse.ok) {
-                    throw new Error('No se pudieron cargar los detalles del adjunto.');
-                }
-                const details = await detailsResponse.json();
-
-                // WordPress REST API para medios devuelve 'description' como 'description.raw'
-                // y 'title' como 'title.raw'. Alt text es 'alt_text'.
-                inputTitle.value = details.title.raw || '';
-                inputAlt.value = details.alt_text || '';
-                inputDescription.value = details.description.raw || '';
-
-            } catch (error) {
-                console.error('Error al cargar detalles del adjunto:', error);
-                inputDescription.value = 'No se pudo cargar la descripción.';
-            }
         });
     });
 

@@ -226,9 +226,9 @@ document.addEventListener('DOMContentLoaded', function() {
         trigger.addEventListener('click', async function() {
 
             currentAttachmentId = this.dataset.attachmentId;
-            const currentTitle = this.dataset.currentTitle;
-            const currentAlt = this.dataset.currentAlt;
-            const currentDescription = this.dataset.currentDescription;
+            const currentTitle = this.dataset.attachmentTitle;
+            const currentAlt = this.dataset.attachmentAlt;
+            const currentDescription = this.dataset.attachmentDescription;
 
             modalAttachmentIdSpan.textContent = currentAttachmentId;
             inputTitle.value = currentTitle;

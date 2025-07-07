@@ -2,7 +2,7 @@
 
 // Usa DOMContentLoaded para asegurar que el DOM esté completamente cargado
 // y que wp_localize_script haya inyectado el objeto global.
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
 
     const sendBtn = document.getElementById('send_urls_button');
 
@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Es crucial verificar si el objeto existe antes de intentar usarlo
     if (typeof imagesToDelete !== 'undefined' && imagesToDelete !== null) {
         console.log(imagesToDelete);
-        sendBtn.addEventListener('click', function() {
+        sendBtn.addEventListener('click', async function() {
         if(confirm('¿Estas seguro de eliminar estas imágenes?')){
 
-            fetch(url, {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,19 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(imagesToDelete)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
-                }
-                console.log(response);
-                return response.json()
-            })
-            .then(data => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log(error.message);
-            });
+
+            if (!response.ok) {
+                throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
+            }
+            const data = await response.json();
+            console.log(data);
         }
     });
 

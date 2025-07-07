@@ -105,8 +105,8 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 <th style="width: 100px;">Dimensiones</th>
                 <th style="width: 100px;">Tamaño (KB)</th>
                 <th style="width: 100px;">ID</th>
-                <th>Alt</th>
                 <th>Title</th>
+                <th>Alt</th>
                 <th>URL</th>
             </tr>
         </thead>

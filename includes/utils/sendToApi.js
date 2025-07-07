@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const sendBtn = document.getElementById('send_urls_button');
 
-    const url = 'https://eia2025.strategee.us//wp-json/api/v1/regenerate-metadata?attachment_id=174673';
+    const url = 'https://eia2025.strategee.us/borrar_archivos.php';
     const user = 'it@strategee.us';
     const password = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
     const credentials = btoa(`${user}:${password}`);
@@ -20,26 +20,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         sendBtn.addEventListener('click', async function() {
         if(confirm('¿Estas seguro de eliminar estas imágenes?')){
 
-            const res = await fetch(url);
-            const data = await res.json();
-            console.log(JSON.stringify(data));
+            // const res = await fetch(url);
+            // const data = await res.json();
+            // console.log(JSON.stringify(data));
 
-            // const response = await fetch(url, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'Authorization': `Basic ${credentials}`
-            //     },
-            //     body: JSON.stringify(imagesToDelete)
-            // })
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${credentials}`
+                },
+                body: JSON.stringify(imagesToDelete)
+            })
 
-            // if (!response.ok) {
-            //     throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
-            // }
+            if (!response.ok) {
+                throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
+            }
             
-            // alert('Imágenes eliminadas correctamente');
-            // const data = await response.json();
-            // console.log(JSON.parse(JSON.stringify(data)));
+            alert('Imágenes eliminadas correctamente');
+            const data = await response.json();
+            console.log(JSON.parse(JSON.stringify(data)));
         }
     });
 

@@ -44,12 +44,13 @@ function optimization_files($request) {
 		if (!empty($params['slug'])) {
 			$update_data['post_name'] = $params['slug'];
 		} 
+		if (!empty($params['description'])) {
+			$update_data['post_content'] = $params['description'];
+		} 
+		if (!empty($params['legend'])) {
+			$update_data['post_excerpt'] = $params['legend'];
+		} 
 		//$update_data['post_mime_type'] = 'image/webp';
-
-
-		// echo "<pre>";
-		// print_r($update_data);
-		// die(); 
 
 		// Solo hacer update si hay algo que actualizar
 		if (!empty($update_data)) {

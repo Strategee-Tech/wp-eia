@@ -11,29 +11,61 @@ function wp_optimization_seo_files() {
 }
 
 function optimization_files($request) {
-
 	// Obtener todos los parámetros de la solicitud POST
     $params = $request->get_params();
 
     // Imprimir todos los parámetros para depuración
     echo "<pre>";
     print_r($params);
-    die();  // Detener la ejecución para que solo se imprima una vez
+
+    // Validar si se envió el ID del post
+	if (empty($params['post_id'])) {
+		return new WP_REST_Response(array('status' => 'error', 'message' => 'El parámetro post_id es obligatorio.'), 400);
+	}
+
+	$post = get_post($params['post_id']);
+	if (!$post || $post->post_type !== 'attachment') {
+		return new WP_REST_Response(array('status' => 'error', 'message' => 'El post no existe o no es un attachment.'), 404);
+	}
+    
+    try {
+		global $wpdb;
+
+		$update_data = array();
+		$where       = array('ID' => $post->ID);
+
+		// Agrega solo si no está vacío
+		if (!empty($params['guid'])) {
+			$update_data['guid'] = $params['guid'];
+		}
+		if (!empty($params['title'])) {
+			$update_data['post_title'] = $params['title'];
+		}
+		if (!empty($params['slug'])) {
+			$update_data['post_name'] = $params['slug'];
+		} 
+		$update_data['post_mime_type'] = 'image/webp';
 
 
-    // $attachment_id = $request->get_param('attachment_id');
-    // try {
-    //     $attachment = get_post( $attachment_id );
-    //     if ( $attachment && $attachment->post_type === 'attachment' ) {
-    //         $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
-    //         update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
-    //         return new WP_REST_Response(array('status' => 'success', 'message' => 'Metadata regenerada correctamente'), 200);
-    //     } else {
-    //         return new WP_REST_Response(array('status' => 'error', 'message' => 'Attachment no encontrado'), 404);
-    //     }
-    // } catch (\Throwable $th) {
-    //     return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
-    // }
+		echo "<pre>";
+		print_r($update_data);
+		die(); 
+
+		// Solo hacer update si hay algo que actualizar
+		if (!empty($update_data)) {
+			$wpdb->update($wpdb->posts, $update_data, $where);
+		}
+
+		// Actualiza alt_text si fue enviado
+		if (!empty($params['alt_text'])) {
+			update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
+		}
+
+        return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
+    
+   	} catch (\Throwable $th) {
+        return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
+    }
 }
 
 // Función de validación de permisos con autenticación básica

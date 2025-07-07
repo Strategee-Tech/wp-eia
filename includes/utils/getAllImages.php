@@ -212,7 +212,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     
     foreach ($all_thumbnails as &$thumbnail) {
         $original_thumbnail_name = get_original_data_from_thumbnail($thumbnail['url']);
-        if(in_array($original_thumbnail_name['name_clean'], $all_delete_names) || $thumbnail['to_delete'] == false){
+        if(in_array($original_thumbnail_name['name_clean'], $all_delete_names) && $thumbnail['to_delete'] == false){
             $thumbnail['to_delete'] = true;
         }
     }

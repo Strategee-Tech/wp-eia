@@ -38,8 +38,6 @@ function optimization_files($request) {
 
 // Función de validación de permisos con autenticación básica
 function basic_auth_permission_check($request) {
-	echo "<pre>";
-	print_r($_SERVER);
     // Verificar si el encabezado 'Authorization' está presente
     $auth_header = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
 
@@ -53,6 +51,12 @@ function basic_auth_permission_check($request) {
 
     // Separar las credenciales en usuario y contraseña
     list($username, $password) = explode(':', $decoded_credentials);
+
+
+    echo "<pre>";
+    print_r($username);
+    print_r($password);
+    die(); 
 
     // Validar las credenciales con las que se han enviado
     if ($username !== AUTH_USER_BASIC || $password !== AUTH_PASSWORD_BASIC) {

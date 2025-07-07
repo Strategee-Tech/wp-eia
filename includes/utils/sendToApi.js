@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const sendBtn = document.getElementById('send_urls_button');
 
-    const url = 'https://eia2025.strategee.us/wp-content/plugins/wp-eia/prueba.php';
+    const url = 'https://eia2025.strategee.us//wp-json/api/v1/regenerate-metadata?attachment_id=174673';
     const user = 'it@strategee.us';
     const password = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
     const credentials = btoa(`${user}:${password}`);

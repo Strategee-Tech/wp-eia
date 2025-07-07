@@ -44,12 +44,12 @@ function optimization_files($request) {
 		if (!empty($params['slug'])) {
 			$update_data['post_name'] = $params['slug'];
 		} 
-		$update_data['post_mime_type'] = 'image/webp';
+		//$update_data['post_mime_type'] = 'image/webp';
 
 
-		echo "<pre>";
-		print_r($update_data);
-		die(); 
+		// echo "<pre>";
+		// print_r($update_data);
+		// die(); 
 
 		// Solo hacer update si hay algo que actualizar
 		if (!empty($update_data)) {
@@ -60,7 +60,7 @@ function optimization_files($request) {
 		if (!empty($params['alt_text'])) {
 			update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
 		}
-
+		//update_post_meta($post_id, '_wp_attached_file', $folder.$slug.'.webp');
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
     
    	} catch (\Throwable $th) {

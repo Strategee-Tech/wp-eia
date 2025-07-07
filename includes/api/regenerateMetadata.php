@@ -19,7 +19,9 @@ function wpil_register_csv_export_route() {
 
 function regenerate_metadata($request) {
     $attachment_id = $request->get_param('attachment_id');
+
+    $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
     
-    wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id)));
-    return new WP_REST_Response(array('status' => 'success'), 200);
+
+    return new WP_REST_Response(array('status' => 'success', 'metadata' => $metadata), 200);
 }

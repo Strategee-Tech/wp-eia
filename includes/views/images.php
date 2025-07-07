@@ -32,12 +32,14 @@ $all_images = get_all_images_in_uploads($selected_folder, $orderby, $order, $sho
 
 $total_files      = count( $all_images['all_images'] );
 $total_size_bytes = array_sum( array_column( $all_images['all_images'], 'size_bytes' ) );
-
+$total_delete_size_bytes = 0;
+$total_delete_size_bytes_thumbnails = 0;
 $thumbnail_count =  count($all_images['all_thumbnails']);
 $to_delete_count = 0;
 foreach ( $all_images['all_images'] as $image ) {
     if( isset($image['to_delete']) && $image['to_delete'] === true) {
         $to_delete_count++;
+        $total_delete_size_bytes += $image['size_bytes'];
     }
 }
 
@@ -45,6 +47,7 @@ $thumbnail_to_delete_count = 0;
 foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
     if( isset($thumbnail['to_delete']) && $thumbnail['to_delete'] === true) {
         $thumbnail_to_delete_count++;
+        $total_delete_size_bytes_thumbnails += $thumbnail['size_bytes'];
     }
 }
 
@@ -100,11 +103,11 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
     <strong>Imagenes Encontradas:</strong> <?php echo number_format( $total_files ); ?><br>
     <strong>Peso Total de Imágenes:</strong> <?php echo size_format( $total_size_bytes ); ?><br>
     <strong>Imagenes para eliminar:</strong> <?php echo number_format( $to_delete_count ); ?><br>
-    <strong>Espacio Imágenes Liberado:</strong> <?php echo size_format( $to_delete_count ); ?><br>
+    <strong>Espacio Imágenes Liberado:</strong> <?php echo size_format( $total_delete_size_bytes ); ?><br>
     <br>
     <strong>Miniaturas encontradas:</strong> <?php echo number_format( $thumbnail_count ); ?><br>
     <strong>Miniaturas para eliminar:</strong> <?php echo number_format( $thumbnail_to_delete_count ); ?><br>
-    <strong>Espacio Miniaturas Liberado:</strong> <?php echo size_format( $thumbnail_to_delete_count ); ?><br>
+    <strong>Espacio Miniaturas Liberado:</strong> <?php echo size_format( $total_delete_size_bytes_thumbnails ); ?><br>
 </p>
 
     <table class="wp-list-table widefat fixed striped">

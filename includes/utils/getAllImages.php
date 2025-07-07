@@ -37,6 +37,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     $all_delete_names   = array();
     $all_scaleds_names  = array();
     $attachment_paths   = array();
+    $attachment_alts    = array();
 
     //Todas la extensiones permitidas en 
     $allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
@@ -62,11 +63,8 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     foreach ( $attachments_in_folder as $attachment ) {
         $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
+        $attachment_alts[ $attachment['post_id'] ] = $attachment['alt'];
     }
-    echo '<pre>' . htmlspecialchars(print_r($attachments_in_folder, true)) . '</pre>';
-    echo '<h2>attachment_paths</h2>';
-    echo '<pre>' . htmlspecialchars(print_r($attachment_paths, true)) . '</pre>';
-    die();
 
     $AllPostsWithAttachtment = $wpdb->get_results("
 		    SELECT post_id, meta_value 
@@ -138,6 +136,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                 if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
                     echo $attachment_paths[ $relative_path_for_db ] . '<br>';
                     $attachment_id = $attachment_paths[ $relative_path_for_db ];
+                }
+
+                if(isset($attachment_alts[$attachment_id])){
+                    $alt = $attachment_alts[$attachment_id];
                 }
 
                 $to_delete = false;

@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
             }
             
+            alert('Imágenes eliminadas correctamente');
             const data = await response.json();
             console.log(JSON.parse(JSON.stringify(data)));
         }

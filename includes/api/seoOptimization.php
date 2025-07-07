@@ -39,9 +39,9 @@ function optimization_files($request) {
     	$miniaturas    = find_all_related_thumbnails($original_path);
 
 
-    	echo "<pre>";
-    	print_r($miniaturas);
-    	die(); 
+    	// echo "<pre>";
+    	// print_r($miniaturas);
+    	// die(); 
 
     	// Crear archivo temporal WebP en la misma carpeta
     	$temp_webp = $info['dirname'] . '/' . $info['filename'] . '_temp.webp';

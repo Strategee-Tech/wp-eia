@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
             }
             const data = await response.json();
-            console.log(JSON.stringify(data));
+            console.log(JSON.parse(JSON.stringify(data)));
         }
     });
 

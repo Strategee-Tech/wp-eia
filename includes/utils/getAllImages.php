@@ -63,6 +63,10 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     foreach ( $attachments_in_folder as $attachment ) {
         $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
     }
+    echo '<pre>' . htmlspecialchars(print_r($attachments_in_folder, true)) . '</pre>';
+    echo '<h2>attachment_paths</h2>';
+    echo '<pre>' . htmlspecialchars(print_r($attachment_paths, true)) . '</pre>';
+    die();
 
     $AllPostsWithAttachtment = $wpdb->get_results("
 		    SELECT post_id, meta_value 

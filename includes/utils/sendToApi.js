@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log(data);
             })
             .catch((error) => {
-                console.error(error.message);
+                console.log(error.message);
             });
         }
     });

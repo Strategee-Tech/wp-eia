@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Es crucial verificar si el objeto existe antes de intentar usarlo
     if (typeof imagesToDelete !== 'undefined' && imagesToDelete !== null) {
-        console.log('¡imagesToDelete está definido! Datos recibidos:', imagesToDelete);
+        console.log(imagesToDelete);
 
         // Aquí puedes seguir con tu lógica para usar imagesToDelete
         // Por ejemplo:

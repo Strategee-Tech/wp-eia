@@ -41,12 +41,12 @@ function optimization_files($request) {
     	$temp_webp = $info['dirname'] . '/' . $info['filename'] . '_temp.webp';
 
     	// Comprimir a WebP al 80%
-	    $command = escapeshellcmd("convert '$original_path' -quality 80 '$temp_webp'");
-	    exec($command, $output, $code);
+	    // $command = escapeshellcmd("convert '$original_path' -quality 80 '$temp_webp'");
+	    // exec($command, $output, $code);
 
-	    if ($code !== 0 || !file_exists($temp_webp)) {
-	        return new WP_REST_Response(['status' => 'error', 'message' => 'No se pudo crear la imagen WebP'], 500);
-	    }
+	    // if ($code !== 0 || !file_exists($temp_webp)) {
+	    //     return new WP_REST_Response(['status' => 'error', 'message' => 'No se pudo crear la imagen WebP'], 500);
+	    // }
 
 		// Agrega solo si no está vacío
 		if (!empty($params['title'])) {

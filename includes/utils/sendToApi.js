@@ -27,7 +27,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(imagesToDelete)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
+                }
+                console.log(response);
+                return response.json()
+            })
             .then(data => {
                 console.log(data);
             })

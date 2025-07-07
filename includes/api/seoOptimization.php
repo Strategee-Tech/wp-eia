@@ -41,6 +41,11 @@ function basic_auth_permission_check($request) {
 	$site_folder 		 = basename(dirname(ABSPATH));  // Obtener el nombre de la carpeta
 	$path_to_credentials = dirname(ABSPATH) . "/$site_folder/credentials.php";  // Construir la ruta al archivo
 
+
+	echo "<pre>";
+	print_r($site_folder);
+	die(); 
+
 	require_once($path_to_credentials);
 
     // Verificar si el encabezado 'Authorization' está presente

@@ -208,7 +208,10 @@ function find_all_related_thumbnails($original_path) {
         // - nombre-scaled.jpg
         // - nombre-scaled-300x200.webp
         if (
-            preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?\.[a-z0-9]+$/i', $file)
+
+            preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?(\.[a-z0-9]+){1,2}$/i', $file)
+
+            //preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?\.[a-z0-9]+$/i', $file)
             && $full_path !== $original_path // no borres el original
         ) {
             $related_files[] = $full_path;

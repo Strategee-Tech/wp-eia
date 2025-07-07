@@ -102,12 +102,9 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
             <tr>
                 <th>Ruta Relativa</th>
                 <th>Nombre del Archivo</th>
-                <th>Dimensiones</th>
-                <?php
-                // Función auxiliar para generar cabeceras ordenables
-                getSortableImageTableHeader( 'size_bytes', 'Tamaño (KB)', $orderby, $order, $selected_folder, $status, $showMiniatures );
-                getSortableImageTableHeader( 'attachment_id', 'Vinculado a Attachment', $orderby, $order, $selected_folder, $status, $showMiniatures );
-                ?>
+                <th style="width: 100px;">Dimensiones</th>
+                <th style="width: 100px;">Tamaño (KB)</th>
+                <th style="width: 100px;">ID</th>
                 <th>Alt</th>
                 <th>Title</th>
                 <th>URL</th>

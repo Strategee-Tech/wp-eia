@@ -198,6 +198,10 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
 
 
 <script>
+
+const user = 'it@strategee.us';
+const password = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
+const credentials = btoa(`${user}:${password}`);
 // admin-media-editor.js (Asegúrate de que este script esté encolado solo en tu página de administración)
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -220,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // const nonce = yourPluginVar.nonce;
     const restApiBaseUrl = window.location.origin + '/wp-json/api/v1'; // Ajusta esto si tu base de la API es diferente
     const nonce = 'TU_NONCE_GENERADO_EN_PHP'; // <--- ¡IMPORTANTE! Genera esto con wp_create_nonce('wp_rest') en PHP y pásalo via wp_localize_script
+
 
 
     editTriggers.forEach(trigger => {
@@ -272,17 +277,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Llamada a la API REST de WordPress para actualizar el adjunto
             // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
             // URL: /wp-json/wp/v2/media/{id}
-            const response = await fetch(`${window.location.origin}/wp-json/wp/v2/media/${currentAttachmentId}`, {
+            const response = await fetch(`https://eia2025.strategee.us/wp-json/api/v1/seo-optimization`, {
                 method: 'POST', // Las actualizaciones en la API REST de WP suelen ser POST o PUT
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-WP-Nonce': nonce // ¡Crucial para la autenticación!
+                    'Authorization': `Basic ${credentials}`
                 },
                 body: JSON.stringify({
                     title: updatedData.title,
                     alt_text: updatedData.alt, // Para el alt text, el campo es 'alt_text' en la API
-                    description: updatedData.description
-                    // No necesitas enviar 'id' en el body, ya está en la URL
+                    description: updatedData.description,
+                    post_id: currentAttachmentId
                 })
             });
 

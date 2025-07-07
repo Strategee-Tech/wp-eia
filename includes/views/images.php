@@ -75,22 +75,9 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
     </table>
     <p class="submit">
         <input type="submit" name="submit" id="submit" class="button button-secondary" value="Mostrar Imágenes">
+    <?php if($to_delete_count > 0): ?>
         <input type="button" id="send_urls_button" class="button button-primary" value="Enviar URLs por POST">
-        <input type="button" id="export_csv_button" class="button button-primary" value="Descargar CSV">
-        
-        <?php if(!$status && $showMiniatures): ?>
-            <input type="button" id="btn-delete-all" class="button button-primary" value="Eliminar Todos">
-        <?php endif; ?>
-
-        <label>
-            <input type="checkbox" name='status' id="check-status" value="1" <?php echo $status == true ? '' : 'checked' ?> >
-            Mostrar solo sin attachment
-        </label>
-    
-        <label>
-            <input type="checkbox" name='miniatures' id="check-miniatures" value="1" <?php echo $showMiniatures == true ? 'checked' : '' ?> >
-            Mostrar Miniaturas
-        </label>
+    <?php endif; ?>
     </p>
 </form>
 

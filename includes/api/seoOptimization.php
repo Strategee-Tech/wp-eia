@@ -81,6 +81,17 @@ function optimization_files($request) {
 			    )
 			);
 
+			$wpdb->query(
+			    $wpdb->prepare(
+			        "UPDATE {$wpdb->prefix}learnpress_courses 
+			        SET post_content = REPLACE(post_content, %s, %s) 
+			        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft')",
+			        $old_url,
+			        $new_url,
+			        '%' . basename($old_url) . '%'
+			    )
+			);
+
 			// Tabla de Yoast SEO
 			$tabla_yoast_seo_links = $wpdb->prefix . 'yoast_seo_links';
 			$tabla_indexable 	   = $wpdb->prefix . 'yoast_indexable';

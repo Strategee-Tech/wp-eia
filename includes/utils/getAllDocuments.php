@@ -134,7 +134,7 @@ function wpil_get_all_documents_in_uploads( $subfolder = '', $orderby = 'size_by
 					'en_contenido'	  => $en_contenido
 				);
 
-				$to_delete_without_index[] = $file->getPathname();
+				$to_delete_with_index[] = $attachment_id;
             }
         }
     } catch ( UnexpectedValueException $e ) {

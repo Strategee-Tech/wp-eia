@@ -134,7 +134,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                 //LLENAMOS EL ATTACHMENT ID BUSCANDO EN attachment_paths
                 $relative_path_for_db = ltrim( $relative_path, '/' );
                 if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
-                    echo $attachment_paths[ $relative_path_for_db ] . '<br>';
                     $attachment_id = $attachment_paths[ $relative_path_for_db ];
                 }
 

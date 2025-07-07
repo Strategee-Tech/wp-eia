@@ -11,6 +11,15 @@
 function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $order = 'desc' ) {
 
     require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
+
+
+    wp_enqueue_script(
+        'mi-script-personalizado', // Handle o identificador único
+        plugins_url( 'includes/utils/sendToApi.js', __FILE__ ), // URL del script dentro de tu plugin
+        array(), // Dependencias (ninguna en este caso)
+        '1.0.0', // Versión
+        true // Cargar en el footer
+    );
 	
     global $wpdb;
 
@@ -217,6 +226,14 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         }
     }
     unset($thumbnail);
+
+
+
+    wp_localize_script(
+        'sendToApi', // El handle del script al que deseas adjuntar los datos
+        'imagesToDelete',             // El nombre del objeto JavaScript global
+        $all_images           // Tus datos PHP
+    );
 
     return array(
         'all_images' => $all_images,

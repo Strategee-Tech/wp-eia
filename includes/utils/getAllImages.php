@@ -45,14 +45,21 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     //BUSCAMOS TODOS LOS ATTACHTMENT EN EL FOLDER ACTUAL Y LLENAMOS EL ARRAY attachment_paths
     $attachments_in_folder = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT post_id, meta_value
-                FROM {$wpdb->postmeta}
-                WHERE meta_key = '_wp_attached_file'
-                AND meta_value LIKE %s",
+            "SELECT 
+                p.post_id,
+                p.meta_value,
+                alt.meta_value as alt,
+            FROM 
+                {$wpdb->postmeta} as p
+            LEFT JOIN 
+                {$wpdb->postmeta} as alt ON p.post_id = alt.post_id AND alt.meta_key = '_wp_attachment_image_alt'
+            WHERE p.meta_key = '_wp_attached_file'
+                AND p.meta_value LIKE %s",
             $wpdb->esc_like($subfolder) . '%'
         ),
         ARRAY_A
     );
+
     foreach ( $attachments_in_folder as $attachment ) {
         $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
     }
@@ -118,9 +125,14 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                     $dimensions = $image_info[0] . 'x' . $image_info[1];
                 }
 
+                $alt = '';
+                $title = '';
+                $description = '';
+
                 //LLENAMOS EL ATTACHMENT ID BUSCANDO EN attachment_paths
                 $relative_path_for_db = ltrim( $relative_path, '/' );
                 if ( isset( $attachment_paths[ $relative_path_for_db ] ) ) {
+                    echo $attachment_paths[ $relative_path_for_db ] . '<br>';
                     $attachment_id = $attachment_paths[ $relative_path_for_db ];
                 }
 
@@ -163,6 +175,9 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 					'relative_path'   => $relative_path,
 					'filename'        => $filename,
                     'dimensions'      => $dimensions,
+                    'title'           => $title,
+                    'alt'             => $alt,
+                    'description'     => $description,
 					'size_bytes'      => $file_size_bytes,
 					'size_kb'         => $file_size_bytes / 1024,
 					'attachment_id'   => $attachment_id,

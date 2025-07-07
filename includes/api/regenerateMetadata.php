@@ -26,8 +26,11 @@ function wpil_register_csv_export_route() {
 function regenerate_metadata($request) {
     $attachment_id = $request->get_param('attachment_id');
 
-    $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
-    
-
-    return new WP_REST_Response(array('status' => 'success', 'metadata' => $metadata), 200);
+    try {
+        $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
+        update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
+        return new WP_REST_Response(array('status' => 'success', 'message' => 'Metadata regenerada correctamente'), 200);
+    } catch (\Throwable $th) {
+        return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
+    }
 }

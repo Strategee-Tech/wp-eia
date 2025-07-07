@@ -35,7 +35,13 @@ function optimization_files($request) {
 		$where       = array('ID' => $post->ID);
 
 		$original_path = get_attached_file($post->ID);
-    	$info = pathinfo($original_path);
+    	$info          = pathinfo($original_path);
+    	$miniaturas    = find_all_related_thumbnails($original_path);
+
+
+    	echo "<pre>";
+    	print_r($miniaturas);
+    	die(); 
 
     	// Crear archivo temporal WebP en la misma carpeta
     	$temp_webp = $info['dirname'] . '/' . $info['filename'] . '_temp.webp';
@@ -185,4 +191,29 @@ function basic_auth_permission_check($request) {
 
     // Si las credenciales son correctas, permitir el acceso
     return true;
+}
+
+function find_all_related_thumbnails($original_path) {
+    $dir = dirname($original_path);
+    $filename = basename($original_path);
+    $filename_base = preg_replace('/\.[^.]+$/', '', $filename); // sin extensión
+
+    $related_files = [];
+
+    foreach (scandir($dir) as $file) {
+        $full_path = $dir . '/' . $file;
+
+        // Detecta:
+        // - nombre-300x200.jpg
+        // - nombre-scaled.jpg
+        // - nombre-scaled-300x200.webp
+        if (
+            preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?\.[a-z0-9]+$/i', $file)
+            && $full_path !== $original_path // no borres el original
+        ) {
+            $related_files[] = $full_path;
+        }
+    }
+
+    return $related_files;
 }

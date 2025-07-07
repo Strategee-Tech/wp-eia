@@ -228,11 +228,24 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     unset($thumbnail);
 
 
+    $to_delete_with_indice = array();
+    $to_delete_without_indice = array();
+
+    foreach ($all_images as $image) {
+        if($image['to_delete'] == true){
+            if(isset($image['attachment_id']) && $image['attachment_id'] != null){
+                $to_delete_with_indice[] = $image;
+            } else {
+                $to_delete_without_indice[] = $image;
+            }
+        }
+    }
+
 
     wp_localize_script(
         'sendToApi', // El handle del script al que deseas adjuntar los datos
         'imagesToDelete',             // El nombre del objeto JavaScript global
-        $all_images           // Tus datos PHP
+        array($to_delete_with_indice, $to_delete_without_indice)           // Tus datos PHP
     );
 
     return array(
@@ -242,4 +255,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
         'all_delete_names' => $all_delete_names
     );
 }
+
+
 ?>

@@ -20,3 +20,4 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
 
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/admin-menus.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/api/regenerateMetadata.php';

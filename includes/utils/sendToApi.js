@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const sendBtn = document.getElementById('send_urls_button');
 
-    const url = 'http://45.55.46.208/borrar_archivos.php';
+    const url = 'https://eia2025.strategee.us/borrar_archivos.php';
     const user = 'it@strategee.us';
     const password = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
     const credentials = btoa(`${user}:${password}`);

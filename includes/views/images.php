@@ -100,7 +100,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
     <table class="wp-list-table widefat fixed striped">
         <thead>
             <tr>
-                <th>Ruta Relativa</th>
+                <!-- <th>Ruta Relativa</th> -->
                 <th>Nombre del Archivo</th>
                 <th style="width: 100px;">Dimensiones</th>
                 <th style="width: 100px;">Tamaño (KB)</th>
@@ -124,7 +124,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 foreach ( $all_images['all_images'] as $image ) :
             ?>
                     <tr>
-                        <td><?php echo esc_html( $image['relative_path'] ); ?></td>
+                        <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['filename'] ); ?></td>
                         <td><?php echo esc_html( $image['dimensions'] );  echo $image['is_thumbnail'] == 1 ? ' (Thumbnail)' : '' ?>  </td>
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>

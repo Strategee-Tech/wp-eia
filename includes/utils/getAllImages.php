@@ -216,7 +216,6 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             $thumbnail['to_delete'] = true;
         }
     }
-    echo '<pre>' . htmlspecialchars(print_r($all_thumbnails, true)) . '</pre>';
     unset($thumbnail);
 
     return array(

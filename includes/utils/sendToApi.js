@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(imagesToDelete);
         sendBtn.addEventListener('click', function() {
         if(confirm('¿Estas seguro de eliminar estas imágenes?')){
+
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
+                console.log(data);
             })
             .catch((error) => {
                 console.error('Error:', error);

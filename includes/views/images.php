@@ -224,14 +224,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {
+
             currentAttachmentId = this.dataset.attachmentId;
             const currentTitle = this.dataset.currentTitle;
             const currentAlt = this.dataset.currentAlt;
+            const currentDescription = this.dataset.currentDescription;
 
             modalAttachmentIdSpan.textContent = currentAttachmentId;
             inputTitle.value = currentTitle;
             inputAlt.value = currentAlt;
-            inputDescription.value = 'Cargando descripción...'; // Mensaje provisional
+            inputDescription.value = currentDescription;
 
             modal.style.display = 'flex'; // Muestra el modal
 

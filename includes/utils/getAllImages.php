@@ -15,7 +15,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     wp_enqueue_script(
         'mi-script-personalizado', // Handle o identificador único
-        plugins_url( 'includes/utils/sendToApi.js', __FILE__ ), // URL del script dentro de tu plugin
+        plugins_url( 'sendToApi.js', __FILE__ ), // URL del script dentro de tu plugin
         array(), // Dependencias (ninguna en este caso)
         '1.0.0', // Versión
         true // Cargar en el footer

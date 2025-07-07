@@ -38,15 +38,15 @@ function optimization_files($request) {
 
 // Función de validación de permisos con autenticación básica
 function basic_auth_permission_check($request) {
-	$site_folder 		 = basename(dirname(ABSPATH));  // Obtener el nombre de la carpeta
-	$path_to_credentials = dirname(ABSPATH) . "/$site_folder/credentials.php";  // Construir la ruta al archivo
+	// Ruta absoluta al archivo credentials.php
+    $path_to_credentials = dirname(ABSPATH) . '/credentials.php';
 
-
-	echo "<pre>";
-	print_r($site_folder);
-	die(); 
-
-	require_once($path_to_credentials);
+    // Verificación si el archivo existe antes de incluirlo
+    if (file_exists($path_to_credentials)) {
+        require_once($path_to_credentials);
+    } else {
+        return new WP_Error('server_error', 'No se encontró el archivo de credenciales.', array('status' => 500));
+    }
 
     // Verificar si el encabezado 'Authorization' está presente
     $auth_header = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;

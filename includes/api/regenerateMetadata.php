@@ -5,12 +5,10 @@ function wpil_register_csv_export_route() {
     register_rest_route( 'api/v1', '/regenerate-metadata', array(
         'methods'             => 'GET', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'regenerate_metadata',
-        'permission_callback' => function() {
-            return current_user_can( 'manage_options' );
-        },
+        'permission_callback' => '__return_true',
         'args' => array(
             'attachment_id' => array(
-                'required'          => '__return_true',
+                'required'          => true,
                 'type'              => 'string',
                 'sanitize_callback' => 'sanitize_text_field',
                 'description'       => 'ID del attachment.',

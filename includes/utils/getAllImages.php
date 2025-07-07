@@ -240,6 +240,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     
     foreach ($all_thumbnails as &$thumbnail) {
+        echo $thumbnail['url'] . '<br>';
         $original_thumbnail_name = get_original_data_from_thumbnail($thumbnail['url']);
         if(in_array($original_thumbnail_name['name_clean'], $all_delete_names) && $thumbnail['to_delete'] == false){
             $thumbnail['to_delete'] = true;
@@ -253,6 +254,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
     foreach ($all_images as $image) {
         if($image['to_delete'] == true){
+
             if(isset($image['attachment_id']) && $image['attachment_id'] != null){
                 $to_delete_with_index[] = $image['attachment_id'];
             } else {

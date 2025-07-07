@@ -19,22 +19,22 @@ document.addEventListener('DOMContentLoaded', async function() {
         sendBtn.addEventListener('click', async function() {
         if(confirm('¿Estas seguro de eliminar estas imágenes?')){
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Basic ${credentials}`
-                },
-                body: JSON.stringify(imagesToDelete)
-            })
+            // const response = await fetch(url, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization': `Basic ${credentials}`
+            //     },
+            //     body: JSON.stringify(imagesToDelete)
+            // })
 
-            if (!response.ok) {
-                throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
-            }
+            // if (!response.ok) {
+            //     throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
+            // }
             
-            alert('Imágenes eliminadas correctamente');
-            const data = await response.json();
-            console.log(JSON.parse(JSON.stringify(data)));
+            // alert('Imágenes eliminadas correctamente');
+            // const data = await response.json();
+            // console.log(JSON.parse(JSON.stringify(data)));
         }
     });
 

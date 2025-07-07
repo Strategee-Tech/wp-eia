@@ -107,8 +107,9 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 // Función auxiliar para generar cabeceras ordenables
                 getSortableImageTableHeader( 'size_bytes', 'Tamaño (KB)', $orderby, $order, $selected_folder, $status, $showMiniatures );
                 getSortableImageTableHeader( 'attachment_id', 'Vinculado a Attachment', $orderby, $order, $selected_folder, $status, $showMiniatures );
-                getSortableImageTableHeader( 'modified_date', 'Fecha de Modificación', $orderby, $order, $selected_folder, $status, $showMiniatures );
                 ?>
+                <th>Alt</th>
+                <th>Title</th>
                 <th>URL</th>
             </tr>
         </thead>
@@ -147,6 +148,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                             }
                             ?>
                         </td>
+                        <td><?php echo esc_html( $image['title'] ); ?></td>
                         <td><?php echo esc_html( $image['alt'] ); ?></td>
                         <td><a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank"><?php echo esc_url( $image['url'] ); ?></a></td>
                     </tr>

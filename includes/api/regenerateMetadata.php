@@ -4,10 +4,9 @@ if ( ! function_exists( 'wp_crop_image' ) ) {
     include( ABSPATH . 'wp-admin/includes/image.php' );
 }
 
+add_action( 'rest_api_init', 'generate_metadata_route' );
 
-add_action( 'rest_api_init', 'wpil_register_csv_export_route' );
-
-function wpil_register_csv_export_route() {
+function generate_metadata_route() {
     register_rest_route( 'api/v1', '/regenerate-metadata', array(
         'methods'             => 'GET', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'regenerate_metadata',

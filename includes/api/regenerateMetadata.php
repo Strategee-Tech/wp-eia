@@ -1,4 +1,10 @@
 <?php
+
+if ( ! function_exists( 'wp_crop_image' ) ) {
+    include( ABSPATH . 'wp-admin/includes/image.php' );
+}
+
+
 add_action( 'rest_api_init', 'wpil_register_csv_export_route' );
 
 function wpil_register_csv_export_route() {

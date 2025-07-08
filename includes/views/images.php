@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    
+
     regenerateAltBtn.addEventListener('click', async function() {
         const result = await geminiPost(modalUrl.value);
         inputAlt.value = result.alt;
@@ -359,6 +359,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+
 
 
 

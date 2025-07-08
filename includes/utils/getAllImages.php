@@ -38,6 +38,8 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     $all_scaleds_names  = array();
     $attachment_paths   = array();
     $attachment_alts    = array();
+    $attachment_titles  = array();
+    $attachment_contents  = array();
 
     //Todas la extensiones permitidas en 
     $allowed_extensions = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif' );
@@ -49,11 +51,15 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
             "SELECT 
                 p.post_id,
                 p.meta_value,
-                alt.meta_value as alt
+                alt.meta_value as alt,
+                post.post_title
+                post.post_content
             FROM 
                 {$wpdb->postmeta} as p
             LEFT JOIN 
                 {$wpdb->postmeta} as alt ON p.post_id = alt.post_id AND alt.meta_key = '_wp_attachment_image_alt'
+            LEFT JOIN 
+                {$wpdb->posts} as post ON p.post_id = post.ID
             WHERE p.meta_key = '_wp_attached_file'
                 AND p.meta_value LIKE %s",
             $wpdb->esc_like($subfolder) . '%'
@@ -64,6 +70,8 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
     foreach ( $attachments_in_folder as $attachment ) {
         $attachment_paths[ $attachment['meta_value'] ] = $attachment['post_id'];
         $attachment_alts[ $attachment['post_id'] ] = $attachment['alt'];
+        $attachment_titles[ $attachment['post_id'] ] = $attachment['post_title'];
+        $attachment_contents[ $attachment['post_id'] ] = $attachment['post_content'];
     }
 
     $AllPostsWithAttachtment = $wpdb->get_results("
@@ -139,6 +147,14 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
 
                 if(isset($attachment_alts[$attachment_id])){
                     $alt = $attachment_alts[$attachment_id];
+                }
+
+                if(isset($attachment_titles[$attachment_id])){
+                    $title = $attachment_titles[$attachment_id];
+                }
+
+                if(isset($attachment_contents[$attachment_id])){
+                    $description = $attachment_contents[$attachment_id];
                 }
 
                 $to_delete = false;

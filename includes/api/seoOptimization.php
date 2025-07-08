@@ -113,7 +113,7 @@ function optimization_files($request) {
     	regenerate_metadata($post->ID);
 
     	// Actualizar post_content y Yoast
-		update_yoast_info($new_url, $old_url, $post->ID, $wpdb);
+		update_yoast_info($new_url, $old_url, $post->ID);
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
@@ -194,7 +194,8 @@ function regenerate_metadata($attachment_id){
     }
 }
 
-function update_yoast_info($new_ulr, $old_url, $post_id, $wpdb) {
+function update_yoast_info($new_ulr, $old_url, $post_id) {
+	global $wpdb;
 	//actualizar post_content de una imagen dentro de una pagina
 	$wpdb->query(
 	    $wpdb->prepare(
@@ -222,40 +223,28 @@ function update_yoast_info($new_ulr, $old_url, $post_id, $wpdb) {
 	// Tabla de Yoast SEO
 	$tabla_yoast_seo_links = $wpdb->prefix . 'yoast_seo_links';
 	$tabla_indexable 	   = $wpdb->prefix . 'yoast_indexable';
-	 
-	// Obtener el indexable_id desde wp_yoast_seo_links
-	$indexable_id = $wpdb->get_var(
+	
+    // Actualizar tabla yoast_indexable (open graph y twitter image)
+	$wpdb->query(
 	    $wpdb->prepare(
-	        "SELECT indexable_id FROM $tabla_yoast_seo_links 
-	         WHERE post_id = %d AND type = %s LIMIT 1",
-	        $post_id,
-	        'image-in'
+	        "UPDATE $tabla_indexable 
+	         SET open_graph_image = %s, twitter_image = %s
+	         WHERE open_graph_image = %s AND twitter_image = %s",
+	        $new_url,     // nuevo open_graph_image
+	        $new_url,     // nuevo twitter_image
+	        $old_url,     // viejo open_graph_image
+	        $old_url      // viejo twitter_image
 	    )
 	);
 
-	if ($indexable_id) { 
-	    $wpdb->query(
-		    $wpdb->prepare(
-		        "UPDATE $tabla_indexable 
-		        SET open_graph_image = %s,
-		        twitter_image     = %s
-		        WHERE id = %d",
-		        $new_url,     // %s → open_graph_image
-		        $new_url,     // %s → twitter_image
-		        $indexable_id // %d → id
-		    )
-		);
-
-	    $wpdb->query(
-		    $wpdb->prepare(
-		        "UPDATE $tabla_yoast_seo_links
-		        SET url = %s
-		        WHERE post_id = %d AND url = %s AND type = %s",
-		        $new_url,
-		        $post_id,
-		        $old_url,
-		        'image-in'
-		    )
-		);
-	}
+	// Actualizar tabla yoast_seo_links (url general)
+	$wpdb->query(
+	    $wpdb->prepare(
+	        "UPDATE $tabla_yoast_seo_links
+	         SET url = %s
+	         WHERE url = %s",
+	        $new_url,
+	        $old_url
+	    )
+	);
 }

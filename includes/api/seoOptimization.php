@@ -18,10 +18,6 @@ function optimization_files($request) {
 	// Obtener todos los parámetros de la solicitud POST
     $params = $request->get_params();
 
-    // Imprimir todos los parámetros para depuración
-    //echo "<pre>";
-    //print_r($params);
-
     // Validar si se envió el ID del post
 	if (empty($params['post_id'])) {
 		return new WP_REST_Response(array('status' => 'error', 'message' => 'El parámetro post_id es obligatorio.'), 400);
@@ -37,7 +33,6 @@ function optimization_files($request) {
 
 		$update_data   = array();
 		$where         = array('ID' => $post->ID);
-
 		$original_path = get_attached_file($post->ID);
     	$info          = pathinfo($original_path);
     	$miniaturas    = find_all_related_thumbnails($original_path);
@@ -46,73 +41,44 @@ function optimization_files($request) {
     	$old_url       = $post->guid;
 
     	// Crear archivo temporal WebP en la misma carpeta
-    	$temp_webp   = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
+    	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
 
     	// Comprimir a WebP al 80%
     	if($params['resize'] == true) {
-    		$command = escapeshellcmd("convert '$original_path' -resize 1920x -quality 80 '$temp_webp'");
+    		$command = escapeshellcmd("convert '$original_path' -resize 1920x -quality 80 '$temp_img'");
     	} else {
-    		$command = escapeshellcmd("convert '$original_path' -quality 80 '$temp_webp'");
+    		$command = escapeshellcmd("convert '$original_path' -quality 80 '$temp_img'");
     	}
 	    exec($command, $output, $code);
 
-	    if ($code !== 0 || !file_exists($temp_webp)) {
+	    if ($code !== 0 || !file_exists($temp_img)) {
 	        return new WP_REST_Response(['status' => 'error', 'message' => 'No se pudo crear la imagen WebP'], 500);
 	    }
 
-	    // Paso 3: Determinar el nuevo nombre (usando el slug)
+	    // Determinar el nuevo nombre (usando el slug)
 		$slug 	  	  = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
 	    $new_filename = $slug . $ext;
 		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 
-	 	// Reemplazar el archivo original
+	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
-    		//unlink($original_path); // elimina el original
-    		echo "archivo original eliminado ".$original_path;
+    		unlink($original_path); // elimina el original
 	 	}	
-    	rename($temp_webp, $new_path); // renombra el WebP para que quede con el nuevo nombre
+    	rename($temp_img, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
     	$upload_dir    = wp_get_upload_dir();
 		$relative_path = str_replace($upload_dir['basedir'], '', $original_path);
 		$folder        = dirname($relative_path);
 		$new_url	   = trailingslashit($upload_dir['url']) . $new_filename;
 
-
-
 		// Eliminar miniaturas
-		// if(!empty($miniaturas)) {
-    	// 	foreach ($miniaturas as $key => $path) {
-    	// 		if(file_exists($path)) {
-    	// 			if(unlink($path)) {
-
-    	// 			} else {
-    	// 				echo "No eliminado: ".$path;
-    	// 			}
-    	// 		}
-    	// 	}
-    	// }
-
-		//Regenerar metadatos
-    	//regenerate_metadata($post->ID);
-
-		//actualizar derivados del metadata
-    	//update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
-
-
-    	echo "<pre>";
-    	echo "<br>";
-
-    	echo "<br>";
-    	print_r($relative_path);
-    	echo "<br>";
-    	print_r($upload_dir);
-    	echo "<br>";
-    	print_r($new_url); 
-    	echo "<br>";
-
-    	echo "</pre>";
-
-		die();
+		if(!empty($miniaturas)) {
+    		foreach ($miniaturas as $key => $path) {
+    			if(file_exists($path)) {
+    				unlink($path);
+    			}
+    		}
+    	}
 
 		// Agrega solo si no está vacío
 		if (!empty($params['title'])) {
@@ -128,19 +94,26 @@ function optimization_files($request) {
 			$update_data['post_name'] = $params['slug'];
 		} 
 		$update_data['post_mime_type'] = $mimeType;
-		// $update_data['guid'] = $new_url;
+		$update_data['guid'] = $new_url;
 
 		// Solo hacer update si hay algo que actualizar
 		if (!empty($update_data)) {
 			$wpdb->update($wpdb->posts, $update_data, $where);
 		}
 
-		// Actualiza alt_text si fue enviado
+		// Actualiza texto alternativo si fue enviado
 		if (!empty($params['alt_text'])) {
 			update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
 		}
 
-		//update_yoast_info($new_url, $old_url, $post->ID);
+		// Actualizar derivados del metadata
+    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+
+    	// Regenerar metadatos
+    	regenerate_metadata($post->ID);
+
+    	// Actualizar post_content y Yoast
+		update_yoast_info($new_url, $old_url, $post->ID);
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);

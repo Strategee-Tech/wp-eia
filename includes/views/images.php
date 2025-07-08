@@ -245,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentDescription = this.dataset.attachmentDescription;
             const currentSlug = this.dataset.attachmentSlug;
             const resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
-            console.log(resize);
             
 
             modalAttachmentIdSpan.textContent = currentAttachmentId;

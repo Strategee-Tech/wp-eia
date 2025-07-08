@@ -18,8 +18,8 @@ function geminiPost(imageUrl) {
                     },
                     {
                         // Para URLs de imagen, se usa 'file_data' y 'file_uri'
-                        file_data: {
-                            mime_type: 'image/jpeg', // Asegúrate de que coincida con el tipo real de tu imagen
+                        inline_data: {
+                            mime_type: 'image/png', // Asegúrate de que coincida con el tipo real de tu imagen
                             file_uri: imageUrl
                         }
                     }

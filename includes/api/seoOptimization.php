@@ -97,7 +97,7 @@ function optimization_files($request) {
     	//regenerate_metadata($post->ID);
 
 		//actualizar derivados del metadata
-    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+    	//update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
 
     	echo "<pre>";

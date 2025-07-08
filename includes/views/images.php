@@ -269,12 +269,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Cierra el modal si se hace clic fuera del contenido (en el fondo oscuro)
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            statusMessage.textContent = '';
-        }
-    });
+    // modal.addEventListener('click', function(e) {
+    //     if (e.target === modal) {
+    //         modal.style.display = 'none';
+    //         statusMessage.textContent = '';
+    //     }
+    // });
 
 
     // Manejar el envío del formulario

@@ -14,7 +14,7 @@ function wp_store_google_sheet() {
 function save_google_sheet($request) {
     require_once dirname(__FILE__) . '/../utils/google_sheet_2.0.0/vendor/autoload.php';
     $client = new Google_Client();
-    $client->setAuthConfig(ROOT . DS .'client_secret_1065046989376-tbket75qsb90vg21lejeercjhot7i90t.apps.googleusercontent.com.json');
+    $client->setAuthConfig(dirname(__FILE__) . '/../utils/google_sheet_2.0.0/client_secret_1065046989376-tbket75qsb90vg21lejeercjhot7i90t.apps.googleusercontent.com.json');
     $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
     $client->setAccessType('offline'); // Acceso offline para obtener tokens de actualización
     $client->setDeveloperKey("AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik"); //cuenta notificaciones@strategee.us, password mercadeo93

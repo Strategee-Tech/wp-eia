@@ -62,8 +62,8 @@ function optimization_files($request) {
 
 	    // Paso 3: Determinar el nuevo nombre (usando el slug)
 		$slug 	  	  = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
-		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 	    $new_filename = $slug . $ext;
+		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 
 	 	// Reemplazar el archivo original
 	 	if(file_exists($original_path)){
@@ -82,12 +82,12 @@ function optimization_files($request) {
 
 		// Eliminar miniaturas
 		// if(!empty($miniaturas)) {
-    	// 	foreach ($miniaturas as $key => $relative_path) {
-    	// 		if(file_exists($relative_path)) {
-    	// 			if(unlink($relative_path)) {
+    	// 	foreach ($miniaturas as $key => $path) {
+    	// 		if(file_exists($path)) {
+    	// 			if(unlink($path)) {
 
     	// 			} else {
-    	// 				echo "No eliminado: ".$relative_path;
+    	// 				echo "No eliminado: ".$path;
     	// 			}
     	// 		}
     	// 	}
@@ -97,18 +97,14 @@ function optimization_files($request) {
     	//regenerate_metadata($post->ID);
 
 		//actualizar derivados del metadata
-    	update_post_meta($post->ID, '_wp_attached_file', $folder.'/'.$new_filename);
+    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
 
     	echo "<pre>";
     	echo "<br>";
     	print_r($old_url);
     	echo "<br>";
-    	print_r($new_url);
-    	echo "<br>";
-    	print_r($folder);
-    	echo "<br>";
-    	print_r($folder.$new_filename);
+    	print_r($new_url); 
     	echo "<br>";
 
 		die();

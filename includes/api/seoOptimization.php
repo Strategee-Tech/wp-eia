@@ -110,6 +110,8 @@ function optimization_files($request) {
     	print_r($new_url); 
     	echo "<br>";
 
+    	echo "</pre>";
+
 		die();
 
 		// Agrega solo si no está vacío

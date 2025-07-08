@@ -102,7 +102,7 @@ function optimization_files($request) {
 
     	echo "<pre>";
     	echo "<br>";
-    	print_r($old_url);
+    	print_r($upload_dir);
     	echo "<br>";
     	print_r($new_url); 
     	echo "<br>";

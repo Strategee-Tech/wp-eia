@@ -6,7 +6,7 @@ function wp_store_google_sheet() {
     register_rest_route( 'api/v1', '/store-google-sheet', array(
         'methods'             => 'POST', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'save_google_sheet',
-        'permission_callback' => 'basic_auth_permission_check', 
+        'permission_callback' => 'basic_auth_permission_check2', 
     )); 
 }
 
@@ -20,7 +20,7 @@ function save_google_sheet($request) {
     $client->setDeveloperKey("AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik"); //cuenta notificaciones@strategee.us, password mercadeo93
 
     
-    
+
     echo "<pre>";
     print_r($client);
     die(); 
@@ -28,7 +28,7 @@ function save_google_sheet($request) {
 }
 
 // Función de validación de permisos con autenticación básica
-function basic_auth_permission_check($request) {
+function basic_auth_permission_check2($request) {
     // Ruta absoluta al archivo credentials.php
     $path_to_credentials = dirname(ABSPATH) . '/credentials.php';
 

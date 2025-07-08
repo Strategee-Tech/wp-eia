@@ -194,7 +194,7 @@ function regenerate_metadata($attachment_id){
     }
 }
 
-function update_yoast_info($new_ulr, $old_url, $post_id) {
+function update_yoast_info($new_url, $old_url, $post_id) {
 	global $wpdb;
 	//actualizar post_content de una imagen dentro de una pagina
 	$wpdb->query(

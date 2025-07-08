@@ -3,7 +3,7 @@
 # Este script automatiza el proceso de pull, add, commit y push a la rama 'main'.
 
 # --- Configuración (puedes ajustarla) ---
-REMOTE_NAME="bitbucket" # El nombre de tu remoto (generalmente 'origin')
+REMOTE_NAME="origin" # El nombre de tu remoto (generalmente 'origin')
 BRANCH_NAME="main"   # La rama a la que quieres hacer push
 
 # --- Procesamiento del mensaje de commit ---

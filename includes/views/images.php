@@ -256,7 +256,8 @@ document.addEventListener('DOMContentLoaded', function() {
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
             inputAlt.value = currentAlt;
-            inputDescription.value = currentDescription;
+            inputDescription.value = cur
+            rentDescription;
             modalUrl.value = currentUrl;
             modal.style.display = 'flex'; // Muestra el modal
         });
@@ -346,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     regenerateAltBtn.addEventListener('click', async function() {
-        geminiPost(currentUrl);
+        geminiPost(modalUrl.value);
     });
 });
 </script>

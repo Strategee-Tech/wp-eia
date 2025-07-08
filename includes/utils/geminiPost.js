@@ -50,7 +50,8 @@ async function geminiPost(imageUrl) {
         body: JSON.stringify(requestBody)
     });
     const data = await response.json();
-    console.log(JSON.stringify(data));
+    const result = JSON.parse(data.candidates[0].content.parts[0].text);
+    console.log(JSON.stringify(result));
 }
 
 

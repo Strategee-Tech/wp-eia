@@ -240,19 +240,6 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 	    )
 	);
 
-	$wpdb->query(
-	    $wpdb->prepare(
-	        "
-	        UPDATE $tabla_indexable
-	        SET open_graph_image_meta = REPLACE(open_graph_image_meta, %s, %s)
-	        WHERE open_graph_image_meta LIKE %s
-	        ",
-	        $old_url,
-	        $new_url,
-	        '%' . $old_url . '%'
-	    )
-	);
-
 	// Actualizar tabla yoast_seo_links (url general)
 	$wpdb->query(
 	    $wpdb->prepare(
@@ -263,4 +250,39 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 	        $old_url
 	    )
 	);
+
+	// 1. Buscar todas las filas que contienen la URL antigua
+	$filas = $wpdb->get_results(
+	    $wpdb->prepare(
+	        "SELECT id, open_graph_image_meta FROM $tabla_indexable 
+	         WHERE open_graph_image_meta LIKE %s",
+	        '%' . $old_url . '%'
+	    ),
+	    ARRAY_A
+	);
+
+	// 2. Iterar sobre cada fila y actualizar si aplica
+	foreach ($filas as $fila) {
+	    $json = $fila['open_graph_image_meta'];
+	    $id   = $fila['id'];
+
+	    $meta = json_decode($json, true); // Convertir a array asociativo
+
+	    if (json_last_error() === JSON_ERROR_NONE && is_array($meta)) {
+	        // 3. Reemplazar solo la clave "url" si coincide
+	        if (isset($meta['url']) && $meta['url'] == $old_url) {
+	            $meta['url'] = $new_url;
+
+	            // 4. Codificar de nuevo el JSON
+	            $nuevo_json = wp_json_encode($meta);
+
+	            // 5. Actualizar en base de datos
+	            $wpdb->update(
+	                $tabla_indexable,
+	                ['open_graph_image_meta' => $nuevo_json],
+	                ['id' => $id]
+	            );
+	        }
+	    } 
+	}
 }

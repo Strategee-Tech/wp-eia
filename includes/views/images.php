@@ -353,6 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
         inputSlug.value = result.slug;
         statusMessage.textContent = 'Generado exitoso!';
         statusMessage.style.color = 'green';
+        
     });
 });
 </script>

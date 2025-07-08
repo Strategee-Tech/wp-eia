@@ -35,13 +35,7 @@ function geminiPost(imageUrl) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            model: 'gemini-2.0-flash',
-            messages: [{
-                role: 'user',
-                content: prompt
-            }]
-        })
+        body: JSON.stringify(requestBody)
     });
     const data = response.json();
     console.log(JSON.stringify(data));

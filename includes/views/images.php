@@ -345,6 +345,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
+    
     regenerateAltBtn.addEventListener('click', async function() {
         const result = await geminiPost(modalUrl.value);
         inputAlt.value = result.alt;
@@ -353,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
         inputSlug.value = result.slug;
         statusMessage.textContent = 'Generado exitoso!';
         statusMessage.style.color = 'green';
-        
+
     });
 });
 </script>

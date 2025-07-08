@@ -52,7 +52,7 @@ function get_all_images_in_uploads( $subfolder = '', $orderby = 'size_bytes', $o
                 p.post_id,
                 p.meta_value,
                 alt.meta_value as alt,
-                post.post_title
+                post.post_title,
                 post.post_content
             FROM 
                 {$wpdb->postmeta} as p

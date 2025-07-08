@@ -51,7 +51,7 @@ async function geminiPost(imageUrl) {
     });
     const data = await response.json();
     const result = JSON.parse(data.candidates[0].content.parts[0].text);
-    console.log(result);
+    return result;
 }
 
 

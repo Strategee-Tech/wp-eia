@@ -346,7 +346,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     regenerateAltBtn.addEventListener('click', async function() {
-        geminiPost(modalUrl.value);
+        const result = await geminiPost(modalUrl.value);
+        console.log(result);
+        inputAlt.value = result.alt;
+        inputTitle.value = result.title;
+        inputDescription.value = result.description;
+        inputSlug.value = result.slug;
     });
 });
 </script>

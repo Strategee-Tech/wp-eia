@@ -26,7 +26,20 @@ async function geminiPost(imageUrl) {
                     }
                 ]
             }
-        ]
+        ],
+        "generationConfig": {
+        "responseMimeType": "application/json",
+        "responseSchema": {
+          "type": "OBJECT",
+          "properties": {
+            "title": { "type": "STRING", "description": "Título conciso y descriptivo de la imagen." },
+            "description": { "type": "STRING", "description": "Descripción detallada de la imagen." },
+            "alt": { "type": "STRING", "description": "Texto alternativo para la imagen, optimizado para SEO y accesibilidad." },
+            "slug": { "type": "STRING", "description": "Slug amigable para URL, en minúsculas y con guiones." }
+          },
+          "required": ["title", "description", "alt", "slug"]
+        }
+      }
     };
 
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyB9Q9OQoIMSoJVz_00P5jsSt3eQmJbSK5c', {

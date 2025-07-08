@@ -34,7 +34,6 @@ function geminiPost(imageUrl) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer sk-proj-5f5bbfdcc63c1d31405daeeba9a8ee239130d438'
         },
         body: JSON.stringify({
             model: 'gemini-2.0-flash',

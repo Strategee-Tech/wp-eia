@@ -60,19 +60,18 @@ function optimization_files($request) {
 	    $new_filename = $slug . $ext;
 		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 
-		$dimensions = 'N/A';
-        $image_info = @getimagesize( $new_path );
-        if ( $image_info !== false ) {
-            $dimensions = $image_info[0] . 'x' . $image_info[1];
-        }
-        $file_size_bytes = filesize($new_path) / 1024;
-
-
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
     		unlink($original_path); // elimina el original
 	 	}	
     	rename($temp_img, $new_path); // renombra el WebP para que quede con el nuevo nombre
+
+    	$dimensions = 'N/A';
+        $image_info = @getimagesize( $new_path );
+        if ( $image_info !== false ) {
+            $dimensions = $image_info[0] . 'x' . $image_info[1];
+        }
+        $file_size_bytes = filesize($new_path) / 1024;
 
 		// Obtener la base de uploads
 		$wp_uploads_basedir = wp_get_upload_dir()['basedir'];

@@ -193,6 +193,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 <label for="modal-description">Descripción:</label><br>
                 <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
             </p>
+            <input type="hidden" id="modal-url" name="url" />
             <p>
                 <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
@@ -225,6 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelBtn = document.getElementById('cancel-metadata-btn');
     const statusMessage = document.getElementById('save-status-message');
     const regenerateAltBtn = document.getElementById('regenerate-alt-btn');
+    const modalUrl = document.getElementById('modal-url');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
@@ -255,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inputTitle.value = currentTitle;
             inputAlt.value = currentAlt;
             inputDescription.value = currentDescription;
-
+            modalUrl.value = currentUrl;
             modal.style.display = 'flex'; // Muestra el modal
         });
     });

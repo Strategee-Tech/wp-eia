@@ -20,7 +20,6 @@ function save_google_sheet($request) {
     $client->setDeveloperKey("AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik"); //cuenta notificaciones@strategee.us, password mercadeo93
 
 
-
     echo "<pre>";
     print_r($client);
     die(); 

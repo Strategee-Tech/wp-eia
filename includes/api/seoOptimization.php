@@ -262,27 +262,29 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 	);
 
 	// 2. Iterar sobre cada fila y actualizar si aplica
-	foreach ($filas as $fila) {
-	    $json = $fila['open_graph_image_meta'];
-	    $id   = $fila['id'];
+	if(!empty($filas)) {
+		foreach ($filas as $fila) {
+		    $json = $fila['open_graph_image_meta'];
+		    $id   = $fila['id'];
 
-	    $meta = json_decode($json, true); // Convertir a array asociativo
+		    $meta = json_decode($json, true); // Convertir a array asociativo
 
-	    if (json_last_error() === JSON_ERROR_NONE && is_array($meta)) {
-	        // 3. Reemplazar solo la clave "url" si coincide
-	        if (isset($meta['url']) && $meta['url'] == $old_url) {
-	            $meta['url'] = $new_url;
+		    if (json_last_error() === JSON_ERROR_NONE && is_array($meta)) {
+		        // 3. Reemplazar solo la clave "url" si coincide
+		        if (isset($meta['url']) && $meta['url'] == $old_url) {
+		            $meta['url'] = $new_url;
 
-	            // 4. Codificar de nuevo el JSON
-	            $nuevo_json = wp_json_encode($meta);
+		            // 4. Codificar de nuevo el JSON
+		            $nuevo_json = wp_json_encode($meta);
 
-	            // 5. Actualizar en base de datos
-	            $wpdb->update(
-	                $tabla_indexable,
-	                ['open_graph_image_meta' => $nuevo_json],
-	                ['id' => $id]
-	            );
-	        }
-	    } 
+		            // 5. Actualizar en base de datos
+		            $wpdb->update(
+		                $tabla_indexable,
+		                ['open_graph_image_meta' => $nuevo_json],
+		                ['id' => $id]
+		            );
+		        }
+		    } 
+		}
 	}
 }

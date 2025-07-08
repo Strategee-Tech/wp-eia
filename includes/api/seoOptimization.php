@@ -113,7 +113,7 @@ function optimization_files($request) {
     	regenerate_metadata($post->ID);
 
     	// Actualizar post_content y Yoast
-		update_yoast_info($new_url, $old_url, $post->ID);
+		update_yoast_info($new_url, $old_url, $post->ID, $wpdb);
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
@@ -194,7 +194,7 @@ function regenerate_metadata($attachment_id){
     }
 }
 
-function update_yoast_info($new_ulr, $old_url, $post_id) {
+function update_yoast_info($new_ulr, $old_url, $post_id, $wpdb) {
 	//actualizar post_content de una imagen dentro de una pagina
 	$wpdb->query(
 	    $wpdb->prepare(

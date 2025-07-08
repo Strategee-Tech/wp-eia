@@ -114,6 +114,10 @@ function optimization_files($request) {
 
     	// Actualizar post_content y Yoast
 		update_yoast_info($new_url, $old_url, $post->ID);
+
+		wp_cache_flush(); // Borra el object cache de WordPress
+		do_action('wpseo_clear_indexables'); // Limpia los indexables de Yoast
+
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);

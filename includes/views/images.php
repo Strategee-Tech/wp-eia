@@ -134,6 +134,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                                 data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
                                 data-attachment-slug="<?php echo esc_attr( $image['filename'] ); ?>"
                                 data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
+                                data-attachment-url="<?php echo esc_attr( $image['url'] ); ?>"
                             >
                                 <?php echo esc_html( $image['filename'] ); ?>
                             </span>
@@ -236,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     let resize = false;
-    
+
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {
 
@@ -245,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentAlt = this.dataset.attachmentAlt;
             const currentDescription = this.dataset.attachmentDescription;
             const currentSlug = this.dataset.attachmentSlug;
+            const currentUrl = this.dataset.attachmentUrl;
             resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
 
@@ -342,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     regenerateAltBtn.addEventListener('click', async function() {
-        const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=TU_API_KEY";
+        geminiPost(currentUrl);
     });
 });
 </script>

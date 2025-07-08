@@ -66,10 +66,16 @@ function optimization_files($request) {
 	 	}	
     	rename($temp_img, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
-    	$upload_dir    = wp_get_upload_dir();
-		$relative_path = str_replace($upload_dir['basedir'], '', $original_path);
-		$folder        = dirname($relative_path);
-		$new_url	   = trailingslashit($upload_dir['url']) . $new_filename;
+		// Obtener la base de uploads
+		$wp_uploads_basedir = wp_get_upload_dir()['basedir'];
+		$wp_uploads_baseurl = wp_get_upload_dir()['baseurl'];
+
+		// Obtener la subcarpeta donde está el archivo original
+		$relative_path = str_replace($wp_uploads_basedir, '', $original_path);  // /2025/06/Banner-Web2-intento-1.webp
+		$folder        = dirname($relative_path);                               // /2025/06
+
+		// Construir la nueva URL en la misma carpeta del archivo original
+		$new_url = trailingslashit($wp_uploads_baseurl . $folder) . $new_filename;
 
 		// Eliminar miniaturas
 		if(!empty($miniaturas)) {

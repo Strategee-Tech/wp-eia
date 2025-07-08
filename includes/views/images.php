@@ -235,7 +235,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const nonce = 'TU_NONCE_GENERADO_EN_PHP'; // <--- ¡IMPORTANTE! Genera esto con wp_create_nonce('wp_rest') en PHP y pásalo via wp_localize_script
 
 
-
+    let resize = false;
+    
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {
 
@@ -244,8 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentAlt = this.dataset.attachmentAlt;
             const currentDescription = this.dataset.attachmentDescription;
             const currentSlug = this.dataset.attachmentSlug;
-            const resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
-            console.log(resize.toString());
+            resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
 
             modalAttachmentIdSpan.textContent = currentAttachmentId;

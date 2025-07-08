@@ -61,8 +61,9 @@ function optimization_files($request) {
 	    }
 
 	    // Paso 3: Determinar el nuevo nombre (usando el slug)
-		$slug 	  = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
-		$new_path = $info['dirname'] . '/' . $slug . $ext;
+		$slug 	  	  = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
+		$new_path 	  = $info['dirname'] . '/' . $new_filename;
+	    $new_filename = $slug . $ext;
 
 	 	// Reemplazar el archivo original
 	 	if(file_exists($original_path)){
@@ -75,6 +76,8 @@ function optimization_files($request) {
 		$relative_path = str_replace($upload_dir['basedir'], '', $original_path);
 		$new_url 	   = $upload_dir['baseurl'] . $relative_path;
 		$folder        = dirname($relative_path);
+		$new_url	   = trailingslashit($upload_dir['baseurl']) . trailingslashit($relative_path) . $new_filename;
+
 
 
 		// Eliminar miniaturas
@@ -94,7 +97,7 @@ function optimization_files($request) {
     	//regenerate_metadata($post->ID);
 
 		//actualizar derivados del metadata
-    	//update_post_meta($post->ID, '_wp_attached_file', $folder.$slug.$ext);
+    	update_post_meta($post->ID, '_wp_attached_file', $folder.'/'.$new_filename);
 
 
     	echo "<pre>";
@@ -105,7 +108,7 @@ function optimization_files($request) {
     	echo "<br>";
     	print_r($folder);
     	echo "<br>";
-    	print_r($folder.$slug.$ext);
+    	print_r($folder.$new_filename);
     	echo "<br>";
 
 		die();

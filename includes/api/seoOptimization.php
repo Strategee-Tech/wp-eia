@@ -31,17 +31,26 @@ function optimization_files($request) {
     try {
 		global $wpdb;
 
-		$update_data = array();
-		$where       = array('ID' => $post->ID);
+		$update_data   = array();
+		$where         = array('ID' => $post->ID);
 
 		$original_path = get_attached_file($post->ID);
     	$info          = pathinfo($original_path);
     	$miniaturas    = find_all_related_thumbnails($original_path);
 
+    	// if(!empty($miniaturas)) {
+    	// 	foreach ($miniaturas as $key => $relative_path) {
+    	// 		if(file_exists($relative_path)) {
+    	// 			if(unlink($relative_path)) {
 
-    	// echo "<pre>";
-    	// print_r($miniaturas);
-    	// die(); 
+    	// 			} else {
+    	// 				echo "No eliminado: ".$relative_path;
+    	// 			}
+    	// 		}
+    	// 	}
+    	// }
+
+    	$old_url   = $post->guid;
 
     	// Crear archivo temporal WebP en la misma carpeta
     	$temp_webp = $info['dirname'] . '/' . $info['filename'] . '_temp.webp';
@@ -53,6 +62,19 @@ function optimization_files($request) {
 	    // if ($code !== 0 || !file_exists($temp_webp)) {
 	    //     return new WP_REST_Response(['status' => 'error', 'message' => 'No se pudo crear la imagen WebP'], 500);
 	    // }
+
+	 	// Reemplazar el archivo original
+    	//unlink($original_path); // elimina el original
+    	//rename($temp_webp, $original_path); // renombra el WebP para que quede con el nombre original
+
+    	$upload_dir    = wp_get_upload_dir();
+		$relative_path = str_replace($upload_dir['basedir'], '', $original_path);
+		$new_url 	   = $upload_dir['baseurl'] . $relative_path;
+
+		echo "GUID viejo: $old_url\n";
+		echo "GUID nuevo: $new_url\n";
+
+		die();
 
 		// Agrega solo si no está vacío
 		if (!empty($params['title'])) {
@@ -83,75 +105,7 @@ function optimization_files($request) {
 		}
 		//update_post_meta($post_id, '_wp_attached_file', $folder.$slug.'.webp');
 
-		if (!empty($params['old_url']) && !empty($params['new_url'])) {
-
-			$old_url = $params['old_url'];
-			$new_url = $params['new_url'];
-
-			//actualizar post_content de una imagen dentro de una pagina
-			//parametros: old_url, new_url
-			$wpdb->query(
-			    $wpdb->prepare(
-			        "UPDATE {$wpdb->posts} 
-			        SET post_content = REPLACE(post_content, %s, %s) 
-			        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-			        $old_url,
-			        $new_url,
-			        '%' . basename($old_url) . '%'
-			    )
-			);
-
-			$wpdb->query(
-			    $wpdb->prepare(
-			        "UPDATE {$wpdb->prefix}learnpress_courses 
-			        SET post_content = REPLACE(post_content, %s, %s) 
-			        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft')",
-			        $old_url,
-			        $new_url,
-			        '%' . basename($old_url) . '%'
-			    )
-			);
-
-			// Tabla de Yoast SEO
-			$tabla_yoast_seo_links = $wpdb->prefix . 'yoast_seo_links';
-			$tabla_indexable 	   = $wpdb->prefix . 'yoast_indexable';
-			 
-			// Obtener el indexable_id desde wp_yoast_seo_links
-			$indexable_id = $wpdb->get_var(
-			    $wpdb->prepare(
-			        "SELECT indexable_id FROM $tabla_yoast_seo_links 
-			         WHERE post_id = %d AND type = %s LIMIT 1",
-			        $post->ID,
-			        'image-in'
-			    )
-			);
-
-			if ($indexable_id) { 
-			    $wpdb->query(
-				    $wpdb->prepare(
-				        "UPDATE $tabla_indexable 
-				        SET open_graph_image = %s,
-				        twitter_image     = %s
-				        WHERE id = %d",
-				        $new_url,     // %s → open_graph_image
-				        $new_url,     // %s → twitter_image
-				        $indexable_id // %d → id
-				    )
-				);
-
-			    $wpdb->query(
-				    $wpdb->prepare(
-				        "UPDATE $tabla_yoast_seo_links
-				        SET url = %s
-				        WHERE post_id = %d AND url = %s AND type = %s",
-				        $new_url,
-				        $post->ID,
-				        $old_url,
-				        'image-in'
-				    )
-				);
-			}
-		}
+		
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
@@ -194,29 +148,24 @@ function basic_auth_permission_check($request) {
 }
 
 function find_all_related_thumbnails($original_path) {
-    $dir = dirname($original_path);
-    $filename = basename($original_path);
+    $dir 		   = dirname($original_path);
+    $filename 	   = basename($original_path);
     $filename_base = preg_replace('/\.[^.]+$/', '', $filename); // sin extensión
-
     $related_files = [];
 
     foreach (scandir($dir) as $file) {
         $full_path = $dir . '/' . $file;
-
         // Detecta:
         // - nombre-300x200.jpg
         // - nombre-scaled.jpg
         // - nombre-scaled-300x200.webp
         if (
-
             preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?(\.[a-z0-9]+){1,2}$/i', $file)
-
             //preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?\.[a-z0-9]+$/i', $file)
             && $full_path !== $original_path // no borres el original
         ) {
             $related_files[] = $full_path;
         }
     }
-
     return $related_files;
 }

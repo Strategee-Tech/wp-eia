@@ -74,7 +74,6 @@ function optimization_files($request) {
 
     	$upload_dir    = wp_get_upload_dir();
 		$relative_path = str_replace($upload_dir['basedir'], '', $original_path);
-		$new_url 	   = $upload_dir['baseurl'] . $relative_path;
 		$folder        = dirname($relative_path);
 		$new_url	   = trailingslashit($upload_dir['baseurl']) . trailingslashit($relative_path) . $new_filename;
 
@@ -101,6 +100,10 @@ function optimization_files($request) {
 
 
     	echo "<pre>";
+    	echo "<br>";
+
+    	echo "<br>";
+    	print_r($relative_path);
     	echo "<br>";
     	print_r($upload_dir);
     	echo "<br>";

@@ -60,6 +60,14 @@ function optimization_files($request) {
 	    $new_filename = $slug . $ext;
 		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 
+		$dimensions = 'N/A';
+        $image_info = @getimagesize( $new_path );
+        if ( $image_info !== false ) {
+            $dimensions = $image_info[0] . 'x' . $image_info[1];
+        }
+        $file_size_bytes = filesize($new_path) / 1024;
+
+
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
     		unlink($original_path); // elimina el original
@@ -123,7 +131,15 @@ function optimization_files($request) {
 
 		wp_cache_flush();
 
-        return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
+        return new WP_REST_Response(
+        	array(
+        		'status'        => 'success', 
+        		'message'       => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.',
+        		'new_url'       => $new_url,
+        		'size'          => $file_size_bytes,
+        		'new_name_file' => $new_filename,
+        		'dimensions'    => $dimensions,
+        	), 200);
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
     }

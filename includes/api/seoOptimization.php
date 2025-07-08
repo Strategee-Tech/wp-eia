@@ -115,8 +115,8 @@ function optimization_files($request) {
     	// Actualizar post_content y Yoast
 		update_yoast_info($new_url, $old_url, $post->ID);
 
-		wp_cache_flush(); // Borra el object cache de WordPress
-		do_action('wpseo_clear_indexables'); // Limpia los indexables de Yoast
+		wp_cache_flush();
+		do_action('wpseo_clear_indexables');
 
         return new WP_REST_Response(array('status' => 'success', 'message' => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.'), 200);
    	} catch (\Throwable $th) {
@@ -232,12 +232,25 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 	$wpdb->query(
 	    $wpdb->prepare(
 	        "UPDATE $tabla_indexable 
-	         SET open_graph_image = %s, twitter_image = %s
-	         WHERE open_graph_image = %s AND twitter_image = %s",
+	        SET open_graph_image = %s, twitter_image = %s
+	        WHERE open_graph_image = %s AND twitter_image = %s",
 	        $new_url,     // nuevo open_graph_image
 	        $new_url,     // nuevo twitter_image
 	        $old_url,     // viejo open_graph_image
 	        $old_url      // viejo twitter_image
+	    )
+	);
+
+	$wpdb->query(
+	    $wpdb->prepare(
+	        "
+	        UPDATE $tabla_indexable
+	        SET open_graph_image_meta = REPLACE(open_graph_image_meta, %s, %s)
+	        WHERE open_graph_image_meta LIKE %s
+	        ",
+	        $old_url,
+	        $new_url,
+	        '%' . $old_url . '%'
 	    )
 	);
 

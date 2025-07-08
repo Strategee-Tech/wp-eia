@@ -256,8 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
             inputAlt.value = currentAlt;
-            inputDescription.value = cur
-            rentDescription;
+            inputDescription.value = currentDescription;
             modalUrl.value = currentUrl;
             modal.style.display = 'flex'; // Muestra el modal
         });

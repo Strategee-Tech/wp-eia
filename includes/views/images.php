@@ -132,6 +132,8 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                                 data-attachment-title="<?php echo esc_attr( $image['title'] ); ?>"
                                 data-attachment-alt="<?php echo esc_attr( $image['alt'] ); ?>"
                                 data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
+                                data-attachment-slug="<?php echo esc_attr( $image['filename'] ); ?>"
+                                data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
                             >
                                 <?php echo esc_html( $image['filename'] ); ?>
                             </span>
@@ -175,6 +177,10 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
         <p>ID del adjunto: <span id="modal-attachment-id"></span></p>
         <form id="edit-metadata-form">
             <p>
+                <label for="modal-slug">Slug:</label><br>
+                <input type="text" id="modal-slug" name="slug" style="width: 100%;" />
+            </p>
+            <p>
                 <label for="modal-title">Título:</label><br>
                 <input type="text" id="modal-title" name="title" style="width: 100%;" />
             </p>
@@ -189,6 +195,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
             <p>
                 <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
+                <button type="button" id="regenerate-alt-btn" class="button">Generar Alt</button>
                 <span id="save-status-message" style="margin-left: 10px;"></span>
             </p>
         </form>
@@ -209,12 +216,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('edit-metadata-modal');
     const modalAttachmentIdSpan = document.getElementById('modal-attachment-id');
     const form = document.getElementById('edit-metadata-form');
+    const inputSlug = document.getElementById('modal-slug');
     const inputTitle = document.getElementById('modal-title');
     const inputAlt = document.getElementById('modal-alt');
     const inputDescription = document.getElementById('modal-description');
     const saveBtn = document.getElementById('save-metadata-btn');
     const cancelBtn = document.getElementById('cancel-metadata-btn');
     const statusMessage = document.getElementById('save-status-message');
+    const regenerateAltBtn = document.getElementById('regenerate-alt-btn');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
@@ -234,8 +243,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentTitle = this.dataset.attachmentTitle;
             const currentAlt = this.dataset.attachmentAlt;
             const currentDescription = this.dataset.attachmentDescription;
+            const currentSlug = this.dataset.attachmentSlug;
+            const resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
+            
 
             modalAttachmentIdSpan.textContent = currentAttachmentId;
+            inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
             inputAlt.value = currentAlt;
             inputDescription.value = currentDescription;
@@ -270,7 +283,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const updatedData = {
             title: inputTitle.value,
             alt: inputAlt.value,
-            description: inputDescription.value
+            description: inputDescription.value,
+            slug: inputSlug.value
         };
 
         try {
@@ -287,7 +301,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: updatedData.title,
                     alt_text: updatedData.alt, // Para el alt text, el campo es 'alt_text' en la API
                     description: updatedData.description,
-                    post_id: currentAttachmentId
+                    slug: updatedData.slug,
+                    post_id: currentAttachmentId,
+                    resize: resize
                 })
             });
 
@@ -322,6 +338,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             saveBtn.disabled = false; // Habilita el botón de nuevo
         }
+    });
+
+    regenerateAltBtn.addEventListener('click', async function() {
+        const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=TU_API_KEY";
     });
 });
 </script>

@@ -30,7 +30,7 @@ function geminiPost(imageUrl) {
 
 
 
-    const response = fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCgo9gEgPrCp_81LGuxLh5rpEgdWCkmeBA', {
+    const response = fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyB9Q9OQoIMSoJVz_00P5jsSt3eQmJbSK5c', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

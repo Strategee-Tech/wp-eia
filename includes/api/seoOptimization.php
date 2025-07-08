@@ -97,8 +97,11 @@ function optimization_files($request) {
 
 
     	echo "<pre>";
+    	echo "<br>";
     	print_r($old_url);
+    	echo "<br>";
     	print_r($new_url);
+    	echo "<br>";
     	print_r($relative_path);
     	
 

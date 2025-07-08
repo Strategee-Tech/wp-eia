@@ -347,11 +347,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     regenerateAltBtn.addEventListener('click', async function() {
         const result = await geminiPost(modalUrl.value);
-        console.log(result);
         inputAlt.value = result.alt;
         inputTitle.value = result.title;
         inputDescription.value = result.description;
         inputSlug.value = result.slug;
+        statusMessage.textContent = 'Generado exitoso!';
+        statusMessage.style.color = 'green';
     });
 });
 </script>

@@ -262,12 +262,12 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 	);
 
 
-	echo "<pre>";
-	print_r($old_url);
-	echo "<br>";
+	// echo "<pre>";
+	// print_r($old_url);
+	// echo "<br>";
 
- 	print_r($filas);
-	echo "<br>"; 
+ // 	print_r($filas);
+	// echo "<br>"; 
 
 
 	// 2. Iterar sobre cada fila y actualizar si aplica
@@ -278,8 +278,8 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 
 		    $meta = json_decode($json, true); // Convertir a array asociativo
 
-		    print_r($meta);
-			die(); 
+		 //    print_r($meta);
+			// die(); 
 
 		    if (json_last_error() === JSON_ERROR_NONE && is_array($meta)) {
 		        // 3. Reemplazar solo la clave "url" si coincide

@@ -1,65 +1,125 @@
 <?php
+
 /**
- * Función para obtener todas las imágenes del directorio de uploads o de una subcarpeta específica.
- * Excluye miniaturas y filtra opcionalmente por si están vinculadas o no a attachments .
+ * Obtiene imágenes paginadas de una subcarpeta específica de uploads,
+ * incluyendo metadatos para SEO y detalles de paginación.
  *
- * @param string $subfolder        Carpeta relativa dentro de uploads (ej: '2024/06' o 'mis-imagenes-api').
- * @param string $orderby          Columna por la que ordenar (size_bytes, is_attachment, modified_date).
- * @param string $order            Dirección de ordenación (asc o desc).
- * @return array Lista de arrays de imágenes.
+ * @param string $subfolder La subcarpeta dentro de wp-content/uploads/ (ej. '2025/06').
+ * @param int    $page      El número de página actual (por defecto 1).
+ * @param int    $per_page  El número de elementos por página (por defecto 10).
+ * @return array Un array asociativo con los registros de imágenes y los datos de paginación.
  */
 function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
-
     global $wpdb;
 
-    $upload_dir_info    = wp_upload_dir();
-    $base_upload_path   = trailingslashit( $upload_dir_info['basedir'] );
-    $base_upload_url    = trailingslashit( $upload_dir_info['baseurl'] );
+    // Aseguramos que $page y $per_page sean enteros positivos
+    $page = max( 1, intval( $page ) );
+    $per_page = max( 1, intval( $per_page ) );
 
-    $start_path         = $base_upload_path;
+    // Calcular el offset para la consulta SQL
+    $offset = ( $page - 1 ) * $per_page;
+
+    // --- Preparación de la cláusula WHERE para el subfolder ---
+    $subfolder_sql_condition = '';
+    $subfolder_sql_params = [];
+
+    // Si se especifica un subfolder, lo añadimos a la condición WHERE
+    // Y lo preparamos con $wpdb->prepare y $wpdb->esc_like para seguridad
     if ( ! empty( $subfolder ) ) {
-        $start_path    .= trailingslashit( $subfolder );
+        // Aseguramos que el path del subfolder termine con barra para coincidencia exacta de directorio
+        $clean_subfolder = trailingslashit( sanitize_text_field( $subfolder ) );
+        // La condición LIKE buscará la ruta relativa del archivo
+        $subfolder_sql_condition = " AND pm_file.meta_value LIKE %s";
+        // El comodín % se añade aquí, no en el %s, y envolvemos el subfolder con barras
+        $subfolder_sql_params[] = '%' . $wpdb->esc_like( $clean_subfolder ) . '%';
     }
-    
+
+    // --- 1. Consulta para el TOTAL de registros (sin paginación) ---
+    // Usamos COUNT(*) para obtener el número total de imágenes que cumplen los criterios
+    $total_query = $wpdb->prepare(
+        "SELECT COUNT(p.ID)
+        FROM " . $wpdb->posts . " AS p
+        JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
+        WHERE
+            p.post_type = 'attachment'
+            AND p.post_mime_type LIKE 'image/%'"
+            . $subfolder_sql_condition, // Añadimos la condición de subfolder
+        ...$subfolder_sql_params     // Pasamos los parámetros de subfolder si existen
+    );
+    $total_records = $wpdb->get_var( $total_query ); // Ejecutamos la consulta y obtenemos el conteo
+
+    // Calcular las páginas totales
+    $total_pages = ceil( $total_records / $per_page );
+
+    // Aseguramos que la página actual no exceda el total de páginas si no hay registros
+    if ( $total_records > 0 && $page > $total_pages ) {
+        $page = $total_pages; // Redirigir a la última página si la solicitada es muy alta
+        $offset = ( $page - 1 ) * $per_page; // Recalcular offset
+    } elseif ( $total_records === 0 ) {
+        $page = 0; // No hay páginas si no hay registros
+    }
+
+
+    // --- 2. Consulta para los registros de la PÁGINA ACTUAL ---
     try {
-
-        echo $subfolder;
-        
-
-        $attachments_in_folder = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT
-                    p.ID AS attachment_id,
-                    p.post_title,
-                    p.post_name,
-                    p.guid AS attachment_url,
-                    p.post_mime_type,
-                    p.post_content AS image_description,
-                    p.post_excerpt AS image_legend,
-                    pm_file.meta_value AS file_path_relative,
-                    pm_alt.meta_value AS image_alt_text
-                FROM " . $wpdb->posts . " AS p -- ¡AQUÍ ESTÁ LA CLÁUSULA FROM FALTANTE!
-                JOIN
-                    " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
-                LEFT JOIN
-                    " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
-                WHERE
-                    p.post_type = 'attachment'
-                    AND p.post_mime_type LIKE 'image/%'
-                    AND pm_file.meta_value LIKE %s", // El LIKE %s ya maneja el comodín '%'
-                '%' . $wpdb->esc_like($subfolder) . '/%' // Asegura que coincida con un subfolder
-            ),
-            ARRAY_A
+        $attachments_query = $wpdb->prepare(
+            "SELECT
+                p.ID AS attachment_id,
+                p.post_title,
+                p.post_name,
+                p.guid AS attachment_url,
+                p.post_mime_type,
+                p.post_content AS image_description,
+                p.post_excerpt AS image_legend,
+                pm_file.meta_value AS file_path_relative,
+                pm_alt.meta_value AS image_alt_text
+            FROM " . $wpdb->posts . " AS p
+            JOIN
+                " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
+            LEFT JOIN
+                " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
+            WHERE
+                p.post_type = 'attachment'
+                AND p.post_mime_type LIKE 'image/%'"
+                . $subfolder_sql_condition . "
+            ORDER BY
+                p.post_date DESC -- O el orden que prefieras, ej. p.post_title ASC
+            LIMIT %d OFFSET %d", // Cláusulas LIMIT y OFFSET para la paginación
+            ...$subfolder_sql_params, // Parámetros para la condición del subfolder
+            $per_page,                // Parámetro para LIMIT
+            $offset                   // Parámetro para OFFSET
         );
-        
-        return $attachments_in_folder;
 
+        $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
-    } catch (\Throwable $th) {
-        error_log( 'WPIL Error iterating directory: ' . $th->getMessage() . ' for path: ' . $start_path );
-        return array();
+        // --- 3. Calcular los datos de paginación para retornar ---
+        $current_page_count = count( $attachments_in_folder ); // Cantidad de registros en la página actual
+
+        $pagination_data = [
+            'records'        => $attachments_in_folder,        // Los registros de la página actual
+            'current_page'   => $page,                          // Página actual
+            'total_pages'    => $total_pages,                   // Total de páginas disponibles
+            'total_records'  => (int) $total_records,           // Total de registros que cumplen el criterio
+            'records_per_page' => $per_page,                    // Registros mostrados por página
+            'records_on_current_page' => $current_page_count,   // Cantidad de registros en la página actual
+            'prev_page'      => ( $page > 1 ) ? $page - 1 : null, // Página anterior (o null si es la primera)
+            'next_page'      => ( $page < $total_pages ) ? $page + 1 : null, // Página siguiente (o null si es la última)
+        ];
+
+        return $pagination_data;
+
+    } catch ( \Throwable $th ) {
+        // Registra cualquier error que ocurra durante la consulta o el procesamiento
+        error_log( 'WPIL Error fetching paginated images: ' . $th->getMessage() . ' for subfolder: ' . $subfolder );
+        return [
+            'records'        => [],
+            'current_page'   => $page,
+            'total_pages'    => 0,
+            'total_records'  => 0,
+            'records_per_page' => $per_page,
+            'records_on_current_page' => 0,
+            'prev_page'      => null,
+            'next_page'      => null,
+        ];
     }
 }
-
-
-?>

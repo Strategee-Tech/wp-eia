@@ -74,7 +74,9 @@ $image_data = getPaginatedImages($page, $per_page);
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
-                        <td><?php echo esc_html( $image['optimization_status'] ); ?></td>
+                        <td>
+                            <?php echo esc_html( $image['optimization_status'] ); ?>
+                        </td>
                         <td>
                             <span 
                                 style="cursor: pointer;"

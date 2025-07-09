@@ -235,6 +235,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
         height: 20px;
         fill: #2171b1;
     }
+    
 </style>
 
 

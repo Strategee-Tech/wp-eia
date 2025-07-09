@@ -116,14 +116,20 @@ $total_size_bytes = array_sum( array_column( $documents, 'size_bytes' ) );
                         <td><?php echo esc_html( number_format( $document['size_kb'], 2 ) ); ?></td>
                         <td>
                             <?php
-                            if ( $document['is_attachment'] ) {								
-                                echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $document['attachment_id'] ) . ')';
+                            if ( $document['esta_en_uso'] ) {
+                                if ( $document['is_attachment'] ) {
+                                    echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> Sí (ID: ' . esc_html( $document['attachment_id'] ) . ')';
+                                } elseif ( $document['en_contenido'] ) {
+                                    echo '<span class="dashicons dashicons-media-text" style="color: orange;"></span> En contenido';
+                                } elseif ( $document['en_programa'] ) {
+                                    echo '<span class="dashicons dashicons-welcome-learn-more" style="color: orange;"></span> En LearnPress';
+                                } elseif ( $document['en_postmeta'] ) {
+                                    echo '<span class="dashicons dashicons-admin-generic" style="color: orange;"></span> En postmeta';
+                                } else {
+                                    echo '<span class="dashicons dashicons-warning" style="color: orange;"></span> En uso (no identificado)';
+                                }
                             } else {
-								if( !$document['en_contenido'] ) {
-                                	echo '<span class="dashicons dashicons-no-alt" style="color: red;"></span> No Content';									
-								} else {
-                                	echo '<span class="dashicons dashicons-no-alt" style="color: green;"></span> En contenido';									
-								}
+                                echo '<span class="dashicons dashicons-no-alt" style="color: red;"></span> Se puede eliminar';
                             }
                             ?>
                         </td>

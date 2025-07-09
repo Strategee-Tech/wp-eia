@@ -16,7 +16,7 @@ function save_google_sheet($request) {
     $datos = $request->get_json_params();
 
     if (!$datos) {
-        return new WP_REST_Response(['error' => 'No se enviaron datos'], 400);
+        return new WP_REST_Response(['error' => 'No se enviaron datos.'], 400);
     }
 
     try {

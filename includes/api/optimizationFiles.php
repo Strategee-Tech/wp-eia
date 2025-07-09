@@ -38,6 +38,8 @@ function optimization($request) {
 	}
 
 	try {
+		global $wpdb;
+		
 		$where          = array('ID' => $post->ID);
 		$slug           = sanitize_file_name($params['slug']);
 		$slug_unico     = slug_unico($slug, $params['post_id']);

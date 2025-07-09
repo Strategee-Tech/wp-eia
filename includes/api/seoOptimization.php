@@ -21,10 +21,8 @@ function wp_optimization_seo_files() {
 }
 
 function optimization_files($request) {
-	// Obtener todos los parámetros de la solicitud POST
     $params = $request->get_params();
 
-    // Validar si se envió el ID del post
 	if (empty($params['post_id'])) {
 		return new WP_REST_Response(array('status' => 'error', 'message' => 'El parámetro post_id es obligatorio.'), 400);
 	}
@@ -35,7 +33,7 @@ function optimization_files($request) {
 	}
 
 	$original_path = get_attached_file( $params['post_id'] );
-    if ( ! file_exists( $original_path ) ) {
+    if (!file_exists($original_path)) {
         return new WP_REST_Response( array( 'error' => 'Archivo no encontrado.' ), 404 );
     }
     
@@ -99,6 +97,7 @@ function optimization_files($request) {
 
 		// Construir la nueva URL en la misma carpeta del archivo original
 		$new_url = trailingslashit($wp_uploads_baseurl . $folder) . $new_filename;
+		$new_url = esc_url_raw($new_url);
 
 		// Eliminar miniaturas
 		if(!empty($miniaturas)) {
@@ -111,13 +110,13 @@ function optimization_files($request) {
 
 		// Agrega solo si no está vacío
 		if (!empty($params['title'])) {
-			$update_data['post_title'] = $params['title'];
+			$update_data['post_title'] = sanitize_text_field($params['title']);
 		}
 		if (!empty($params['description'])) {
-			$update_data['post_content'] = $params['description'];
+			$update_data['post_content'] = sanitize_textarea_field($params['description']);
 		} 
 		if (!empty($params['legend'])) {
-			$update_data['post_excerpt'] = $params['legend'];
+			$update_data['post_excerpt'] = sanitize_text_field($params['legend']);
 		} 
 		if (!empty($params['slug'])) {
 			$update_data['post_name'] = $params['slug'];

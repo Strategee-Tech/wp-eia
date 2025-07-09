@@ -36,7 +36,7 @@ function save_google_sheet($request) {
             [
                 $datos['nombre'] ?? '',
                 $datos['correo'] ?? '',
-                $datos['correo'] ?? '',
+                $datos['correo'] ?? 'e',
                 date('Y-m-d H:i:s')
             ]
         ];

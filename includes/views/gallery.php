@@ -28,20 +28,60 @@ $image_data = getPaginatedImages($page, $per_page);
                 <label for="status">Estado de Optimización</label>
                 <select name="status" id="">
                     <option value="all">Todos</option>
+                    <option value="optimized">Pendientes</option>
+                    <option value="not_optimized">Por optimizar</option>
                     <option value="optimized">Optimizadas</option>
-                    <option value="not_optimized">No optimizadas</option>
+                    <option value="deleted">Eliminar</option>
                 </select>
             </div>
             <div>
-                <label for="status">Estado de Uso</label>
-                <select name="status" id="">
+                <label for="year">Año</label>
+                <select name="year" id="">
                     <option value="all">Todos</option>
-                    <option value="used">Usadas</option>
-                    <option value="not_used">No usadas</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                </select>
+            </div>
+            <div>
+                <label for="month">Mes</label>
+                <select name="month" id="">
+                    <option value="all">Todos</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
                 </select>
             </div>
         </div>
-        <button class="button button-primary" type="submit">Filtrar</button>
+        <div style='flex-grow: 1;'></div>
+        <button class="button button-primary" type="submit">
+            <span class="dashicons dashicons-filter"></span>
+            Filtrar
+        </button>
+        <button class="button button-primary" type="button">
+            <span class="dashicons dashicons-admin-dashboard"></span>
+            Optimizar
+        </button>
+        <button class="button button-primary" type="button">
+            <span class="dashicons dashicons-admin-search"></span>
+            Escanear
+        </button>
+        <button class="button button-primary" type="button">
+            <span class="dashicons dashicons-trash"></span>
+            Eliminar
+        </button>
     </form>
 
     <table class="wp-list-table widefat fixed striped">
@@ -162,6 +202,14 @@ $image_data = getPaginatedImages($page, $per_page);
     .filter-container {
         display: flex;
         margin-bottom: 10px;
+        gap: 8px;
+    }
+
+    .filter-container button {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-direction: column;
     }
     .filter-container > div {
         display: flex;

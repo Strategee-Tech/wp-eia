@@ -26,18 +26,25 @@ function save_google_sheet($request) {
         $client->addScope(Google_Service_Sheets::SPREADSHEETS);
 
         // ID de la hoja y rango donde se insertarán datos
-        $spreadsheetId = '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM'; // ejemplo: 1xA2B3C...etc
-        $range = 'Imagenes!A1'; // puede ser solo 'A1' si no tienes varias hojas
-
+        $spreadsheetId = $datos['id_sheet'];
+        $range   = $datos['sheet'];
+        
         $service = new Google_Service_Sheets($client);
 
         // Armar los datos a insertar (debes adaptar a lo que recibes)
         $valores = [
             [
-                $datos['nombre'] ?? '',
-                $datos['correo'] ?? '',
-                $datos['correo'] ?? 'e',
-                date('Y-m-d H:i:s')
+                $datos['fecha'],
+                $datos['new_url'],      
+                $datos['peso_antes'],
+                $datos['peso_despues'],
+                $datos['alt_text_opt'],
+                $datos['slug_opt'],
+                $datos['title_opt'],
+                $datos['description_opt'],
+                $datos['format_opt'],
+                $datos['size_opt'], 
+                $datos['ia' ]
             ]
         ];
 

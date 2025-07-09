@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Bogota');
 
 if ( ! function_exists( 'wp_crop_image' ) ) {
     include( ABSPATH . 'wp-admin/includes/image.php' );
@@ -30,6 +31,25 @@ function optimization_files($request) {
     
     try {
 		global $wpdb;
+
+		$datos_drive = array(
+			'fecha' 	      => date('Y-m-d H:i:s'),
+			'new_url'         => 'https://url.com/',
+			'peso_antes'      => 22,
+			'peso_despues'    => 12,
+			'alt_text_opt'    => 'alt text 1',
+			'slug_opt' 	      => 'slug 1',
+			'title_opt'       => 'title 1',
+			'description_opt' => 'prueba 1',
+			'format_opt'      => 'image/webp',
+			'size_opt'    	  => 'prueba 1', 
+			'ia'              => $params['ia'] == true ? 'Si' : 'No',
+			'id_sheet'        => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
+			'sheet'           => 'Imagenes!A1',
+		);
+
+		$respuesta 	   = save_google_sheet($datos_drive); // Llamada directa
+
 
 		$update_data   = array();
 		$where         = array('ID' => $post->ID);

@@ -151,6 +151,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                         <td><?php echo esc_html( $image['alt'] ); ?></td>
                         <td>
                             <span 
+                                style="cursor: pointer;"
                                 class="edit-attachment-trigger dashicons dashicons-edit"
                                 data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
                                 data-attachment-title="<?php echo esc_attr( $image['title'] ); ?>"
@@ -161,7 +162,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                                 data-attachment-url="<?php echo esc_attr( $image['url'] ); ?>"
                             ></span>
                             <a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank">
-                                <span class="dashicons dashicons-admin-links"></span>
+                                <span class="dashicons dashicons-visibility"></span>
                             </a>
                         </td>
                     </tr>

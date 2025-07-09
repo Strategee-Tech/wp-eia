@@ -7,11 +7,10 @@
  *
  * @param int    $page       El número de página actual (por defecto 1).
  * @param int    $per_page   El número de elementos por página (por defecto 10).
- * @param string|null $optimized  Filtra por estado de optimización (ej. 'optimized', 'pending'). Null para no filtrar.
- * @param string|null $used       Filtra por estado de uso (ej. 'used', 'unused'). Null para no filtrar.
+ * @param string|null $status  Filtra por estado de optimización (ej. 'optimized', 'pending'). Null para no filtrar.
  * @return array Un array asociativo con los registros de imágenes y los datos de paginación.
  */
-function getPaginatedImages( $page = 1, $per_page = 10, $optimized = null, $used = null ) {
+function getPaginatedImages( $page = 1, $per_page = 10, $status = null ) {
     global $wpdb;
 
     // Aseguramos que $page y $per_page sean enteros positivos
@@ -29,15 +28,9 @@ function getPaginatedImages( $page = 1, $per_page = 10, $optimized = null, $used
     $query_params = []; // Array para almacenar los parámetros de prepare
 
     // Condición para el estado de optimización
-    if ( ! is_null( $optimized ) && ! empty( $optimized ) ) {
+    if ( ! is_null( $status ) && ! empty( $status ) ) {
         $where_conditions[] = "pm_optimized.meta_value = %s";
-        $query_params[] = sanitize_text_field( $optimized );
-    }
-
-    // Condición para el estado de uso
-    if ( ! is_null( $used ) && ! empty( $used ) ) {
-        $where_conditions[] = "pm_used.meta_value = %s";
-        $query_params[] = sanitize_text_field( $used );
+        $query_params[] = sanitize_text_field( $status );
     }
 
     // Unir todas las condiciones WHERE
@@ -53,8 +46,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $optimized = null, $used
         FROM " . $wpdb->posts . " AS p
         JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
         LEFT JOIN " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
-        LEFT JOIN " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = 'stg_optimized_status'
-        LEFT JOIN " . $wpdb->postmeta . " AS pm_used ON p.ID = pm_used.post_id AND pm_used.meta_key = 'stg_used_status'
+        LEFT JOIN " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimization_status'
         WHERE " . $where_clause,
         ...$total_query_params // Now this is the ONLY argument after the format string
     );
@@ -89,17 +81,14 @@ function getPaginatedImages( $page = 1, $per_page = 10, $optimized = null, $used
                 p.post_excerpt AS image_legend,
                 pm_file.meta_value AS file_path_relative,
                 pm_alt.meta_value AS image_alt_text,
-                pm_optimized.meta_value AS optimization_status,
-                pm_used.meta_value AS usage_status
+                pm_optimized.meta_value AS optimization_status
             FROM " . $wpdb->posts . " AS p
             JOIN
                 " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
             LEFT JOIN
                 " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
             LEFT JOIN
-                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = 'stg_optimized_status'
-            LEFT JOIN
-                " . $wpdb->postmeta . " AS pm_used ON p.ID = pm_used.post_id AND pm_used.meta_key = 'stg_used_status'
+                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimization_status'
             WHERE " . $where_clause . "
             ORDER BY
                 p.post_date DESC

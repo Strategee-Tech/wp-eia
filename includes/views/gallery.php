@@ -52,6 +52,7 @@ $image_data = getPaginatedImages($page, $per_page);
                 <th>Título</th>
                 <th>slug</th>
                 <th>Alt</th>
+                <th style="width: 100px;">Estado</th>
                 <th style="width: 100px;">Acciones</th>
             </tr>
         </thead>
@@ -73,6 +74,7 @@ $image_data = getPaginatedImages($page, $per_page);
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
+                        <td><?php echo esc_html( $image['optimization_status'] ); ?></td>
                         <td>
                             <span 
                                 style="cursor: pointer;"
@@ -85,6 +87,9 @@ $image_data = getPaginatedImages($page, $per_page);
                                 data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
                                 data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>"
                             ></span>
+                            <?php if ( $image['usage'] ) : ?>
+                                <span class="dashicons dashicons-trash"></span>
+                            <?php endif; ?>
                             <a href="<?php echo esc_url( $image['attachment_url'] ); ?>" target="_blank">
                                 <span class="dashicons dashicons-visibility"></span>
                             </a>
@@ -149,13 +154,22 @@ $image_data = getPaginatedImages($page, $per_page);
             </div>
         </div>
     <?php endif; ?>
-
-
-
-
-
-
 </div>
+
+<style>
+    .filter-container {
+        display: flex;
+        gap: 10px;
+    }
+    .filter-container > div {
+        display: flex;
+        flex-direction: column;
+    }
+    .filter-container > div > label {
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+</style>
 
 <?php
 echo '<pre>';

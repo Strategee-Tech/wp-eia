@@ -10,6 +10,7 @@ async function geminiPost(imageUrl) {
     
     Asegúrate de que la salida sea un objeto JSON **estrictamente válido** y nada más.`.trim(); 
 
+    
     const base64Image = await imageUrlToBase64(imageUrl);
 
     const requestBody = {

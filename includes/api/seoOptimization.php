@@ -136,8 +136,8 @@ function optimization_files($request) {
 		$datos_drive = array(
 			'fecha' 	      => date('Y-m-d H:i:s'),
 			'new_url'         => $new_url,
-			'peso_antes'      => $file_size_bytes_before,
-			'peso_despues'    => $file_size_bytes_after,
+			'peso_antes'      => number_format($file_size_bytes_before),
+			'peso_despues'    => number_format($file_size_bytes_after),
 			'alt_text_opt'    => $params['alt_text'],
 			'slug_opt' 	      => $params['slug'],
 			'title_opt'       => $params['title'],
@@ -149,7 +149,7 @@ function optimization_files($request) {
 			'sheet'           => 'Imagenes!A1',
 		);
 
-		$respuesta 	   = save_google_sheet($datos_drive); // Llamada directa
+		$respuesta = save_google_sheet($datos_drive); // Llamada directa
 
         return new WP_REST_Response(
         	array(

@@ -159,10 +159,13 @@ $image_data = getPaginatedImages($page, $per_page);
 <style>
     .filter-container {
         display: flex;
-        gap: 10px;
         margin-bottom: 10px;
     }
     .filter-container > div {
+        display: flex;
+        gap: 10px;
+    }
+    .filter-container > div > div {
         display: flex;
         flex-direction: column;
     }

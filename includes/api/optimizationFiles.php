@@ -39,7 +39,7 @@ function optimization($request) {
 
 	try {
 		global $wpdb;
-		
+
 		$where          = array('ID' => $post->ID);
 		$slug           = sanitize_file_name($params['slug']);
 		$slug_unico     = slug_unico($slug, $params['post_id']);
@@ -56,9 +56,11 @@ function optimization($request) {
 
 		// Ruta completa a ffmpeg
 		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
+		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac'];
+
 
 		// Si NO es PDF → Comprimir con FFmpeg
-		if ($ext != 'pdf') {
+		if (in_array($ext, $ext_multimedia)) {
 
 			$temp_path  = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
@@ -73,7 +75,7 @@ function optimization($request) {
 
 			if ($return_code !== 0 || !file_exists($temp_path)) {
 				return new WP_REST_Response([
-					'error'     => 'Error al comprimir con FFmpeg.',
+					'message'   => 'Error al comprimir con FFmpeg.',
 					'cmd'       => $ffmpeg_cmd,
 					'output'    => $output,
 					'exit_code' => $return_code,
@@ -85,6 +87,8 @@ function optimization($request) {
     			rename($temp_path, $new_path);
 			}
 			$file_size_bytes_after = filesize($new_path);
+		} else {
+			return new WP_REST_Response(['status' => 'error', 'message' => __('La extensión del archivo no se puede comprimir.')], 500);
 		}
 
 		// Obtener ruta relativa y URL pública

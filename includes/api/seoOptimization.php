@@ -58,6 +58,10 @@ function optimization_files($request) {
 
 	    // Determinar el nuevo nombre (usando el slug)
 		$slug 	  	  = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
+	    	
+	    //Determinamos si es el slug es duplicado
+        $slug   	  = wp_unique_post_slug($slug, 0, 'inherit', 'attachment', 0);
+
 	    $new_filename = $slug . $ext;
 		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 

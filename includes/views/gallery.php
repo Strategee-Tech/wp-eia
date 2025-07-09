@@ -52,7 +52,7 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
 
 <div class="wrap">
 
-    <form method="get" class="filter-container" action="">
+    <form id="filter-form" method="get" class="filter-container" action="">
         <div>
             <input type="hidden" name="page" value="gallery" />
             <input type="hidden" name="scan" value="0">
@@ -100,19 +100,19 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
             </div>
         </div>
         <div style='flex-grow: 1;'></div>
-        <button class="btn" type="submit">
+        <button id="filter-btn" class="btn" type="submit">
             <span class="dashicons dashicons-filter"></span>
             Filtrar
         </button>
-        <button class="btn" type="button">
+        <button id="scan-btn" class="btn" type="button">
             <span class="dashicons dashicons-search"></span>
             Escanear
         </button>
-        <button class="btn" type="button">
+        <button id="optimize-btn" class="btn" type="button">
             <span class="dashicons dashicons-dashboard"></span>
             Optimizar
         </button>
-        <button class="btn delete-btn" type="button">
+        <button id="delete-btn" class="btn delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
             Eliminar
         </button>
@@ -231,6 +231,31 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scanBtn = document.querySelector('.scan-btn');
+        const deleteBtn = document.querySelector('.delete-btn');
+        const optimizeBtn = document.querySelector('.optimize-btn');
+        const filterBtn = document.querySelector('.filter-btn');
+        const filterForm = document.querySelector('#filter-form');
+
+        scanBtn.addEventListener('click', function() {
+            filterForm.submit();
+        });
+        deleteBtn.addEventListener('click', function() {
+            filterForm.submit();
+        });
+        optimizeBtn.addEventListener('click', function() {
+            filterForm.submit();
+        });
+        filterBtn.addEventListener('click', function() {
+            filterForm.submit();
+        });
+    });
+
+
+</script>
 
 <style>
     .filter-container {

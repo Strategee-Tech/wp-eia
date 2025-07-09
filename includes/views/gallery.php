@@ -21,6 +21,29 @@ $image_data = getPaginatedImages($page, $per_page);
 
 
 <div class="wrap">
+
+    <form action="">
+        <div>
+            <div>
+                <label for="status">Estado de Optimización</label>
+                <select name="status" id="">
+                    <option value="all">Todos</option>
+                    <option value="optimized">Optimizadas</option>
+                    <option value="not_optimized">No optimizadas</option>
+                </select>
+            </div>
+            <div>
+                <label for="status">Estado de Uso</label>
+                <select name="status" id="">
+                    <option value="all">Todos</option>
+                    <option value="used">Usadas</option>
+                    <option value="not_used">No usadas</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit">Filtrar</button>
+    </form>
+
     <table class="wp-list-table widefat fixed striped">
         <thead>
             <tr>
@@ -48,7 +71,7 @@ $image_data = getPaginatedImages($page, $per_page);
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
-                        <td><?php echo esc_html( $image['post_name'] ); ?></td>
+                        <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
                         <td>
                             <span 
@@ -60,9 +83,9 @@ $image_data = getPaginatedImages($page, $per_page);
                                 data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
                                 data-attachment-slug="<?php echo esc_attr( $image['filename'] ); ?>"
                                 data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
-                                data-attachment-url="<?php echo esc_attr( $image['url'] ); ?>"
+                                data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>"
                             ></span>
-                            <a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank">
+                            <a href="<?php echo esc_url( $image['attachment_url'] ); ?>" target="_blank">
                                 <span class="dashicons dashicons-visibility"></span>
                             </a>
                         </td>

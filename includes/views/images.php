@@ -179,24 +179,24 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
 <div id="edit-metadata-modal" style="display: none; background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
         <h3>Optimizar Imagen</h3>
-        <p>ID del adjunto: <span id="modal-attachment-id"></span></p>
+
         <form id="edit-metadata-form">
-            <p>
+            <div>
                 <label for="modal-slug">Slug:</label><br>
                 <input type="text" id="modal-slug" name="slug" style="width: 100%;" />
-            </p>
-            <p>
+            </div>
+            <div>
                 <label for="modal-title">Título:</label><br>
                 <input type="text" id="modal-title" name="title" style="width: 100%;" />
-            </p>
-            <p>
+            </div>
+            <div>
                 <label for="modal-alt">Texto Alternativo (Alt):</label><br>
                 <input type="text" id="modal-alt" name="alt" style="width: 100%;" />
-            </p>
-            <p>
+            </div>
+            <div>
                 <label for="modal-description">Descripción:</label><br>
                 <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
-            </p>
+            </div>
             <input type="hidden" id="modal-url" name="url" />
 
 
@@ -235,7 +235,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
         height: 20px;
         fill: #2171b1;
     }
-    
+
 </style>
 
 

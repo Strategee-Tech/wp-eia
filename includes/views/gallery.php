@@ -19,7 +19,7 @@ $selected_folder            = trim( $selected_folder, '/' );
 $page                       = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : 1;
 $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 10;
 
-$images = getPaginatedImages($page, $per_page);
+$image_data = getPaginatedImages($page, $per_page);
 
 ?>
 
@@ -39,14 +39,14 @@ $images = getPaginatedImages($page, $per_page);
 
         <tbody>
             <?php
-            if ( empty( $images ) ) :
+            if ( empty( $image_data['records'] ) ) :
             ?>
                 <tr>
                     <td colspan="7">No se encontraron imágenes en el directorio especificado.</td>
                 </tr>
             <?php
             else :
-                foreach ( $images as $image ) :
+                foreach ( $image_data['records'] as $image ) :
             ?>
                     <tr>
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
@@ -80,10 +80,66 @@ $images = getPaginatedImages($page, $per_page);
         
         
     </table>
+
+
+    <?php if ( $total_pages > 1 ) : ?>
+        <div class="tablenav bottom">
+            <div class="tablenav-pages">
+                <span class="displaying-num"><?php printf( esc_html__( '%d elementos', 'tu-textdomain' ), $total_records ); ?></span>
+                <span class="pagination-links">
+                    <?php
+                    // Enlace a la primera página
+                    $first_page_url = add_query_arg( 'paged', 1, remove_query_arg( 's' ) ); // remove_query_arg('s') para limpiar si hay búsqueda
+                    if ( $current_page_num > 1 ) {
+                        echo '<a class="first-page button" href="' . esc_url( $first_page_url ) . '">&laquo;</a>';
+                    } else {
+                        echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
+                    }
+
+                    // Enlace a la página anterior
+                    $prev_page_url = add_query_arg( 'paged', $prev_page, remove_query_arg( 's' ) );
+                    if ( $prev_page !== null ) {
+                        echo '<a class="prev-page button" href="' . esc_url( $prev_page_url ) . '">&lsaquo;</a>';
+                    } else {
+                        echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
+                    }
+                    ?>
+                    <span class="paging-input">
+                        <label for="current-page-selector" class="screen-reader-text"><?php esc_html_e( 'Página actual', 'tu-textdomain' ); ?></label>
+                        <input class="current-page" id="current-page-selector" type="text" name="paged" value="<?php echo esc_attr( $current_page_num ); ?>" size="1" aria-describedby="table-paging">
+                        <span class="tablenav-paging-text"> de <span class="total-pages"><?php echo esc_html( $total_pages ); ?></span></span>
+                    </span>
+                    <?php
+                    // Enlace a la página siguiente
+                    $next_page_url = add_query_arg( 'paged', $next_page, remove_query_arg( 's' ) );
+                    if ( $next_page !== null ) {
+                        echo '<a class="next-page button" href="' . esc_url( $next_page_url ) . '">&rsaquo;</a>';
+                    } else {
+                        echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
+                    }
+
+                    // Enlace a la última página
+                    $last_page_url = add_query_arg( 'paged', $total_pages, remove_query_arg( 's' ) );
+                    if ( $current_page_num < $total_pages ) {
+                        echo '<a class="last-page button" href="' . esc_url( $last_page_url ) . '">&raquo;</a>';
+                    } else {
+                        echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
+                    }
+                    ?>
+                </span>
+            </div>
+        </div>
+    <?php endif; ?>
+
+
+
+
+
+
 </div>
 
 <?php
 echo '<pre>';
-print_r($images);
+print_r($image_data);
 echo '</pre>';
 ?>  

@@ -99,7 +99,7 @@ function optimization($request) {
 
 		// Actualizar post
 		if (!empty($update_data)) {
-			$wpdb->update($wpdb->posts, $update_data, $where);
+			//$wpdb->update($wpdb->posts, $update_data, $where);
 		}
 
 		// Texto alternativo

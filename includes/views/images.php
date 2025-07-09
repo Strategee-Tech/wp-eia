@@ -160,9 +160,14 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                         </td>
                         <td><?php echo esc_html( $image['title'] ); ?></td>
                         <td><?php echo esc_html( $image['alt'] ); ?></td>
-                        <td><a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank"><?php echo esc_url( $image['url'] ); ?></a></td>
+                        <td>
+                            <a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank">
+                                <span class="dashicons dashicons-admin-links"></span>
+                            </a>
+                            <span class="dashicons dashicons-edit"></span>
+                        </td>
                     </tr>
-                    <?php
+                    <?php   
                 endforeach;
             endif;
             ?>
@@ -174,7 +179,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
 
 <div id="edit-metadata-modal" style="display: none; background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
-        <h3>Editar Metadatos de Archivo</h3>
+        <h3>Optimizar Imagen</h3>
         <p>ID del adjunto: <span id="modal-attachment-id"></span></p>
         <form id="edit-metadata-form">
             <p>
@@ -194,15 +199,25 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
             </p>
             <input type="hidden" id="modal-url" name="url" />
-            <p>
+
+
+            <div class="modal-footer">
                 <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
                 <button type="button" id="regenerate-alt-btn" class="button">Generar Alt</button>
                 <span id="save-status-message" style="margin-left: 10px;"></span>
-            </p>
+            </div>
         </form>
     </div>
 </div>
+
+<style>
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+</style>
 
 
 

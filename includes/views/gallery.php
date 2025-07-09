@@ -68,19 +68,19 @@ $image_data = getPaginatedImages($page, $per_page);
             </div>
         </div>
         <div style='flex-grow: 1;'></div>
-        <button class="button button-primary" type="submit">
+        <button class="btn" type="submit">
             <span class="dashicons dashicons-filter"></span>
             Filtrar
         </button>
-        <button class="button button-primary" type="button">
+        <button class="btn" type="button">
             <span class="dashicons dashicons-dashboard"></span>
             Optimizar
         </button>
-        <button class="button button-primary" type="button">
+        <button class="btn" type="button">
             <span class="dashicons dashicons-search"></span>
             Escanear
         </button>
-        <button class="button delete-btn" type="button">
+        <button class="btn delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
             Eliminar
         </button>
@@ -207,12 +207,6 @@ $image_data = getPaginatedImages($page, $per_page);
         gap: 8px;
     }
 
-    .filter-container button {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        flex-direction: column !important;
-    }
     .filter-container > div {
         display: flex;
         gap: 10px;
@@ -226,9 +220,18 @@ $image_data = getPaginatedImages($page, $per_page);
         font-size: 12px;
     }
 
+    .btn {
+
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-direction: column;
+    }
+
     .delete-btn {
         background-color:rgb(143, 15, 15);
         color: #fff;
+        padding: 5px 10px;
     }
 </style>
 

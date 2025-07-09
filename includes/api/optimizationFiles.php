@@ -46,7 +46,7 @@ function optimization($request) {
 		$info           = pathinfo($original_path);
 		$ext            = strtolower($info['extension']);
 		$dir            = $info['dirname'];
-		$new_filename   = $slug . $ext;
+		$new_filename   = $slug . '.' . $ext;
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
 

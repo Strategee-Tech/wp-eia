@@ -13,7 +13,7 @@ function wp_store_google_sheet() {
 
 function save_google_sheet($request) {
     require_once '/var/www/html/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
-    $datos = $request->get_json_params();
+    $datos = $request;
 
     if (!$datos) {
         return new WP_REST_Response(['error' => 'No se enviaron datos'], 400);
@@ -26,9 +26,9 @@ function save_google_sheet($request) {
         $client->addScope(Google_Service_Sheets::SPREADSHEETS);
 
         // ID de la hoja y rango donde se insertarán datos
-        $spreadsheetId = $datos['id_sheet'];
-        $range   = $datos['sheet'];
-        
+        $spreadsheetId = $datos["id_sheet"];
+        $range   = $datos["sheet"];
+
         $service = new Google_Service_Sheets($client);
 
         // Armar los datos a insertar (debes adaptar a lo que recibes)

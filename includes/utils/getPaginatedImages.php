@@ -31,6 +31,7 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
                 "SELECT
                     p.ID AS attachment_id,
                     p.post_title,
+                    p.post_name,
                     p.guid AS attachment_url,
                     p.post_mime_type,
                     p.post_content AS image_description,
@@ -50,11 +51,8 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
             ),
             ARRAY_A
         );
-
-        echo '<pre>';
-        print_r( $attachments_in_folder );
-        echo '</pre>';
-        die();
+        
+        return $attachments_in_folder;
 
 
     } catch (\Throwable $th) {

@@ -34,6 +34,18 @@ if($month !== 'all' && $year !== 'all'){
 } else {
     $folder = null;
 }
+if($status === 'all'){
+    $status = null;
+}
+if($scan === '1'){
+    $scan = null;
+}
+if($delete === '1'){
+    $delete = null;
+}
+if($optimize === '1'){
+    $optimize = null;
+}
 
 $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
 

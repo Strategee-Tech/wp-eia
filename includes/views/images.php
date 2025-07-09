@@ -205,12 +205,10 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
                 <button type="button" id="regenerate-alt-btn" class="button">
-                    <svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
+                    <svg id="gemini-icon" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
                         <path class="cls-1" d="M121.24,60.61c-33.48,0-60.62,27.14-60.62,60.62,0-33.48-27.14-60.62-60.62-60.62,33.48,0,60.62-27.14,60.62-60.61,0,33.47,27.14,60.61,60.62,60.61Z"/>
                     </svg>
-                    <span id="regenerate-alt-spinner" style="display: none;">
-                        <span class="spinner"></span>
-                    </span>
+                    <div id="loader" class="loader"></div> 
                     <span id="regenerate-alt-text">Generar con IA</span>
                 </button>
             </div>
@@ -234,6 +232,30 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
         width: 20px;
         height: 20px;
         fill: #2171b1;
+    }
+    .loader {
+        width: 20px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 8px solid #2171b1;
+        animation:
+            l20-1 0.8s infinite linear alternate,
+            l20-2 1.6s infinite linear;
+    }
+    @keyframes l20-1{
+        0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+        12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+        25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+        50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+        62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+        75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+        100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+    }
+    @keyframes l20-2{ 
+        0%    {transform:scaleY(1)  rotate(0deg)}
+        49.99%{transform:scaleY(1)  rotate(135deg)}
+        50%   {transform:scaleY(-1) rotate(0deg)}
+        100%  {transform:scaleY(-1) rotate(-135deg)}
     }
 
 </style>
@@ -381,7 +403,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     regenerateAltBtn.addEventListener('click', async function() {
+
+        document.getElementById('gemini-icon').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
         const result = await geminiPost(modalUrl.value);
+        document.getElementById('gemini-icon').style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
         inputAlt.value = result.alt;
         inputTitle.value = result.title;
         inputDescription.value = result.description;

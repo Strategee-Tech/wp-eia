@@ -35,13 +35,13 @@ if($month !== 'all' && $year !== 'all'){
 if($status === 'all'){
     $status = null;
 }
-if($scan === '1'){
+if($scan === '0'){
     $scan = null;
 }
-if($delete === '1'){
+if($delete === '0'){
     $delete = null;
 }
-if($optimize === '1'){
+if($optimize === '0'){
     $optimize = null;
 }
 

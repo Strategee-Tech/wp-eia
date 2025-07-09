@@ -17,12 +17,14 @@ $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( 
 
 $image_data = getPaginatedImages($page, $per_page);
 
+
+
 ?>
 
 
 <div class="wrap">
 
-    <form class="filter-container" action="">
+    <form method="get" class="filter-container" action="">
         <div>
             <div>
                 <label for="status">Estado de Optimización</label>
@@ -71,14 +73,14 @@ $image_data = getPaginatedImages($page, $per_page);
             Filtrar
         </button>
         <button class="button button-primary" type="button">
-            <span class="dashicons dashicons-admin-dashboard"></span>
+            <span class="dashicons dashicons-dashboard"></span>
             Optimizar
         </button>
         <button class="button button-primary" type="button">
-            <span class="dashicons dashicons-admin-search"></span>
+            <span class="dashicons dashicons-search"></span>
             Escanear
         </button>
-        <button class="button button-primary" type="button">
+        <button class="button delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
             Eliminar
         </button>
@@ -209,7 +211,7 @@ $image_data = getPaginatedImages($page, $per_page);
         display: flex;
         align-items: center;
         gap: 5px;
-        flex-direction: column;
+        flex-direction: column !important;
     }
     .filter-container > div {
         display: flex;
@@ -222,6 +224,11 @@ $image_data = getPaginatedImages($page, $per_page);
     .filter-container > div > label {
         margin-bottom: 5px;
         font-size: 12px;
+    }
+
+    .delete-btn {
+        background-color:rgb(143, 15, 15);
+        color: #fff;
     }
 </style>
 

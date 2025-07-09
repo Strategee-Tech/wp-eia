@@ -26,8 +26,9 @@ $image_data = getPaginatedImages($page, $per_page);
 
     <form method="get" class="filter-container" action="">
         <div>
+            <input type="hidden" name="page" value="gallery" />
             <div>
-                <label for="status">Estado de Optimización</label>
+                <lsabel for="status">Estado de Optimización</lsabel>
                 <select name="status" id="">
                     <option value="all">Todos</option>
                     <option value="optimized">Pendientes</option>
@@ -73,12 +74,12 @@ $image_data = getPaginatedImages($page, $per_page);
             Filtrar
         </button>
         <button class="btn" type="button">
-            <span class="dashicons dashicons-dashboard"></span>
-            Optimizar
-        </button>
-        <button class="btn" type="button">
             <span class="dashicons dashicons-search"></span>
             Escanear
+        </button>
+        <button class="btn" type="button">
+            <span class="dashicons dashicons-dashboard"></span>
+            Optimizar
         </button>
         <button class="btn delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
@@ -224,14 +225,18 @@ $image_data = getPaginatedImages($page, $per_page);
 
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 2px;
         flex-direction: column;
     }
 
     .delete-btn {
-        background-color:rgb(143, 15, 15);
+        background-color:rgb(185, 34, 34);
+        transition: background-color 0.3s ease;
         color: #fff;
-        padding: 5px 10px;
+        padding: 3px 10px;
+    }  
+    .delete-btn:hover {
+        background-color:rgb(170, 36, 36);
     }
 </style>
 

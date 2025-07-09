@@ -146,6 +146,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
             $attachment['image_width']  = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
             $attachment['image_height'] = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
             $attachment['image_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
+            $attachment['optimization_status'] = get_post_meta($attachment['attachment_id'], '_stg_optimized_status', true);
         }
 
 
@@ -184,14 +185,17 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
                 if($in_content == 0 && $programas == 0){
                     $attachment['optimization_status'] = 'eliminar';
+                    update_post_meta($attachment['attachment_id'], '_stg_optimized_status', 'eliminar');
                     foreach ($AllPostsWithAttachment as $post) {
                         if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment['attachment_id']) {
                             $attachment['optimization_status'] = 'por optimizar';
+                            update_post_meta($attachment['attachment_id'], '_stg_optimized_status', 'por optimizar');
                             break;
                         } 
                     }
                 } else {
-                    $attachment['optimization_status'] = 'optimizar';
+                    $attachment['optimization_status'] = 'por optimizar';
+                    update_post_meta($attachment['attachment_id'], '_stg_optimized_status', 'por optimizar');
                 }
 
 

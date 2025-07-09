@@ -162,7 +162,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 				 	WHERE post_content LIKE %s 
 				 	AND post_status IN ('publish', 'private', 'draft')
 				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-					'%' . $wpdb->esc_like($attachment['attachment_url']) . '%'
+					'%' . $wpdb->esc_like($attachment['file_path_relative']) . '%'
 				);
 
                 $programas = $wpdb->prepare(
@@ -170,12 +170,13 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 					 FROM {$wpdb->prefix}learnpress_courses
 					 WHERE post_content LIKE %s 
 					 AND post_status IN ('publish', 'private', 'draft')",
-					'%' . $wpdb->esc_like($attachment['attachment_url']) . '%'
+					'%' . $wpdb->esc_like($attachment['file_path_relative']) . '%'
 				); 
 
-                $filenamewithfolder = str_replace('/', '\/', $attachment['relative_path']);
+                $filenamewithfolder = str_replace('/', '\/', $attachment['file_path_relative']);
                 $in_content = $wpdb->get_var($in_content_query);
                 $programas = $wpdb->get_var($programas);
+
                 if($in_content == 0 && $programas == 0){
                     $attachment['optimization_status'] = 'eliminar';
                     foreach ($AllPostsWithAttachment as $post) {
@@ -188,6 +189,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
 
             }
+            unset($attachment);
 
 
 

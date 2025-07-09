@@ -202,8 +202,6 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
 
             <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">
-                <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
-                <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
                 <button type="button" id="regenerate-alt-btn" class="button">
                     <svg id="gemini-icon" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
                         <path class="cls-1" d="M121.24,60.61c-33.48,0-60.62,27.14-60.62,60.62,0-33.48-27.14-60.62-60.62-60.62,33.48,0,60.62-27.14,60.62-60.61,0,33.47,27.14,60.61,60.62,60.61Z"/>
@@ -211,6 +209,10 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                     <div id="loader" class="loader"></div> 
                     <span id="regenerate-alt-text">Generar con IA</span>
                 </button>
+                <div style="flex-grow: 1;"></div>
+                <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
+                <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
+                
             </div>
         </form>
     </div>
@@ -234,10 +236,11 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
         fill: #2171b1;
     }
     .loader {
-        width: 20px;
+        display: none;
+        width: 15px;
         aspect-ratio: 1;
         border-radius: 50%;
-        border: 8px solid #2171b1;
+        border: 3px solid #2171b1;
         animation:
             l20-1 0.8s infinite linear alternate,
             l20-2 1.6s infinite linear;

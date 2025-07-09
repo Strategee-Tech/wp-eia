@@ -55,6 +55,9 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
     <form method="get" class="filter-container" action="">
         <div>
             <input type="hidden" name="page" value="gallery" />
+            <input type="hidden" name="scan" value="0">
+            <input type="hidden" name="delete" value="0">
+            <input type="hidden" name="optimize" value="0">
             <div>
                 <lsabel for="status">Estado de Optimización</lsabel>
                 <select name="status" id="">

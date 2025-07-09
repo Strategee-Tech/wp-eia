@@ -32,25 +32,6 @@ function optimization_files($request) {
     try {
 		global $wpdb;
 
-		$datos_drive = array(
-			'fecha' 	      => date('Y-m-d H:i:s'),
-			'new_url'         => 'https://url.com/',
-			'peso_antes'      => 22,
-			'peso_despues'    => 12,
-			'alt_text_opt'    => 'alt text 1',
-			'slug_opt' 	      => 'slug 1',
-			'title_opt'       => 'title 1',
-			'description_opt' => 'prueba 1',
-			'format_opt'      => 'image/webp',
-			'size_opt'    	  => 'prueba 1', 
-			'ia'              => $params['ia'] == true ? 'Si' : 'No',
-			'id_sheet'        => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
-			'sheet'           => 'Imagenes!A1',
-		);
-
-		$respuesta 	   = save_google_sheet($datos_drive); // Llamada directa
-
-
 		$update_data   = array();
 		$where         = array('ID' => $post->ID);
 		$original_path = get_attached_file($post->ID);
@@ -80,6 +61,8 @@ function optimization_files($request) {
 	    $new_filename = $slug . $ext;
 		$new_path 	  = $info['dirname'] . '/' . $new_filename;
 
+		$file_size_bytes_before = filesize($original_path) / 1024;
+
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
     		unlink($original_path); // elimina el original
@@ -91,7 +74,7 @@ function optimization_files($request) {
         if ( $image_info !== false ) {
             $dimensions = $image_info[0] . 'x' . $image_info[1];
         }
-        $file_size_bytes = filesize($new_path) / 1024;
+        $file_size_bytes_after = filesize($new_path) / 1024;
 
 		// Obtener la base de uploads
 		$wp_uploads_basedir = wp_get_upload_dir()['basedir'];
@@ -150,12 +133,30 @@ function optimization_files($request) {
 
 		wp_cache_flush();
 
+		$datos_drive = array(
+			'fecha' 	      => date('Y-m-d H:i:s'),
+			'new_url'         => $new_url,
+			'peso_antes'      => $file_size_bytes_before,
+			'peso_despues'    => $file_size_bytes_after,
+			'alt_text_opt'    => $params['alt_text'],
+			'slug_opt' 	      => $params['slug'],
+			'title_opt'       => $params['title'],
+			'description_opt' => $params['description'],
+			'format_opt'      => $mimeType,
+			'size_opt'    	  => $dimensions, 
+			'ia'              => isset($params['ia']) && $params['ia'] == true ? 'Si' : 'No',
+			'id_sheet'        => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
+			'sheet'           => 'Imagenes!A1',
+		);
+
+		$respuesta 	   = save_google_sheet($datos_drive); // Llamada directa
+
         return new WP_REST_Response(
         	array(
         		'status'        => 'success', 
         		'message'       => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.',
         		'new_url'       => $new_url,
-        		'size'          => $file_size_bytes,
+        		'size'          => $file_size_bytes_after,
         		'new_name_file' => $new_filename,
         		'dimensions'    => $dimensions,
         	), 200);

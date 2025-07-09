@@ -234,11 +234,11 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const scanBtn = document.querySelector('.scan-btn');
-        const deleteBtn = document.querySelector('.delete-btn');
-        const optimizeBtn = document.querySelector('.optimize-btn');
-        const filterBtn = document.querySelector('.filter-btn');
-        const filterForm = document.querySelector('#filter-form');
+        const scanBtn = document.getElementById('scan-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const optimizeBtn = document.getElementById('optimize-btn');
+        const filterBtn = document.getElementById('filter-btn');
+        const filterForm = document.getElementById('filter-form');
 
         scanBtn.addEventListener('click', function() {
             filterForm.submit();

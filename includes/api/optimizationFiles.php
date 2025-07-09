@@ -93,42 +93,122 @@ function optimization($request) {
 			// --- Compresión con iLovePDF API ---
 			$ilovepdf_public_key = 'project_public_5be346b994ad4beae0796f5033dad295_l_8yob32701f4bca8f5345686a86ed9e5f19e';
 
-			// Paso 1: Crear tarea
-			$task_response = json_decode(file_get_contents("https://api.ilovepdf.com/v1/start/compress?public_key=$ilovepdf_public_key"), true);
-			if (!isset($task_response['task'])) {
-				return new WP_REST_Response(['status' => 'error', 'message' => 'Error al iniciar tarea iLovePDF'], 500);
+			$token = get_iLovePDF_token($ilovepdf_public_key);
+
+			if (!$token) {
+				return new WP_REST_Response(['error' => 'No se pudo autenticar con iLovePDF'], 500);
 			}
+
+			// Paso 1: Crear tarea
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/start/compress');
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			    'Content-Type: application/json',
+			    "Authorization: Bearer $token"
+			]);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, '{}'); // Necesario para POST JSON válido
+			$task_response = json_decode(curl_exec($ch), true);
+			curl_close($ch);
+
+			if (!isset($task_response['task'])) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Error al iniciar tarea iLovePDF',
+			        'debug'   => $task_response,
+			    ], 500);
+			}
+
 			$task = $task_response['task'];
+			//remaining_credits para luego validar cuanto queda
 
 			// Paso 2: Subir archivo
-			$cfile = curl_file_create($original_path);
 			$ch    = curl_init();
 			curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/upload');
 			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, ['task' => $task, 'file' => $cfile]);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, [
+			    'task' 	     => $task,
+			    'cloud_file' => $old_url
+			]);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			    "Authorization: Bearer $token"
+			]);
 			$upload = json_decode(curl_exec($ch), true);
 			curl_close($ch);
 
 			if (!isset($upload['server_filename'])) {
-				return new WP_REST_Response(['status' => 'error', 'message' => 'Error al subir archivo a iLovePDF'], 500);
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Error al subir archivo a iLovePDF',
+			        'debug'   => $upload
+			    ], 500);
 			}
 
 			// Paso 3: Procesar tarea
-			$process_data = json_encode(['task' => $task, 'tool' => 'compress']);
+			$server_filename = $upload['server_filename']; 
+			$process_body = json_encode([
+			    'task'  => $task,
+			    'tool'  => 'compress',
+			    'files' => [
+			        [
+			            'server_filename' => $server_filename,
+			            'filename' 		  => $new_filename // Nombre original o el que quieras usar
+			        ]
+			    ]
+			]);
+
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/process');
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $process_data);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_exec($ch); // ignoramos respuesta
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			    'Content-Type: application/json',
+			    "Authorization: Bearer $token"
+			]);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $process_body);
+			$process_response = curl_exec($ch);
 			curl_close($ch);
 
-			// Paso 4: Descargar
-			$compressed_data = file_get_contents("https://api.ilovepdf.com/v1/download/$task");
-			file_put_contents($new_path, $compressed_data);
-			$file_size_bytes_after = filesize($new_path);
+			// Validar respuesta del proceso (opcional, solo para debug)
+			if (!$process_response) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Error al procesar tarea iLovePDF'
+			    ], 500);
+			}
 
+			// Paso 4: Descargar el archivo comprimido
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, "https://api.ilovepdf.com/v1/download/$task");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			    "Authorization: Bearer $token",
+			    'Content-Type: application/json',
+			]);
+
+			$response = curl_exec($ch);
+			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+			curl_close($ch);
+
+			// Si no fue exitoso o no es binario
+			if ($http_code !== 200 || stripos($content_type, 'application/json') !== false) {
+			    $json_error = json_decode($response, true);
+
+			    return new WP_REST_Response([
+			        'status'     => 'error',
+			        'message'    => 'Fallo al descargar el archivo de iLovePDF.',
+			        'http_code'  => $http_code,
+			        'mime_type'  => $content_type,
+			        'error_json' => $json_error,
+			    ], 500);
+			}
+			// Guardar archivo comprimido
+			file_put_contents($new_path, $response);
+			$file_size_bytes_after = filesize($new_path);
 
 		} else {
 			return new WP_REST_Response(['status' => 'error', 'message' => __('La extensión del archivo no se puede comprimir.')], 500);
@@ -193,6 +273,23 @@ function optimization($request) {
 	} catch (\Throwable $th) {
 		return new WP_REST_Response(['status' => 'error', 'message' => $th->getMessage()], 500);
 	}
+}
+
+function get_iLovePDF_token($public_key) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/auth');
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['public_key' => $public_key]));
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    	'Content-Type: application/x-www-form-urlencoded'
+	]);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($ch);
+	curl_close($ch);
+
+	$data = json_decode($response, true);
+	return $data['token'] ?? null;
 }
 
 function update_url_content($new_url, $old_url) {

@@ -23,22 +23,24 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
     
     try {
 
+        echo $subfolder;
+        
+
         $attachments_in_folder = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT 
-                    p.post_id,
-                    p.meta_value,
-                    alt.meta_value as alt,
-                    post.post_title,
-                    post.post_content
-                FROM 
-                    {$wpdb->postmeta} as p
-                LEFT JOIN 
-                    {$wpdb->postmeta} as alt ON p.post_id = alt.post_id AND alt.meta_key = '_wp_attachment_image_alt'
-                LEFT JOIN 
-                    {$wpdb->posts} as post ON p.post_id = post.ID
-                WHERE p.meta_key = '_wp_attached_file'
-                    AND p.meta_value LIKE %s",
+                "SELECT
+                    p.ID AS attachment_id,
+                    p.post_title,
+                    p.guid AS attachment_url,
+                    pm.meta_value AS file_path_relative
+                FROM
+                    wp_posts AS p
+                JOIN
+                    wp_postmeta AS pm ON p.ID = pm.post_id
+                WHERE
+                    p.post_type = 'attachment'
+                    AND pm.meta_key = '_wp_attached_file'
+                    AND pm.meta_value LIKE %s",
                 $wpdb->esc_like($subfolder) . '%'
             ),
             ARRAY_A

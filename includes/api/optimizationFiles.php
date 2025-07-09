@@ -55,22 +55,30 @@ function optimization($request) {
 
 		// Si NO es PDF → Comprimir con FFmpeg
 		if ($ext != 'pdf') {
+
+			$temp_path  = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
+
 			$ffmpeg_cmd = sprintf(
-				'/bin/bash -c "%s -i %s -vcodec libx264 -crf 28 %s"',
-				escapeshellcmd($ffmpeg_exe),
-				escapeshellarg($original_path),
-				escapeshellarg($new_path)
+			    '/bin/bash -c "%s -i %s -vcodec libx264 -crf 28 %s"',
+			    escapeshellcmd($ffmpeg_exe),
+			    escapeshellarg($original_path),
+			    escapeshellarg($temp_path)
 			);
 
 			exec($ffmpeg_cmd . ' 2>&1', $output, $return_code);
 
-			if ($return_code !== 0 || !file_exists($new_path)) {
+			if ($return_code !== 0 || !file_exists($temp_path)) {
 				return new WP_REST_Response([
 					'error'     => 'Error al comprimir con FFmpeg.',
 					'cmd'       => $ffmpeg_cmd,
 					'output'    => $output,
 					'exit_code' => $return_code,
 				], 500);
+			}
+
+		 	if (file_exists($temp_path)) {
+    			//unlink($original_path);
+    			rename($temp_path, $new_path);
 			}
 
 			// Eliminar original si fue reemplazado con éxito

@@ -129,7 +129,7 @@ $total_size_bytes = array_sum( array_column( $documents, 'size_bytes' ) );
                                     echo '<span class="dashicons dashicons-warning" style="color: orange;"></span> En uso (no identificado)';
                                 }
                             } else {
-                                echo '<span class="dashicons dashicons-no-alt" style="color: red;"></span> Se puede eliminar';
+                                echo '<span class="dashicons dashicons-trash" style="color: red;"></span> Se puede eliminar';
                             }
                             ?>
                         </td>

@@ -4,6 +4,7 @@ if ( ! function_exists( 'wp_crop_image' ) ) {
     include( ABSPATH . 'wp-admin/includes/image.php' );
 }
 require_once dirname(__DIR__) . '/utils/auth.php';
+
 add_action( 'rest_api_init', 'wp_optimization_seo_files' );
 
 date_default_timezone_set('America/Bogota');
@@ -32,13 +33,17 @@ function optimization_files($request) {
 	if (!$post || $post->post_type !== 'attachment') {
 		return new WP_REST_Response(array('status' => 'error', 'message' => 'El post no existe o no es un attachment.'), 404);
 	}
+
+	$original_path = get_attached_file( $params['post_id'] );
+    if ( ! file_exists( $original_path ) ) {
+        return new WP_REST_Response( array( 'error' => 'Archivo no encontrado.' ), 404 );
+    }
     
     try {
 		global $wpdb;
 
 		$update_data   = array();
 		$where         = array('ID' => $post->ID);
-		$original_path = get_attached_file($post->ID);
     	$info          = pathinfo($original_path);
     	$miniaturas    = find_all_related_thumbnails($original_path);
     	$ext           = '.webp';
@@ -299,32 +304,4 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 		    } 
 		}
 	}
-}
-
-function slug_unico($slug_deseado, $id_actual = 0) {
-    global $wpdb;
-
-    $slug_deseado = sanitize_title($slug_deseado);
-
-    // Verifica si ese slug ya está en uso por otro attachment
-    $sql = $wpdb->prepare(
-        "SELECT ID FROM $wpdb->posts 
-         WHERE post_name = %s 
-           AND post_type = 'attachment'
-           AND post_status != 'trash'
-           AND ID != %d
-         LIMIT 1",
-        $slug_deseado,
-        $id_actual
-    );
-
-    $existe_id = $wpdb->get_var($sql);
-
-    if (!$existe_id) {
-        // Slug libre o es suyo mismo
-        return $slug_deseado;
-    }
-
-    // Slug ya usado por otro → generar uno único
-    return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }

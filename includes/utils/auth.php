@@ -36,3 +36,31 @@ function basic_auth_permission_check() {
     return true;
 }
 
+
+function slug_unico($slug_deseado, $id_actual = 0) {
+    global $wpdb;
+
+    $slug_deseado = sanitize_title($slug_deseado);
+
+    // Verifica si ese slug ya está en uso por otro attachment
+    $sql = $wpdb->prepare(
+        "SELECT ID FROM $wpdb->posts 
+         WHERE post_name = %s 
+           AND post_type = 'attachment'
+           AND post_status != 'trash'
+           AND ID != %d
+         LIMIT 1",
+        $slug_deseado,
+        $id_actual
+    );
+
+    $existe_id = $wpdb->get_var($sql);
+
+    if (!$existe_id) {
+        // Slug libre o es suyo mismo
+        return $slug_deseado;
+    }
+
+    // Slug ya usado por otro → generar uno único
+    return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
+}

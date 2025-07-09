@@ -57,42 +57,42 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
             <input type="hidden" name="page" value="gallery" />
             <div>
                 <lsabel for="status">Estado de Optimización</lsabel>
-                <select value="<?php echo $status; ?>" selected="<?php echo $status; ?>" name="status" id="">
-                    <option value="all">Todos</option>
-                    <option value="optimized">Pendientes</option>
-                    <option value="not_optimized">Por optimizar</option>
-                    <option value="optimized">Optimizadas</option>
-                    <option value="deleted">Eliminar</option>
+                <select name="status" id="">
+                    <option <?php echo $status === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
+                    <option <?php echo $status === 'pendiente' ? 'selected' : ''; ?> value="pendiente">Pendientes</option>
+                    <option <?php echo $status === 'por optimizar' ? 'selected' : ''; ?> value="por optimizar">Por optimizar</option>
+                    <option <?php echo $status === 'optimizadas' ? 'selected' : ''; ?> value="optimizadas">Optimizadas</option>
+                    <option <?php echo $status === 'eliminar' ? 'selected' : ''; ?> value="eliminar">Eliminar</option>
                 </select>
             </div>
             <div>
                 <label for="year">Año</label>
-                <select value="<?php echo $year; ?>" selected="<?php echo $year; ?>" name="year" id="">
+                <select name="year" id="">
                     <option value="all">Todos</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
+                    <option <?php echo $year === '2025' ? 'selected' : ''; ?> value="2025">2025</option>
+                    <option <?php echo $year === '2024' ? 'selected' : ''; ?> value="2024">2024</option>
+                    <option <?php echo $year === '2023' ? 'selected' : ''; ?> value="2023">2023</option>
+                    <option <?php echo $year === '2022' ? 'selected' : ''; ?> value="2022">2022</option>
+                    <option <?php echo $year === '2021' ? 'selected' : ''; ?> value="2021">2021</option>
+                    <option <?php echo $year === '2020' ? 'selected' : ''; ?> value="2020">2020</option>
                 </select>
             </div>
             <div>
                 <label for="month">Mes</label>
-                <select value="<?php echo $month; ?>" selected="<?php echo $month; ?>" name="month" id="">
+                <select name="month" id="">
                     <option value="all">Todos</option>
-                    <option value="01">01</option>
-                    <option value="02">02</option>
-                    <option value="03">03</option>
-                    <option value="04">04</option>
-                    <option value="05">05</option>
-                    <option value="06">06</option>
-                    <option value="07">07</option>
-                    <option value="08">08</option>
-                    <option value="09">09</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
+                    <option <?php echo $month === '01' ? 'selected' : ''; ?> value="01">01</option>
+                    <option <?php echo $month === '02' ? 'selected' : ''; ?> value="02">02</option>
+                    <option <?php echo $month === '03' ? 'selected' : ''; ?> value="03">03</option>
+                    <option <?php echo $month === '04' ? 'selected' : ''; ?> value="04">04</option>
+                    <option <?php echo $month === '05' ? 'selected' : ''; ?> value="05">05</option>
+                    <option <?php echo $month === '06' ? 'selected' : ''; ?> value="06">06</option>
+                    <option <?php echo $month === '07' ? 'selected' : ''; ?> value="07">07</option>
+                    <option <?php echo $month === '08' ? 'selected' : ''; ?> value="08">08</option>
+                    <option <?php echo $month === '09' ? 'selected' : ''; ?> value="09">09</option>
+                    <option <?php echo $month === '10' ? 'selected' : ''; ?> value="10">10</option>
+                    <option <?php echo $month === '11' ? 'selected' : ''; ?> value="11">11</option>
+                    <option <?php echo $month === '12' ? 'selected' : ''; ?> value="12">12</option>
                 </select>
             </div>
         </div>

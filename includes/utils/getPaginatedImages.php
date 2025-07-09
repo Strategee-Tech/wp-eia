@@ -32,12 +32,9 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
     // Condición para el estado de optimización
     if ( ! is_null( $status ) && ! empty( $status ) ) {
-        // Si el estado es 'pendiente' o 'unprocessed', buscamos cuando el meta_value es NULL
         if ( $status === 'pendiente' || $status === 'unprocessed' ) {
             $where_conditions[] = "pm_optimized.meta_value IS NULL";
-            // No se añade nada a $query_params porque IS NULL no usa un marcador de posición %s
         } else {
-            // Para cualquier otro estado, filtramos por el valor específico
             $where_conditions[] = "pm_optimized.meta_value = %s";
             $query_params[] = sanitize_text_field( $status );
         }
@@ -45,10 +42,8 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
     // Condición para el filtro de carpeta (folder)
     if ( ! is_null( $folder ) && ! empty( $folder ) ) {
-        // Aseguramos que la ruta del folder termine con barra para una coincidencia exacta de directorio
         $clean_folder = trailingslashit( sanitize_text_field( $folder ) );
         $where_conditions[] = "pm_file.meta_value LIKE %s";
-        // El comodín % se añade aquí, y envolvemos el folder con barras para buscarlo como un directorio
         $query_params[] = '%' . $wpdb->esc_like( $clean_folder ) . '%';
     }
 
@@ -57,17 +52,21 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
 
     // --- 1. Consulta para el TOTAL de registros (sin paginación) ---
-    // Combinamos todos los parámetros para la consulta total aquí
-    $total_query_params = $query_params; // Empieza con los parámetros de la cláusula WHERE
-
-    $total_query = $wpdb->prepare(
-        "SELECT COUNT(p.ID)
+    $total_query_sql_template = "
+        SELECT COUNT(p.ID)
         FROM " . $wpdb->posts . " AS p
         JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
         LEFT JOIN " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
         LEFT JOIN " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimization_status'
-        WHERE " . $where_clause,
-        ...$total_query_params // Ahora este es el ÚNICO argumento después de la cadena de formato
+        WHERE " . $where_clause;
+    
+    // DEBUG: Imprimir la consulta total y sus parámetros
+    // error_log('Total Query SQL (Template): ' . $total_query_sql_template);
+    // error_log('Total Query Parameters: ' . print_r($query_params, true));
+
+    $total_query = $wpdb->prepare(
+        $total_query_sql_template,
+        ...$query_params
     );
     
     $total_records = $wpdb->get_var( $total_query );
@@ -76,21 +75,24 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     $total_pages = ceil( $total_records / $per_page );
 
     // Aseguramos que la página actual no exceda el total de páginas si no hay registros
+    // Y ajustamos el offset en consecuencia
     if ( $total_records > 0 && $page > $total_pages ) {
         $page = $total_pages;
         $offset = ( $page - 1 ) * $per_page;
     } elseif ( $total_records === 0 ) {
         $page = 0;
+        $offset = 0; // Asegurarse de que el offset sea 0 si no hay registros
     }
 
 
     // --- 2. Consulta para los registros de la PÁGINA ACTUAL ---
     try {
         // Combinamos todos los parámetros para la consulta principal de adjuntos
-        $attachments_query_params = array_merge($query_params, [$per_page, $offset]); // Fusiona los parámetros WHERE con los parámetros LIMIT/OFFSET
+        // El orden es CRÍTICO: Primero los de WHERE, luego LIMIT, luego OFFSET
+        $attachments_query_params = array_merge($query_params, [$per_page, $offset]);
 
-        $attachments_query = $wpdb->prepare(
-            "SELECT
+        $attachments_query_sql_template = "
+            SELECT
                 p.ID AS attachment_id,
                 p.post_title,
                 p.post_name,
@@ -107,12 +109,19 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
             LEFT JOIN
                 " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
             LEFT JOIN
-                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimized_status'
+                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimization_status'
             WHERE " . $where_clause . "
             ORDER BY
                 p.post_date DESC
-            LIMIT %d OFFSET %d",
-            // El array combinado es ahora el único argumento después de la cadena de formato
+            LIMIT %d OFFSET %d";
+        
+        // DEBUG: Imprimir la consulta principal y sus parámetros
+        // error_log('Attachments Query SQL (Template): ' . $attachments_query_sql_template);
+        // error_log('Attachments Query Parameters (Merged): ' . print_r($attachments_query_params, true));
+
+
+        $attachments_query = $wpdb->prepare(
+            $attachments_query_sql_template,
             ...$attachments_query_params
         );
 

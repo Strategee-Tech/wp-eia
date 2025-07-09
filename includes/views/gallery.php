@@ -12,7 +12,7 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 
 <?php
 
-$page                       = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : 1;
+$page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;
 $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 20;
 
 $image_data = getPaginatedImages($page, $per_page);
@@ -85,7 +85,7 @@ $image_data = getPaginatedImages($page, $per_page);
                 <span class="pagination-links">
                     <?php
                     // Enlace a la primera página
-                    $first_page_url = add_query_arg( 'page', 1, remove_query_arg( 's' ) ); // remove_query_arg('s') para limpiar si hay búsqueda
+                    $first_page_url = add_query_arg( 'pagination', 1, remove_query_arg( 's' ) ); // remove_query_arg('s') para limpiar si hay búsqueda
                     if ( $image_data['current_page'] > 1 ) {
                         echo '<a class="first-page button" href="' . esc_url( $first_page_url ) . '">&laquo;</a>';
                     } else {
@@ -93,7 +93,7 @@ $image_data = getPaginatedImages($page, $per_page);
                     }
 
                     // Enlace a la página anterior
-                    $prev_page_url = add_query_arg( 'page', $image_data['prev_page'], remove_query_arg( 's' ) );
+                    $prev_page_url = add_query_arg( 'pagination', $image_data['prev_page'], remove_query_arg( 's' ) );
                     if ( $image_data['prev_page'] !== null ) {
                         echo '<a class="prev-page button" href="' . esc_url( $prev_page_url ) . '">&lsaquo;</a>';
                     } else {
@@ -107,7 +107,7 @@ $image_data = getPaginatedImages($page, $per_page);
                     </span>
                     <?php
                     // Enlace a la página siguiente
-                    $next_page_url = add_query_arg( 'page', $image_data['next_page'], remove_query_arg( 's' ) );
+                    $next_page_url = add_query_arg( 'pagination', $image_data['next_page'], remove_query_arg( 's' ) );
                     if ( $image_data['next_page'] !== null ) {
                         echo '<a class="next-page button" href="' . esc_url( $next_page_url ) . '">&rsaquo;</a>';
                     } else {
@@ -115,7 +115,7 @@ $image_data = getPaginatedImages($page, $per_page);
                     }
 
                     // Enlace a la última página
-                    $last_page_url = add_query_arg( 'page', $image_data['total_pages'], remove_query_arg( 's' ) );
+                    $last_page_url = add_query_arg( 'pagination', $image_data['total_pages'], remove_query_arg( 's' ) );
                     if ( $image_data['current_page'] < $image_data['total_pages'] ) {
                         echo '<a class="last-page button" href="' . esc_url( $last_page_url ) . '">&raquo;</a>';
                     } else {

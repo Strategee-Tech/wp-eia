@@ -49,7 +49,6 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     // --- 1. Consulta para el TOTAL de registros (sin paginación) ---
     // Combine all parameters for the total query here
     $total_query_params = $query_params; // Start with WHERE clause parameters
-    $attachments_query_params = array_merge($query_params, [$per_page, $offset]); // Merge WHERE params with LIMIT/OFFSET params
 
 
     $total_query = $wpdb->prepare(
@@ -57,9 +56,9 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
         FROM " . $wpdb->posts . " AS p
         JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
         LEFT JOIN " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
-        LEFT JOIN " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimization_status'
+        LEFT JOIN " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimized_status'
         WHERE " . $where_clause,
-        ...$attachments_query_params // Now this is the ONLY argument after the format string
+        ...$total_query_params // Now this is the ONLY argument after the format string
     );
     
     $total_records = $wpdb->get_var( $total_query );

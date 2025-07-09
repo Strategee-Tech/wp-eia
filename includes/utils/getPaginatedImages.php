@@ -173,9 +173,14 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 					'%' . $wpdb->esc_like($attachment['file_path_relative']) . '%'
 				); 
 
+                if($attachment['optimization_status'] == 'optimizada'){
+                    continue;
+                }
+
                 $filenamewithfolder = str_replace('/', '\/', $attachment['file_path_relative']);
                 $in_content = $wpdb->get_var($in_content_query);
                 $programas = $wpdb->get_var($programas);
+
 
                 if($in_content == 0 && $programas == 0){
                     $attachment['optimization_status'] = 'eliminar';
@@ -185,6 +190,8 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
                             break;
                         } 
                     }
+                } else {
+                    $attachment['optimization_status'] = 'optimizar';
                 }
 
 

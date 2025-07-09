@@ -5,7 +5,6 @@ if ( ! current_user_can( 'manage_options' ) ) {
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 
-getPaginatedImages();
 ?>
 
 <h1>Galeria de Imágenes</h1>
@@ -19,6 +18,8 @@ $selected_folder            = trim( $selected_folder, '/' );
 
 $page                       = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : 1;
 $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 10;
+
+$images = getPaginatedImages($selected_folder, $page, $per_page);
 
 ?>
 

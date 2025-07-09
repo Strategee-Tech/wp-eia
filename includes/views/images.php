@@ -210,8 +210,8 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                     <span id="regenerate-alt-text">Generar con IA</span>
                 </button>
                 <div style="flex-grow: 1;"></div>
-                <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
+                <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 
             </div>
         </form>
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveBtn = document.getElementById('save-metadata-btn');
     const cancelBtn = document.getElementById('cancel-metadata-btn');
     const statusMessage = document.getElementById('save-status-message');
-    const regenerateAltBtn = document.getElementById('regenerate-alt-btn');
+    const generateBtn = document.getElementById('regenerate-alt-btn');
     const modalUrl = document.getElementById('modal-url');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
@@ -405,13 +405,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    regenerateAltBtn.addEventListener('click', async function() {
+    generateBtn.addEventListener('click', async function() {
 
         document.getElementById('gemini-icon').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
+        generateBtn.disabled = true;
+        cancelBtn.disabled = true;
+        saveBtn.disabled = true;
         const result = await geminiPost(modalUrl.value);
         document.getElementById('gemini-icon').style.display = 'block';
         document.getElementById('loader').style.display = 'none';
+        generateBtn.disabled = false;
+        cancelBtn.disabled = false;
+        saveBtn.disabled = false;
         inputAlt.value = result.alt;
         inputTitle.value = result.title;
         inputDescription.value = result.description;

@@ -13,7 +13,7 @@
  * @param string|null $folder     Filtra por subcarpeta de uploads (ej. '2024/07'). Null para no filtrar.
  * @return array Un array asociativo con los registros de imágenes y los datos de paginación.
  */
-function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder = null ) {
+function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder = null, $scan = 0 ) {
     global $wpdb;
 
     // Aseguramos que $page y $per_page sean enteros positivos
@@ -22,6 +22,19 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
     // Calcular el offset para la consulta SQL
     $offset = ( $page - 1 ) * $per_page;
+
+
+    $AllPostsWithAttachment = array();
+
+    if($scan == 1){
+        $AllPostsWithAttachment = $wpdb->get_results("
+                SELECT post_id, meta_value 
+                FROM {$wpdb->prefix}postmeta AS wpostmeta
+                LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+                WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
+                AND wpost.post_status IN('publish', 'private', 'draft')
+            ");
+    }
 
     // --- Preparación de las cláusulas WHERE dinámicas ---
     $where_conditions = [
@@ -138,6 +151,47 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 
         // --- 3. Calcular los datos de paginación para retornar ---
         $current_page_count = count( $attachments_in_folder );
+
+        if($scan == 1){
+            
+            foreach ($attachments_in_folder as &$attachment) {
+                
+                $in_content_query = $wpdb->prepare(
+					"SELECT COUNT(*) 
+				 	FROM $wpdb->posts
+				 	WHERE post_content LIKE %s 
+				 	AND post_status IN ('publish', 'private', 'draft')
+				 	AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+					'%' . $wpdb->esc_like($attachment['attachment_url']) . '%'
+				);
+
+                $programas = $wpdb->prepare(
+					"SELECT COUNT(*) 
+					 FROM {$wpdb->prefix}learnpress_courses
+					 WHERE post_content LIKE %s 
+					 AND post_status IN ('publish', 'private', 'draft')",
+					'%' . $wpdb->esc_like($attachment['attachment_url']) . '%'
+				); 
+
+                $filenamewithfolder = str_replace('/', '\/', $attachment['relative_path']);
+                $in_content = $wpdb->get_var($in_content_query);
+                $programas = $wpdb->get_var($programas);
+                if($in_content == 0 && $programas == 0){
+                    $attachment['optimization_status'] = 'eliminar';
+                    foreach ($AllPostsWithAttachment as $post) {
+                        if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment['attachment_id']) {
+                            $attachment['optimization_status'] = 'por optimizar';
+                            break;
+                        } 
+                    }
+                }
+
+
+            }
+
+
+
+        }
 
         $pagination_data = [
             'records'        => $attachments_in_folder,

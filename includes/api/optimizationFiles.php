@@ -49,6 +49,8 @@ function optimization($request) {
 		$new_filename   = $slug . '.' . $ext;
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
+		$file_size_bytes_before = filesize($original_path);
+		$file_size_bytes_after  = filesize($new_path);
 
 		// Ruta completa a ffmpeg
 		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
@@ -80,11 +82,7 @@ function optimization($request) {
     			//unlink($original_path);
     			rename($temp_path, $new_path);
 			}
-
-			// Eliminar original si fue reemplazado con éxito
-			if ($original_path !== $new_path && file_exists($original_path)) {
-				//unlink($original_path);
-			}
+			$file_size_bytes_after = filesize($new_path);
 		}
 
 		// Obtener ruta relativa y URL pública
@@ -101,7 +99,7 @@ function optimization($request) {
 
 		// Actualizar post
 		if (!empty($update_data)) {
-			// $wpdb->update($wpdb->posts, $update_data, $where);
+			$wpdb->update($wpdb->posts, $update_data, $where);
 		}
 
 		// Texto alternativo
@@ -112,17 +110,64 @@ function optimization($request) {
 		// Actualizar derivados del metadata
     	// update_post_meta($post->ID, '_wp_attached_file', $relative_path);
 
+    	// Actualizar post_content
+		// update_url_content($new_url, $old_url);
+
+		$datos_drive = array(
+			'fecha' 	      => date('Y-m-d H:i:s'),
+			'new_url'         => $new_url,
+			'peso_antes'      => number_format($file_size_bytes_before),
+			'peso_despues'    => number_format($file_size_bytes_after),
+			'alt_text_opt'    => $params['alt_text'],
+			'slug_opt' 	      => $params['slug'],
+			'title_opt'       => $params['title'],
+			'description_opt' => $params['description'],
+			'format_opt'      => $ext,
+			'size_opt'    	  => 'N/A', 
+			'ia'              => isset($params['ia']) && $params['ia'] == true ? 'Si' : 'No',
+			'id_sheet'        => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
+			'sheet'           => 'Documentos!A1',
+		);
+
+		$respuesta = save_google_sheet($datos_drive); // Llamada directa
+
 		return new WP_REST_Response([
-			'status'      => 'success',
-			'message'     => 'Se han actualizado los datos y se ha optimizado el archivo.',
-			'old_url'     => $old_url,
-			'new_url'     => $new_url,
-			'new_path'    => $new_path,
-			'relative_path' => $relative_path,
-			'compressed'  => ($ext !== 'pdf')
+			'status'        => 'success',
+			'message'       => 'Se han actualizado los datos y se ha optimizado el archivo.',
+			'old_url'       => $old_url,
+			'new_url'       => $new_url,
+			'new_path'      => $new_path,
+			'relative_path' => $relative_path, 
 		], 200);
 
 	} catch (\Throwable $th) {
 		return new WP_REST_Response(['status' => 'error', 'message' => $th->getMessage()], 500);
 	}
+}
+
+function update_url_content($new_url, $old_url) {
+	global $wpdb;
+	//actualizar post_content de una imagen dentro de una pagina
+	$wpdb->query(
+	    $wpdb->prepare(
+	        "UPDATE {$wpdb->posts} 
+	        SET post_content = REPLACE(post_content, %s, %s) 
+	        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+	        $old_url,
+	        $new_url,
+	        '%' . basename($old_url) . '%'
+	    )
+	);
+
+	//actualizar post_content de una imagen dentro de un programa
+	$wpdb->query(
+	    $wpdb->prepare(
+	        "UPDATE {$wpdb->prefix}learnpress_courses 
+	        SET post_content = REPLACE(post_content, %s, %s) 
+	        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft')",
+	        $old_url,
+	        $new_url,
+	        '%' . basename($old_url) . '%'
+	    )
+	);
 }

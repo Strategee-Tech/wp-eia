@@ -39,41 +39,21 @@ $images = getPaginatedImages($selected_folder, $page, $per_page);
 
         <tbody>
             <?php
-            if ( empty( $all_images['all_images'] ) ) :
+            if ( empty( $images ) ) :
             ?>
                 <tr>
                     <td colspan="7">No se encontraron imágenes en el directorio especificado.</td>
                 </tr>
             <?php
             else :
-                foreach ( $all_images['all_images'] as $image ) :
+                foreach ( $images as $image ) :
             ?>
                     <tr>
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
-                        <td>
-                            <?php echo esc_html( $image['filename'] ); ?>
-                        </td>
-                        <td><?php echo esc_html( $image['dimensions'] );  echo $image['is_thumbnail'] == 1 ? ' (Thumbnail)' : '' ?>  </td>
-                        <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
-                        <td>
-                            <?php
-                            if($image['to_delete'] !== false){
-                                if($image['attachment_id']){    
-                                    echo '<span class="dashicons dashicons-trash" style="color: red;"></span> ID: ' . esc_html( $image['attachment_id'] );						
-                                }else{
-                                    echo '<span class="dashicons dashicons-trash" style="color: red;"></span> No ID';						
-                                }						
-                            }else{
-                                if ( $image['attachment_id'] ) {								
-                                    echo '<span class="dashicons dashicons-yes-alt" style="color: green;"></span> ID: ' . esc_html( $image['attachment_id'] );
-                                } else {
-                                    echo '<span class="dashicons dashicons-yes-alt" style="color: orange;"></span> No ID';									
-                                }
-                            }
-                            ?>
-                        </td>
-                        <td><?php echo esc_html( $image['title'] ); ?></td>
-                        <td><?php echo esc_html( $image['alt'] ); ?></td>
+                        <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
+                        <td><?php echo esc_html( $image['post_title'] ); ?></td>
+                        <td><?php echo esc_html( $image['post_name'] ); ?></td>
+                        <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
                         <td>
                             <span 
                                 style="cursor: pointer;"
@@ -101,3 +81,9 @@ $images = getPaginatedImages($selected_folder, $page, $per_page);
         
     </table>
 </div>
+
+<?php
+echo '<pre>';
+print_r($images);
+echo '</pre>';
+?>  

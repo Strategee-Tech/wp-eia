@@ -1,17 +1,21 @@
 <?php
-date_default_timezone_set('America/Bogota');
 
 if ( ! function_exists( 'wp_crop_image' ) ) {
     include( ABSPATH . 'wp-admin/includes/image.php' );
 }
-
+require_once dirname(__DIR__) . '/utils/auth.php';
 add_action( 'rest_api_init', 'wp_optimization_seo_files' );
+
+date_default_timezone_set('America/Bogota');
 
 function wp_optimization_seo_files() {
     register_rest_route( 'api/v1', '/seo-optimization', array(
         'methods'             => 'POST', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'optimization_files',
-        'permission_callback' => 'basic_auth_permission_check', 
+        'permission_callback' => function () {
+        	require_once dirname(__DIR__) . '/utils/auth.php';
+        	return basic_auth_permission_check();
+    	}, 
     )); 
 }
 
@@ -167,41 +171,6 @@ function optimization_files($request) {
    	} catch (\Throwable $th) {
         return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
     }
-}
-
-// Función de validación de permisos con autenticación básica
-function basic_auth_permission_check($request) {
-	// Ruta absoluta al archivo credentials.php
-    $path_to_credentials = dirname(ABSPATH) . '/credentials.php';
-
-    // Verificación si el archivo existe antes de incluirlo
-    if (file_exists($path_to_credentials)) {
-        require_once($path_to_credentials);
-    } else {
-        return new WP_Error('server_error', 'No se encontró el archivo de credenciales.', array('status' => 500));
-    }
-
-    // Verificar si el encabezado 'Authorization' está presente
-    $auth_header = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
-
-    if (!$auth_header || strpos($auth_header, 'Basic ') !== 0) {
-        return new WP_Error('unauthorized', 'Authorization header missing or incorrect.', array('status' => 401));
-    }
-
-    // Extraer las credenciales de la cabecera 'Authorization'
-    $encoded_credentials = substr($auth_header, 6); // Eliminar 'Basic '
-    $decoded_credentials = base64_decode($encoded_credentials);
-
-    // Separar las credenciales en usuario y contraseña
-    list($username, $password) = explode(':', $decoded_credentials);
-
-    // Validar las credenciales con las que se han enviado
-    if ($username !== AUTH_USER_BASIC || $password !== AUTH_PASSWORD_BASIC) {
-        return new WP_Error('forbidden', 'Invalid credentials.', array('status' => 403));
-    }
-
-    // Si las credenciales son correctas, permitir el acceso
-    return true;
 }
 
 function find_all_related_thumbnails($original_path) {

@@ -259,6 +259,11 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
 </style>
 
 <?php
+echo $folder;
+echo $status;
+echo $scan;
+echo $delete;
+echo $optimize;
 echo '<pre>';
 print_r($image_data);
 echo '</pre>';

@@ -8,7 +8,7 @@ async function geminiPost(imageUrl) {
     - **legend**: Una leyenda o pie de foto más extenso y contextual (máx. 250 caracteres) que complemente el contenido principal de la página. Debe añadir valor informativo o narrativo, explicando el contexto de la imagen dentro de las actividades, eventos, logros o vida estudiantil de la Universidad EIA.
     - **slug**: Un slug amigable para URLs (máx. 50 caracteres) derivado del título o descripción, en minúsculas, usando guiones como separadores de palabras y sin caracteres especiales. Debe ser descriptivo y SEO-friendly, relevante para el contenido de la Universidad EIA.
     
-    Asegúrate de que la salida sea un objeto JSON **estrictamente válido** y nada más.`.trim();
+    Asegúrate de que la salida sea un objeto JSON **estrictamente válido** y nada más.`.trim(); 
 
     const base64Image = await imageUrlToBase64(imageUrl);
 

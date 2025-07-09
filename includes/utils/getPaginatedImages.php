@@ -1,15 +1,14 @@
 <?php
 
 /**
- * Obtiene imágenes paginadas de una subcarpeta específica de uploads,
+ * Obtiene imágenes paginadas de TODAS las carpetas de uploads de WordPress,
  * incluyendo metadatos para SEO y detalles de paginación.
  *
- * @param string $subfolder La subcarpeta dentro de wp-content/uploads/ (ej. '2025/06').
  * @param int    $page      El número de página actual (por defecto 1).
  * @param int    $per_page  El número de elementos por página (por defecto 10).
  * @return array Un array asociativo con los registros de imágenes y los datos de paginación.
  */
-function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
+function getPaginatedImages( $page = 1, $per_page = 10 ) {
     global $wpdb;
 
     // Aseguramos que $page y $per_page sean enteros positivos
@@ -19,33 +18,15 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
     // Calcular el offset para la consulta SQL
     $offset = ( $page - 1 ) * $per_page;
 
-    // --- Preparación de la cláusula WHERE para el subfolder ---
-    $subfolder_sql_condition = '';
-    $subfolder_sql_params = [];
-
-    // Si se especifica un subfolder, lo añadimos a la condición WHERE
-    // Y lo preparamos con $wpdb->prepare y $wpdb->esc_like para seguridad
-    if ( ! empty( $subfolder ) ) {
-        // Aseguramos que el path del subfolder termine con barra para coincidencia exacta de directorio
-        $clean_subfolder = trailingslashit( sanitize_text_field( $subfolder ) );
-        // La condición LIKE buscará la ruta relativa del archivo
-        $subfolder_sql_condition = " AND pm_file.meta_value LIKE %s";
-        // El comodín % se añade aquí, no en el %s, y envolvemos el subfolder con barras
-        $subfolder_sql_params[] = '%' . $wpdb->esc_like( $clean_subfolder ) . '%';
-    }
-
     // --- 1. Consulta para el TOTAL de registros (sin paginación) ---
-    // Usamos COUNT(*) para obtener el número total de imágenes que cumplen los criterios
-    $total_query = $wpdb->prepare(
-        "SELECT COUNT(p.ID)
+    // Esta consulta cuenta todas las imágenes en la base de datos de WordPress
+    $total_query = "
+        SELECT COUNT(p.ID)
         FROM " . $wpdb->posts . " AS p
-        JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
         WHERE
             p.post_type = 'attachment'
-            AND p.post_mime_type LIKE 'image/%'"
-            . $subfolder_sql_condition, // Añadimos la condición de subfolder
-        ...$subfolder_sql_params     // Pasamos los parámetros de subfolder si existen
-    );
+            AND p.post_mime_type LIKE 'image/%'";
+    
     $total_records = $wpdb->get_var( $total_query ); // Ejecutamos la consulta y obtenemos el conteo
 
     // Calcular las páginas totales
@@ -54,7 +35,7 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
     // Aseguramos que la página actual no exceda el total de páginas si no hay registros
     if ( $total_records > 0 && $page > $total_pages ) {
         $page = $total_pages; // Redirigir a la última página si la solicitada es muy alta
-        $offset = ( $page - 1 ) * $per_page; // Recalcular offset
+        $offset = ( $page - 1 ) * $per_page; // Recalcular offset para la última página
     } elseif ( $total_records === 0 ) {
         $page = 0; // No hay páginas si no hay registros
     }
@@ -80,14 +61,12 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
                 " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
             WHERE
                 p.post_type = 'attachment'
-                AND p.post_mime_type LIKE 'image/%'"
-                . $subfolder_sql_condition . "
+                AND p.post_mime_type LIKE 'image/%'
             ORDER BY
                 p.post_date DESC -- O el orden que prefieras, ej. p.post_title ASC
             LIMIT %d OFFSET %d", // Cláusulas LIMIT y OFFSET para la paginación
-            ...$subfolder_sql_params, // Parámetros para la condición del subfolder
-            $per_page,                // Parámetro para LIMIT
-            $offset                   // Parámetro para OFFSET
+            $per_page,            // Parámetro para LIMIT
+            $offset               // Parámetro para OFFSET
         );
 
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
@@ -110,7 +89,7 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
 
     } catch ( \Throwable $th ) {
         // Registra cualquier error que ocurra durante la consulta o el procesamiento
-        error_log( 'WPIL Error fetching paginated images: ' . $th->getMessage() . ' for subfolder: ' . $subfolder );
+        error_log( 'WPIL Error fetching paginated images (no subfolder filter): ' . $th->getMessage() );
         return [
             'records'        => [],
             'current_page'   => $page,

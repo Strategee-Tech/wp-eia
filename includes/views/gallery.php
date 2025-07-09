@@ -24,15 +24,13 @@ $delete                     = isset( $_GET['delete'] ) ? sanitize_text_field( wp
 $optimize                   = isset( $_GET['optimize'] ) ? sanitize_text_field( wp_unslash( $_GET['optimize'] ) ) : null;
 
 
-$folder = '';
+$folder = null;
 if($month !== 'all' && $year !== 'all'){
-    $folder .= $month . '/' . $year;
+    $folder = $year . '/' . $month;
 } else if($month !== 'all' && $year === 'all'){
-    $folder .= '/' . $month;
+    $folder = '/' . $month;
 } else if($month === 'all' && $year !== 'all'){
-    $folder .= $year . '/';
-} else {
-    $folder = null;
+    $folder = $year . '/';
 }
 if($status === 'all'){
     $status = null;
@@ -59,7 +57,7 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
             <input type="hidden" name="page" value="gallery" />
             <div>
                 <lsabel for="status">Estado de Optimización</lsabel>
-                <select name="status" id="">
+                <select value="<?php echo $status; ?>" name="status" id="">
                     <option value="all">Todos</option>
                     <option value="optimized">Pendientes</option>
                     <option value="not_optimized">Por optimizar</option>
@@ -69,7 +67,7 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
             </div>
             <div>
                 <label for="year">Año</label>
-                <select name="year" id="">
+                <select value="<?php echo $year; ?>" name="year" id="">
                     <option value="all">Todos</option>
                     <option value="2025">2025</option>
                     <option value="2024">2024</option>
@@ -81,7 +79,7 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
             </div>
             <div>
                 <label for="month">Mes</label>
-                <select name="month" id="">
+                <select value="<?php echo $month; ?>" name="month" id="">
                     <option value="all">Todos</option>
                     <option value="01">01</option>
                     <option value="02">02</option>

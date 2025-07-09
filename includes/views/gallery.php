@@ -55,9 +55,9 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
     <form id="filter-form" method="get" class="filter-container" action="">
         <div>
             <input type="hidden" name="page" value="gallery" />
-            <input type="hidden" name="scan" value="0">
-            <input type="hidden" name="delete" value="0">
-            <input type="hidden" name="optimize" value="0">
+            <input id="scan-input" type="hidden" name="scan" value="0">
+            <input id="delete-input" type="hidden" name="delete" value="0">
+            <input id="optimize-input" type="hidden" name="optimize" value="0">
             <div>
                 <lsabel for="status">Estado de Optimización</lsabel>
                 <select name="status" id="">
@@ -237,19 +237,18 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
         const scanBtn = document.getElementById('scan-btn');
         const deleteBtn = document.getElementById('delete-btn');
         const optimizeBtn = document.getElementById('optimize-btn');
-        const filterBtn = document.getElementById('filter-btn');
         const filterForm = document.getElementById('filter-form');
 
         scanBtn.addEventListener('click', function() {
+            document.getElementById('scan-input').value = '1';
             filterForm.submit();
         });
         deleteBtn.addEventListener('click', function() {
+            document.getElementById('delete-input').value = '1';
             filterForm.submit();
         });
         optimizeBtn.addEventListener('click', function() {
-            filterForm.submit();
-        });
-        filterBtn.addEventListener('click', function() {
+            document.getElementById('optimize-input').value = '1';
             filterForm.submit();
         });
     });

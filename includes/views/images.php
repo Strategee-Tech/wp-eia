@@ -107,7 +107,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                 <th style="width: 100px;">ID</th>
                 <th>Title</th>
                 <th>Alt</th>
-                <th>URL</th>
+                <th style="width: 100px;">Acciones</th>
             </tr>
         </thead>
 
@@ -126,18 +126,7 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                     <tr>
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td>
-                            <span 
-                                class="edit-attachment-trigger"
-                                data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
-                                data-attachment-title="<?php echo esc_attr( $image['title'] ); ?>"
-                                data-attachment-alt="<?php echo esc_attr( $image['alt'] ); ?>"
-                                data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
-                                data-attachment-slug="<?php echo esc_attr( $image['filename'] ); ?>"
-                                data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
-                                data-attachment-url="<?php echo esc_attr( $image['url'] ); ?>"
-                            >
-                                <?php echo esc_html( $image['filename'] ); ?>
-                            </span>
+                            <?php echo esc_html( $image['filename'] ); ?>
                         </td>
                         <td><?php echo esc_html( $image['dimensions'] );  echo $image['is_thumbnail'] == 1 ? ' (Thumbnail)' : '' ?>  </td>
                         <td><?php echo esc_html( number_format( $image['size_kb'], 2 ) ); ?></td>
@@ -161,10 +150,19 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
                         <td><?php echo esc_html( $image['title'] ); ?></td>
                         <td><?php echo esc_html( $image['alt'] ); ?></td>
                         <td>
+                            <span 
+                                class="edit-attachment-trigger dashicons dashicons-edit"
+                                data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
+                                data-attachment-title="<?php echo esc_attr( $image['title'] ); ?>"
+                                data-attachment-alt="<?php echo esc_attr( $image['alt'] ); ?>"
+                                data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
+                                data-attachment-slug="<?php echo esc_attr( $image['filename'] ); ?>"
+                                data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
+                                data-attachment-url="<?php echo esc_attr( $image['url'] ); ?>"
+                            ></span>
                             <a href="<?php echo esc_url( $image['url'] ); ?>" target="_blank">
                                 <span class="dashicons dashicons-admin-links"></span>
                             </a>
-                            <span class="dashicons dashicons-edit"></span>
                         </td>
                     </tr>
                     <?php   

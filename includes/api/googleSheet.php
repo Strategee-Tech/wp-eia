@@ -12,45 +12,53 @@ function wp_store_google_sheet() {
 
 
 function save_google_sheet($request) {
-    require_once dirname(__FILE__) . '/../utils/google_sheet_2.0.0/vendor/autoload.php';
-    $client = new Google_Client();
-    $client->setAuthConfig(dirname(__FILE__) . '/../utils/google_sheet_2.0.0/client_secret_1065046989376-tbket75qsb90vg21lejeercjhot7i90t.apps.googleusercontent.com.json');
-    $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
-    $client->setAccessType('offline'); // Acceso offline para obtener tokens de actualización
-    $client->setDeveloperKey("AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik");
+    require_once dirname(__FILE__) . '/../utils/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
+    // $client = new Google_Client();
+    // $client->setAuthConfig(dirname(__FILE__) . '/../utils/google_sheet_2.0.0/client_secret_1065046989376-tbket75qsb90vg21lejeercjhot7i90t.apps.googleusercontent.com.json');
+    // $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
+    // $client->setAccessType('offline'); // Acceso offline para obtener tokens de actualización
+    // $client->setDeveloperKey("AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik");
 
+    $datos = $request->get_json_params();
 
-    $service = new Google_Service_Sheets($client);
+    if (!$datos) {
+        return new WP_REST_Response(['error' => 'No se enviaron datos'], 400);
+    }
 
+    try {
+        // Configurar el cliente con la cuenta de servicio
+        $client = new Google_Client();
+        $client->setAuthConfig(dirname(__FILE__) . '/../utils/google-api-php-client-v2.18.3-PHP8.0/credentials/effortless-lock-294114-ae7e961598ae.json'); // ruta al archivo JSON
+        $client->addScope(Google_Service_Sheets::SPREADSHEETS);
 
-    echo "<pre>";
-    print_r($service);
-    die(); 
+        // ID de la hoja y rango donde se insertarán datos
+        $spreadsheetId = '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM'; // ejemplo: 1xA2B3C...etc
+        $range   = 'Imagenes!A1'; // puede ser solo 'A1' si no tienes varias hojas
 
-$spreadsheetId = 'TU_ID_AQUI';
-$range = 'Hoja1';
+        $service = new Google_Service_Sheets($client);
 
-$values = [
-    ['Nombre', 'Correo'],
-    ['Pedro', 'pedro@example.com'],
-];
+        // Armar los datos a insertar (debes adaptar a lo que recibes)
+        $valores = [
+            [
+                $datos['nombre'] ?? '',
+                $datos['correo'] ?? '',
+                date('Y-m-d H:i:s')
+            ]
+        ];
 
-$body = new Google_Service_Sheets_ValueRange([
-    'values' => $values
-]);
+        $body   = new Google_Service_Sheets_ValueRange(['values' => $valores]);
+        $params = ['valueInputOption' => 'RAW'];
 
-$params = ['valueInputOption' => 'RAW'];
+        $resultado = $service->spreadsheets_values->append($spreadsheetId, $range, $body, $params);
 
-$response = $service->spreadsheets_values->append(
-    $spreadsheetId,
-    $range,
-    $body,
-    $params
-);
+        return new WP_REST_Response([
+            'status' => 'ok',
+            'filas_insertadas' => $resultado->getUpdates()->getUpdatedRows()
+        ], 200);
 
-echo 'Datos insertados en: ' . $response->getUpdates()->getUpdatedRange();
-
-
+    } catch (Exception $e) {
+        return new WP_REST_Response(['error' => $e->getMessage()], 500);
+    }
 }
 
 // Función de validación de permisos con autenticación básica

@@ -286,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function() {
             resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
 
-            modalAttachmentIdSpan.textContent = currentAttachmentId;
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
             inputAlt.value = currentAlt;

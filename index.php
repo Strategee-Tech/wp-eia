@@ -18,7 +18,7 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
     define( 'WP_EIA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
 
-
+require_once WP_EIA_PLUGIN_DIR . 'includes/utils/dontShowAlerts.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/admin-menus.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/seoOptimization.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/googleSheet.php';

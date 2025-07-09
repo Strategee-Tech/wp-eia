@@ -12,7 +12,7 @@ function wp_store_google_sheet() {
 
 
 function save_google_sheet($request) {
-    require_once dirname(__FILE__) . '/../utils/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
+    require_once '/var/www/html/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
     $datos = $request->get_json_params();
 
     if (!$datos) {
@@ -22,7 +22,7 @@ function save_google_sheet($request) {
     try {
         // Configurar el cliente con la cuenta de servicio
         $client = new Google_Client();
-        $client->setAuthConfig(dirname(__FILE__) . '/../utils/google-api-php-client-v2.18.3-PHP8.0/credentials/effortless-lock-294114-ae7e961598ae.json'); // ruta al archivo JSON
+        $client->setAuthConfig('/var/www/html/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/google-api-php-client-v2.18.3-PHP8.0/credentials/effortless-lock-294114-ae7e961598ae.json'); // ruta al archivo JSON
         $client->addScope(Google_Service_Sheets::SPREADSHEETS);
 
         // ID de la hoja y rango donde se insertarán datos

@@ -57,7 +57,7 @@ function optimization($request) {
 		// Ruta completa a ffmpeg
 		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
 		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac'];
-
+		$ext_documentos = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
 
 		// Si NO es PDF → Comprimir con FFmpeg
 		if (in_array($ext, $ext_multimedia)) {
@@ -87,6 +87,49 @@ function optimization($request) {
     			rename($temp_path, $new_path);
 			}
 			$file_size_bytes_after = filesize($new_path);
+
+		} elseif(in_array($ext, $ext_documentos)) {
+
+			// --- Compresión con iLovePDF API ---
+			$ilovepdf_public_key = 'project_public_5be346b994ad4beae0796f5033dad295_l_8yob32701f4bca8f5345686a86ed9e5f19e';
+
+			// Paso 1: Crear tarea
+			$task_response = json_decode(file_get_contents("https://api.ilovepdf.com/v1/start/compress?public_key=$ilovepdf_public_key"), true);
+			if (!isset($task_response['task'])) {
+				return new WP_REST_Response(['status' => 'error', 'message' => 'Error al iniciar tarea iLovePDF'], 500);
+			}
+			$task = $task_response['task'];
+
+			// Paso 2: Subir archivo
+			$cfile = curl_file_create($original_path);
+			$ch    = curl_init();
+			curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/upload');
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, ['task' => $task, 'file' => $cfile]);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$upload = json_decode(curl_exec($ch), true);
+			curl_close($ch);
+
+			if (!isset($upload['server_filename'])) {
+				return new WP_REST_Response(['status' => 'error', 'message' => 'Error al subir archivo a iLovePDF'], 500);
+			}
+
+			// Paso 3: Procesar tarea
+			$process_data = json_encode(['task' => $task, 'tool' => 'compress']);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/process');
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $process_data);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_exec($ch); // ignoramos respuesta
+			curl_close($ch);
+
+			// Paso 4: Descargar
+			$compressed_data = file_get_contents("https://api.ilovepdf.com/v1/download/$task");
+			file_put_contents($new_path, $compressed_data);
+			$file_size_bytes_after = filesize($new_path);
+
+
 		} else {
 			return new WP_REST_Response(['status' => 'error', 'message' => __('La extensión del archivo no se puede comprimir.')], 500);
 		}
@@ -140,6 +183,7 @@ function optimization($request) {
 		return new WP_REST_Response([
 			'status'        => 'success',
 			'message'       => 'Se han actualizado los datos y se ha optimizado el archivo.',
+			'new_name_file' => $new_filename,
 			'old_url'       => $old_url,
 			'new_url'       => $new_url,
 			'new_path'      => $new_path,

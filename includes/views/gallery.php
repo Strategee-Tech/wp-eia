@@ -22,7 +22,7 @@ $image_data = getPaginatedImages($page, $per_page);
 
 <div class="wrap">
 
-    <form action="">
+    <form class="filter-container" action="">
         <div>
             <div>
                 <label for="status">Estado de Optimización</label>
@@ -41,7 +41,7 @@ $image_data = getPaginatedImages($page, $per_page);
                 </select>
             </div>
         </div>
-        <button type="submit">Filtrar</button>
+        <button class="button button-primary" type="submit">Filtrar</button>
     </form>
 
     <table class="wp-list-table widefat fixed striped">
@@ -160,6 +160,7 @@ $image_data = getPaginatedImages($page, $per_page);
     .filter-container {
         display: flex;
         gap: 10px;
+        margin-bottom: 10px;
     }
     .filter-container > div {
         display: flex;

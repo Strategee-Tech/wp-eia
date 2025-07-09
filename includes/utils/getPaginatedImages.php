@@ -33,6 +33,15 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
         $query_params[] = sanitize_text_field( $status );
     }
 
+    // Condición para el filtro de carpeta (folder)
+    if ( ! is_null( $folder ) && ! empty( $folder ) ) {
+        // Aseguramos que la ruta del folder termine con barra para una coincidencia exacta de directorio
+        $clean_folder = trailingslashit( sanitize_text_field( $folder ) );
+        $where_conditions[] = "pm_file.meta_value LIKE %s";
+        // El comodín % se añade aquí, y envolvemos el folder con barras para buscarlo como un directorio
+        $query_params[] = '%' . $wpdb->esc_like( $clean_folder ) . '%';
+    }
+
     // Unir todas las condiciones WHERE
     $where_clause = implode( ' AND ', $where_conditions );
 

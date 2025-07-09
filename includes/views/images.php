@@ -200,11 +200,16 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
             <input type="hidden" id="modal-url" name="url" />
 
 
+            <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">
                 <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
-                <button type="button" id="regenerate-alt-btn" class="button">Generar Alt</button>
-                <span id="save-status-message" style="margin-left: 10px;"></span>
+                <button type="button" id="regenerate-alt-btn" class="button">
+                    <svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
+                        <path class="cls-1" d="M121.24,60.61c-33.48,0-60.62,27.14-60.62,60.62,0-33.48-27.14-60.62-60.62-60.62,33.48,0,60.62-27.14,60.62-60.61,0,33.47,27.14,60.61,60.62,60.61Z"/>
+                    </svg>
+                    Generar con IA
+                </button>
             </div>
         </form>
     </div>
@@ -213,8 +218,10 @@ foreach ( $all_images['all_thumbnails'] as $thumbnail ) {
 <style>
     .modal-footer {
         display: flex;
-        justify-content: flex-end;
         gap: 10px;
+    }
+    #regenerate-alt-btn {
+        align-self: flex-end;
     }
 </style>
 

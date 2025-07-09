@@ -57,11 +57,10 @@ function optimization_files($request) {
 	    }
 
 	    // Determinar el nuevo nombre (usando el slug)
-		$slug = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
-	    	
-	    //Determinamos si es el slug es duplicado
-        $slug   	    = wp_unique_post_slug($slug, 0, 'inherit', 'attachment', 0);
-        $params['slug'] = $slug;
+		$slug 		    = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
+		$slug_unico     = slug_unico($slug, $params['post_id']);
+		$params['slug'] = $slug_unico;
+		$slug = $slug_unico;
 
 	    $new_filename = $slug . $ext;
 		$new_path 	  = $info['dirname'] . '/' . $new_filename;
@@ -332,4 +331,32 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 		    } 
 		}
 	}
+}
+
+function slug_unico($slug_deseado, $id_actual = 0) {
+    global $wpdb;
+
+    $slug_deseado = sanitize_title($slug_deseado);
+
+    // Verifica si ese slug ya está en uso por otro attachment
+    $sql = $wpdb->prepare(
+        "SELECT ID FROM $wpdb->posts 
+         WHERE post_name = %s 
+           AND post_type = 'attachment'
+           AND post_status != 'trash'
+           AND ID != %d
+         LIMIT 1",
+        $slug_deseado,
+        $id_actual
+    );
+
+    $existe_id = $wpdb->get_var($sql);
+
+    if (!$existe_id) {
+        // Slug libre o es suyo mismo
+        return $slug_deseado;
+    }
+
+    // Slug ya usado por otro → generar uno único
+    return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }

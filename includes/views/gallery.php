@@ -19,7 +19,7 @@ $selected_folder            = trim( $selected_folder, '/' );
 $page                       = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : 1;
 $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 10;
 
-$images = getPaginatedImages($selected_folder, $page, $per_page);
+$images = getPaginatedImages($page, $per_page);
 
 ?>
 

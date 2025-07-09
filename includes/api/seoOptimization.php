@@ -270,8 +270,8 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 	$filas = $wpdb->get_results(
 	    $wpdb->prepare(
 	        "SELECT id, open_graph_image_meta FROM $tabla_indexable 
-	         WHERE open_graph_image_meta LIKE %s",
-	        '%' . $old_url . '%'
+	         WHERE open_graph_image LIKE %s",
+	        '%' . $new_url . '%'
 	    ),
 	    ARRAY_A
 	);
@@ -280,11 +280,10 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 		foreach ($filas as $fila) {
 		    $json = $fila['open_graph_image_meta'];
 		    $id   = $fila['id'];
-		    $meta = json_decode($json, true); // Convertir a array asociativo
-
+	    	$meta = json_decode($json, true); // Convertir a array asociativo
 		    if (json_last_error() == JSON_ERROR_NONE && is_array($meta)) {
-		        // 3. Reemplazar solo la clave "url" si coincide
-		        if (isset($meta['url']) && $meta['url'] == $old_url) {
+		        // 3. Reemplazar solo la clave "id" si coincide
+		        if (isset($meta['url']) && $post_id == $meta['id']) {
 		            $meta['url'] = $new_url;
 
 		            // 4. Codificar de nuevo el JSON

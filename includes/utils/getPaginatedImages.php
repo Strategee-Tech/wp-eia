@@ -39,9 +39,11 @@ function getPaginatedImages( $subfolder = '', $page = 1, $per_page = 10 ) {
                     wp_postmeta AS pm ON p.ID = pm.post_id
                 WHERE
                     p.post_type = 'attachment'
+                    AND p.post_mime_type LIKE 'image/%'
                     AND pm.meta_key = '_wp_attached_file'
                     AND pm.meta_value LIKE %s",
                 $wpdb->esc_like($subfolder) . '%'
+                    
             ),
             ARRAY_A
         );

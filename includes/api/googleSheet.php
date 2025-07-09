@@ -13,12 +13,6 @@ function wp_store_google_sheet() {
 
 function save_google_sheet($request) {
     require_once dirname(__FILE__) . '/../utils/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
-    // $client = new Google_Client();
-    // $client->setAuthConfig(dirname(__FILE__) . '/../utils/google_sheet_2.0.0/client_secret_1065046989376-tbket75qsb90vg21lejeercjhot7i90t.apps.googleusercontent.com.json');
-    // $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
-    // $client->setAccessType('offline'); // Acceso offline para obtener tokens de actualización
-    // $client->setDeveloperKey("AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik");
-
     $datos = $request->get_json_params();
 
     if (!$datos) {
@@ -33,7 +27,7 @@ function save_google_sheet($request) {
 
         // ID de la hoja y rango donde se insertarán datos
         $spreadsheetId = '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM'; // ejemplo: 1xA2B3C...etc
-        $range   = 'Imagenes!A1'; // puede ser solo 'A1' si no tienes varias hojas
+        $range = 'Imagenes!A1'; // puede ser solo 'A1' si no tienes varias hojas
 
         $service = new Google_Service_Sheets($client);
 

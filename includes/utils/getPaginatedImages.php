@@ -33,7 +33,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     // Condición para el estado de optimización
     if ( ! is_null( $status ) && ! empty( $status ) ) {
         if ( $status === 'pendiente' || $status === 'unprocessed' ) {
-            $where_conditions[] = "pm_optimized.meta_value IS NULL";
+            $where_conditions[] = "pm_optimized.meta_value = 'pendiente'";
         } else {
             $where_conditions[] = "pm_optimized.meta_value = %s";
             $query_params[] = sanitize_text_field( $status );

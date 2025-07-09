@@ -10,7 +10,7 @@
  * @param string|null $status  Filtra por estado de optimización (ej. 'optimized', 'pending'). Null para no filtrar.
  * @return array Un array asociativo con los registros de imágenes y los datos de paginación.
  */
-function getPaginatedImages( $page = 1, $per_page = 10, $status = null ) {
+function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder = null, $scan = null, $delete = null, $optimize = null ) {
     global $wpdb;
 
     // Aseguramos que $page y $per_page sean enteros positivos

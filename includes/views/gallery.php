@@ -15,9 +15,27 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 $page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;
 $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 20;
 
-$image_data = getPaginatedImages($page, $per_page);
+$status                     = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : 'all';
+$year                       = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : 'all';
+$month                      = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : 'all';
+
+$scan                       = isset( $_GET['scan'] ) ? sanitize_text_field( wp_unslash( $_GET['scan'] ) ) : null;
+$delete                     = isset( $_GET['delete'] ) ? sanitize_text_field( wp_unslash( $_GET['delete'] ) ) : null;
+$optimize                   = isset( $_GET['optimize'] ) ? sanitize_text_field( wp_unslash( $_GET['optimize'] ) ) : null;
 
 
+$folder = '';
+if($month !== 'all' && $year !== 'all'){
+    $folder .= $month . '/' . $year;
+} else if($month !== 'all' && $year === 'all'){
+    $folder .= '/' . $month;
+} else if($month === 'all' && $year !== 'all'){
+    $folder .= $year . '/';
+} else {
+    $folder = null;
+}
+
+$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
 
 ?>
 

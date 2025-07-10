@@ -171,6 +171,7 @@ function getStatusIcon($status){
                 <!-- <th>Ruta Relativa</th> -->
                 <th style="width: 60px;">ID</th>
                 <th>Título</th>
+                <th>Peso (KB)</th>
                 <th>slug</th>
                 <th>Alt</th>
                 <th style="width: 125px;">Estado</th>
@@ -193,6 +194,7 @@ function getStatusIcon($status){
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
+                        <td><?php echo esc_html( $image['size_bytes'] / 1024 );?>KB</td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
 

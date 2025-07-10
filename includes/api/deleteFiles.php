@@ -69,9 +69,9 @@ function borrar_archivos($request) {
                 $rel_path    = str_replace($base_dir, '', $full_path);
                 $url         = $url_base . $rel_path;
                 $peso_bytes  = file_exists($full_path) ? filesize($full_path) : 0;
-                $peso_mb     = round($peso_bytes / 1048576, 2) . ' MB';
+                $peso_mb     = round($peso_bytes / 1048576, 2);
                 $carpeta     = file_exists($full_path) ? dirname($rel_path) : 'N/A';
-                $fecha       = date('Y-m-d');
+                $fecha       = date('Y-m-d H:i:s');
                 $datos_drive['values'][] = [$url, $peso_mb, $carpeta, $fecha];
                 //if (unlink($full_path)) {
                     file_put_contents($logPath, "Eliminado archivo en ruta: $full_path\n", FILE_APPEND);

@@ -266,7 +266,7 @@ function getIconExtension($extension){
                                 style="<?php echo esc_html( getIconExtension($image['image_mime_type'])[1] ); ?>"
                                 class="<?php echo esc_html( getIconExtension($image['image_mime_type'])[0] ); ?>"
                             ></span>
-                            <?php echo esc_html( getIconExtension($image['image_mime_type'])[2] ); ?>
+                            <?php echo esc_html( str_replace('image/', '', $image['image_mime_type']) ); ?>
                         </td>
 
                         <td style="text-align: center;">

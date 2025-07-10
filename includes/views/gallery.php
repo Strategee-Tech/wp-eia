@@ -92,24 +92,29 @@ function getStatusIcon($status){
     return $icon;
 }
 
-function getSizeStyle($size){
+function getIconSize($size){
     $size = number_format(($size / 1024), 0);
-    $stylesForSize = '';
+    $iconSize = '';
+    $colorSize = '';
     switch ($size ) {
         case $size < 400 && $size > 0:
-        $stylesForSize = 'background-color: #2ECC71; color: #ffffff;';
+        $iconSize = 'dashicons dashicons-yes';
+        $colorSize = 'color: #2ECC71;';
         break;
     case $size < 800 && $size > 400:
-        $stylesForSize = 'background-color: #FFBF00; color: #333333;';
+        $iconSize = 'dashicons dashicons-flag';
+        $colorSize = 'color: #FFBF00;';
         break;
     case $size > 800:
-        $stylesForSize = 'background-color: #DC143C; color: #ffffff;';
+        $iconSize = 'dashicons dashicons-trash';
+        $colorSize = 'color: #DC143C;';
         break;
     default:
-        $stylesForSize = 'background-color: #2ECC71; color: #2E7D32;';
+        $iconSize = 'dashicons dashicons-no';
+        $colorSize = 'color: #2ECC71;';
         break;
     }
-    return $stylesForSize;
+    return array($iconSize, $colorSize);
 }
 
 ?>
@@ -214,7 +219,11 @@ function getSizeStyle($size){
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
-                        <td style="text-align: center; <?php echo getSizeStyle($image['image_filesize']); ?>">
+                        <td style="text-align: center;">
+                            <span
+                                style="<?php echo $image['image_filesize'][0]; ?>"
+                                class="dashicons <?php echo $image['image_filesize'][1]; ?>"
+                            ></span>
                             <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB
                         </td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>

@@ -154,7 +154,7 @@ function update_yoast_info($new_url, $old_url, $post_id) {
     }
 }
 
-function update_post_meta_elementor_data($basename, $old_url, $new_url){
+function update_post_meta_elementor_data($basename, $new_url, $old_url){
     global $wpdb;
     // Extraer año/mes desde la URL vieja
     preg_match('#/uploads/(\d{4})/(\d{2})/#', $old_url, $matches);
@@ -195,7 +195,7 @@ function update_post_meta_elementor_data($basename, $old_url, $new_url){
     }
 }
 
-function update_elementor_css_url($old_url, $new_url) {
+function update_elementor_css_url($new_url, $old_url) {
     global $wpdb;
     $meta_key = '_elementor_css';
     $rows     = $wpdb->get_results(

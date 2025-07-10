@@ -140,6 +140,9 @@ function optimization_files($request) {
     	// Regenerar metadatos
     	regenerate_metadata($post->ID);
 
+    	//Actualizar elementor_css_url
+    	update_elementor_css_url($new_url, $old_url);
+
     	// Actualizar post_content y Yoast
 		update_yoast_info($new_url, $old_url, $post->ID);
 

@@ -150,21 +150,22 @@ function optimization($request) {
 		update_url_content($new_url, $old_url);
 
 		$datos_drive = array(
-			'fecha' 	      => date('Y-m-d H:i:s'),
-			'new_url'         => $new_url,
-			'peso_antes'      => number_format($file_size_bytes_before),
-			'peso_despues'    => number_format($file_size_bytes_after),
-			'alt_text_opt'    => isset($params['alt_text']) ? $params['alt_text'] : '',
-			'slug_opt' 	      => isset($params['slug']) ? $params['slug'] : '',
-			'title_opt'       => isset($params['title']) ? $params['title'] : '',
-			'description_opt' => isset($params['description']) ? $params['description'] : '',
-			'format_opt'      => $ext,
-			'size_opt'    	  => 'N/A', 
-			'ia'              => isset($params['ia']) && $params['ia'] == true ? 'Si' : 'No',
-			'id_sheet'        => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
-			'sheet'           => 'Documentos!A1',
+			'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
+			'sheet'    => 'Documentos!A1',
+			'values'   => [[
+				date('Y-m-d H:i:s'),
+				$new_url,
+				number_format($file_size_bytes_before),
+				number_format($file_size_bytes_after),
+				isset($params['alt_text']) ? $params['alt_text'] : '',
+				isset($params['slug']) ? $params['slug'] : '',
+				isset($params['title']) ? $params['title'] : '',
+				isset($params['description']) ? $params['description'] : '',
+				$ext,
+				'N/A',
+				(isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
+			]]
 		);
-
 		$respuesta = save_google_sheet($datos_drive); // Llamada directa
 
 		return new WP_REST_Response([

@@ -52,7 +52,6 @@ function optimization($request) {
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
 		$file_size_bytes_before = filesize($original_path);
-		$file_size_bytes_after  = filesize($new_path);
 
 		// Ruta completa a ffmpeg
 		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
@@ -119,6 +118,7 @@ function optimization($request) {
 		    if ($original_path != $new_path) {
 		        rename($original_path, $new_path);
 		    }
+		    $file_size_bytes_after = filesize($new_path);
 		}
 
 		// Obtener ruta relativa y URL pública
@@ -147,7 +147,9 @@ function optimization($request) {
     	update_post_meta($post->ID, '_wp_attached_file', $relative_path);
 
     	// Actualizar post_content
-		update_url_content($new_url, $old_url);
+		update_yoast_info($new_url, $old_url, $post->ID);
+
+		wp_cache_flush();
 
 		$datos_drive = array(
 			'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
@@ -182,31 +184,4 @@ function optimization($request) {
 	} catch (\Throwable $th) {
 		return new WP_REST_Response(['status' => 'error', 'message' => $th->getMessage()], 500);
 	}
-}
-
-function update_url_content($new_url, $old_url) {
-	global $wpdb;
-	//actualizar post_content de una imagen dentro de una pagina
-	$wpdb->query(
-	    $wpdb->prepare(
-	        "UPDATE {$wpdb->posts} 
-	        SET post_content = REPLACE(post_content, %s, %s) 
-	        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-	        $old_url,
-	        $new_url,
-	        '%' . basename($old_url) . '%'
-	    )
-	);
-
-	//actualizar post_content de una imagen dentro de un programa
-	$wpdb->query(
-	    $wpdb->prepare(
-	        "UPDATE {$wpdb->prefix}learnpress_courses 
-	        SET post_content = REPLACE(post_content, %s, %s) 
-	        WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft')",
-	        $old_url,
-	        $new_url,
-	        '%' . basename($old_url) . '%'
-	    )
-	);
 }

@@ -141,12 +141,14 @@ function getIconExtension($extension){
     $extension = str_replace('image/', '', $extension);
     $iconSize = '';
     $colorSize = '';
+
     switch ($extension) {
-        case $extension === 'webp':
+        case $extension == 'webp':
         $iconSize = 'dashicons dashicons-yes';
         $colorSize = 'color: #2ECC71;';
         break;
-    default:
+
+        default:
         $iconSize = 'dashicons dashicons-no-alt';
         $colorSize = 'color: #DC143C;';
         break;

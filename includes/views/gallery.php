@@ -117,6 +117,22 @@ function getIconSize($size){
     return array($iconSize, $colorSize);
 }
 
+function getIconAlt($alt){
+    $iconSize = '';
+    $colorSize = '';
+    switch ($alt) {
+        case $alt == '':
+        $iconSize = 'dashicons dashicons-yes';
+        $colorSize = 'color: #2ECC71;';
+        break;
+    case $alt != '':
+        $iconSize = 'dashicons dashicons-no-alt';
+        $colorSize = 'color: #DC143C;';
+        break;
+    }
+    return array($iconSize, $colorSize);
+}
+
 function getIconDimensions($width){
     $iconSize = '';
     $colorSize = '';
@@ -238,7 +254,7 @@ function getIconExtension($extension){
             <th style="width: 80px; text-align: center;">Tamaño (px)</th>
             <th style="width: 100px; text-align: center;">Peso (KB)</th>
             <th>slug</th>
-            <th>Alt</th>
+            <th style="width: 60px; text-align: center;">Alt</th>
             <th style="width: 125px;">Estado</th>
             <th style="width: 100px;">Acciones</th>
         </tr>
@@ -283,7 +299,13 @@ function getIconExtension($extension){
                     </td>
 
                     <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
-                    <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
+
+                    <td style="text-align: center;">
+                        <span
+                            style="<?php echo esc_html( getIconAlt($image['image_alt_text'])[1] ); ?>"
+                            class="<?php echo esc_html( getIconAlt($image['image_alt_text'])[0] ); ?>"
+                        ></span>
+                    </td>
 
                     <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
                         <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>

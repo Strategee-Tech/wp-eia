@@ -120,6 +120,7 @@ function getIconSize($size){
 function getIconAlt($alt){
     $iconSize = '';
     $colorSize = '';
+    echo $alt;
     switch ($alt) {
         case empty($alt):
             $iconSize = 'dashicons dashicons-no-alt';

@@ -215,7 +215,7 @@ function getIconSize($size){
             else :
                 foreach ( $image_data['records'] as $image ) :
             ?>
-                    <tr>
+                    <tr class="image-row">
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
@@ -376,6 +376,12 @@ function getIconSize($size){
     }  
     .delete-btn:hover {
         background-color:rgb(170, 36, 36);
+    }
+    .image-row {
+        cursor: pointer;
+    }
+    .image-row:hover {
+        background-color:rgb(213, 213, 213);
     }
 </style>
 

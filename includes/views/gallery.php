@@ -47,6 +47,51 @@ if($optimize === '0'){
 
 $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
 
+function getStatusStyle($status){
+    $stylesForStatus = '';
+
+    switch ($status) {
+        case 'pendiente':
+        $stylesForStatus = 'background-color: #FFCDD2; color: #C62828;';
+        break;
+    case 'por optimizar':
+        $stylesForStatus = 'background-color: #FFCDD2; color: #C62828;';
+        break;
+    case 'optimizadas':
+        $stylesForStatus = 'background-color: #C8E6C9; color: #2E7D32;';
+        break;
+    case 'eliminar':
+        $stylesForStatus = 'background-color: #FFCDD2; color: #C62828;';
+        break;
+    default:
+        $stylesForStatus = 'background-color: #C8E6C9; color: #2E7D32;';
+        break;
+    }
+    return $stylesForStatus;
+}
+
+function getStatusIcon($status){
+    $icon = '';
+    switch ($status) {
+        case 'pendiente':
+        $icon = 'dashicons dashicons-warning';
+        break;
+    case 'por optimizar':
+        $icon = 'dashicons dashicons-warning';
+        break;
+    case 'optimizadas':
+        $icon = 'dashicons dashicons-yes';
+        break;
+    case 'eliminar':
+        $icon = 'dashicons dashicons-warning';
+        break;
+    default:
+        $icon = 'dashicons dashicons-yes';
+        break;
+    }
+    return $icon;
+}
+
 ?>
 
 
@@ -108,14 +153,16 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
             <span class="dashicons dashicons-search"></span>
             Escanear
         </button>
-        <button id="optimize-btn" class="btn" type="button">
+        <button hidden id="optimize-btn" class="btn" type="button">
             <span class="dashicons dashicons-dashboard"></span>
             Optimizar
         </button>
+        <?php if($delete > 0): ?>
         <button id="delete-btn" class="btn delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
             Eliminar
         </button>
+        <?php endif; ?>
     </form>
 
     <table class="wp-list-table widefat fixed striped">
@@ -148,8 +195,10 @@ $image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $del
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
-                        <td>
-                            <?php echo esc_html( $image['optimization_status'] ); ?>
+
+                        <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
+                            <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
+                            <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
                         </td>
                         <td>
                             <span 

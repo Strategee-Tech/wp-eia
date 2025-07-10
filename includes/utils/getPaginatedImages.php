@@ -23,6 +23,9 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     // Calcular el offset para la consulta SQL
     $offset = ( $page - 1 ) * $per_page;
 
+    $pending_delete = 0;
+    $pending_optimize = 0;
+
 
     $AllPostsWithAttachment = array();
 
@@ -147,6 +150,11 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
             $attachment['image_height'] = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
             $attachment['image_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
             $attachment['optimization_status'] = get_post_meta($attachment['attachment_id'], '_stg_optimized_status', true);
+            if($attachment['optimization_status'] == 'eliminar'){
+                $pending_delete++;
+            } else if($attachment['optimization_status'] == 'por optimizar'){
+                $pending_optimize++;
+            }
         }
 
 
@@ -222,14 +230,16 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     } catch ( \Throwable $th ) {
         error_log( 'WPIL Error fetching paginated images (filtered): ' . $th->getMessage() );
         return [
-            'records'        => [],
-            'current_page'   => $page,
-            'total_pages'    => 0,
-            'total_records'  => 0,
+            'delete'           => $pending_delete,
+            'optimize'         => $pending_optimize,
+            'records'          => [],
+            'current_page'     => $page,
+            'total_pages'      => 0,
+            'total_records'    => 0,
             'records_per_page' => $per_page,
             'records_on_current_page' => 0,
-            'prev_page'      => null,
-            'next_page'      => null,
+            'prev_page'        => null,
+            'next_page'        => null,
         ];
     }
 }

@@ -121,11 +121,11 @@ function getIconAlt($alt){
     $iconSize = '';
     $colorSize = '';
     switch ($alt) {
-        case $alt != '' || $alt != null:
+        case isset($alt):
         $iconSize = 'dashicons dashicons-yes';
         $colorSize = 'color: #2ECC71;';
         break;
-    case $alt == '' || $alt == null:
+    default:
         $iconSize = 'dashicons dashicons-no-alt';
         $colorSize = 'color: #DC143C;';
         break;

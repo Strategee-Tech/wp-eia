@@ -120,17 +120,14 @@ function getIconSize($size){
 function getIconAlt($alt){
     $iconSize = '';
     $colorSize = '';
-    switch ($alt) {
-        case empty($alt) || $alt == null || $alt == '':
-            $iconSize = 'dashicons dashicons-no-alt';
-            $colorSize = 'color: #DC143C;';
-            break;
-        default:
-            $iconSize = 'dashicons dashicons-yes';
-            $colorSize = 'color: #2ECC71;';
-            break;
+    if(empty($alt) || $alt == null || $alt == ''){
+        $iconSize = 'dashicons dashicons-no-alt';
+        $colorSize = 'color: #DC143C;';
+    } else {
+        $iconSize = 'dashicons dashicons-yes';
+        $colorSize = 'color: #2ECC71;';
     }
-    return array($iconSize, $colorSize);
+    return array($iconSize, $colorSize);    
 }
 
 function getIconDimensions($width){

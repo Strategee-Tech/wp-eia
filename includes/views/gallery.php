@@ -114,8 +114,6 @@ function getIconSize($size){
         $colorSize = 'color: #2ECC71;';
         break;
     }
-    echo $iconSize;
-    echo $colorSize;
     return array($iconSize, $colorSize);
 }
 
@@ -221,13 +219,16 @@ function getIconSize($size){
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
+
                         <td style="text-align: center;">
                             <span
                                 style="<?php echo getIconSize($image['image_filesize'])[0]; ?>"
                                 class="dashicons <?php echo getIconSize($image['image_filesize'])[1]; ?>"
                             ></span>
                             <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB
+                            <p><?php echo esc_html( getIconSize($image['image_filesize']) ); ?></p>
                         </td>
+
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
 

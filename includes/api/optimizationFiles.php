@@ -174,29 +174,13 @@ function optimization($request) {
 			'old_url'       => $old_url,
 			'new_url'       => $new_url,
 			'new_path'      => $new_path,
-			'relative_path' => $relative_path, 
+			'relative_path' => $relative_path,
+			'size'          => $file_size_bytes_after,
 		], 200);
 
 	} catch (\Throwable $th) {
 		return new WP_REST_Response(['status' => 'error', 'message' => $th->getMessage()], 500);
 	}
-}
-
-function get_iLovePDF_token($public_key) {
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'https://api.ilovepdf.com/v1/auth');
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['public_key' => $public_key]));
-	curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    	'Content-Type: application/x-www-form-urlencoded'
-	]);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-	$response = curl_exec($ch);
-	curl_close($ch);
-
-	$data = json_decode($response, true);
-	return $data['token'] ?? null;
 }
 
 function update_url_content($new_url, $old_url) {

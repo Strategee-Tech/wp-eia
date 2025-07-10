@@ -222,14 +222,10 @@ function getIconSize($size){
 
                         <td style="text-align: center;">
                             <span
-                                style="<?php echo getIconSize($image['image_filesize'])[0]; ?>"
-                                class="dashicons <?php echo getIconSize($image['image_filesize'])[1]; ?>"
+                                style="<?php echo esc_html( getIconSize($image['image_filesize'])[0] ); ?>"
+                                class="dashicons <?php echo esc_html( getIconSize($image['image_filesize'])[1] ); ?>"
                             ></span>
                             <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB
-                            <br>
-                            <p><?php echo esc_html( getIconSize($image['image_filesize'])[0] ); ?></p>
-                            <br>
-                            <p><?php echo esc_html( getIconSize($image['image_filesize'])[1] ); ?></p>
                         </td>
 
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>

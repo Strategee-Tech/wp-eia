@@ -52,19 +52,19 @@ function getStatusStyle($status){
 
     switch ($status) {
         case 'pendiente':
-        $stylesForStatus = 'background-color: #FFCDD2; color: #C62828;';
+        $stylesForStatus = 'background-color: #FFBF00; color: #333333;';
         break;
     case 'por optimizar':
-        $stylesForStatus = 'background-color: #FFCDD2; color: #C62828;';
+        $stylesForStatus = 'background-color: #00BFFF; color: #FFFFFF;';
         break;
     case 'optimizadas':
-        $stylesForStatus = 'background-color: #C8E6C9; color: #2E7D32;';
+        $stylesForStatus = 'background-color: #2ECC71; color: #FFFFFF;';
         break;
     case 'eliminar':
-        $stylesForStatus = 'background-color: #FFCDD2; color: #C62828;';
+        $stylesForStatus = 'background-color: #DC143C; color: #FFFFFF;';
         break;
     default:
-        $stylesForStatus = 'background-color: #C8E6C9; color: #2E7D32;';
+        $stylesForStatus = 'background-color: #2ECC71; color: #2E7D32;';
         break;
     }
     return $stylesForStatus;
@@ -77,13 +77,13 @@ function getStatusIcon($status){
         $icon = 'dashicons dashicons-warning';
         break;
     case 'por optimizar':
-        $icon = 'dashicons dashicons-warning';
+        $icon = 'dashicons dashicons-flag';
         break;
     case 'optimizadas':
         $icon = 'dashicons dashicons-yes';
         break;
     case 'eliminar':
-        $icon = 'dashicons dashicons-warning';
+        $icon = 'dashicons dashicons-trash';
         break;
     default:
         $icon = 'dashicons dashicons-yes';
@@ -173,7 +173,7 @@ function getStatusIcon($status){
                 <th>Título</th>
                 <th>slug</th>
                 <th>Alt</th>
-                <th style="width: 100px;">Estado</th>
+                <th style="width: 125px;">Estado</th>
                 <th style="width: 100px;">Acciones</th>
             </tr>
         </thead>
@@ -200,7 +200,7 @@ function getStatusIcon($status){
                             <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
                             <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
                         </td>
-                        <td>
+                        <td style="text-align: center;">
                             <span 
                                 style="cursor: pointer;"
                                 class="edit-attachment-trigger dashicons dashicons-edit"

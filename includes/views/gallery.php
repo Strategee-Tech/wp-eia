@@ -225,7 +225,7 @@ function getIconSize($size){
                                 style="<?php echo esc_html( getIconSize($image['image_filesize'])[1] ); ?>"
                                 class="<?php echo esc_html( getIconSize($image['image_filesize'])[0] ); ?>"
                             ></span>
-                            <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB
+                            <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 0) );?>KB
                         </td>
 
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
@@ -382,7 +382,7 @@ function getIconSize($size){
         transition: background-color 0.3s ease;
     }
     .image-row:hover {
-        background-color:rgb(213, 213, 213) !important;
+        background-color:rgb(235, 235, 235) !important;
     }
 </style>
 

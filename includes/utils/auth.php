@@ -156,6 +156,13 @@ function update_yoast_info($new_url, $old_url, $post_id) {
 
 function update_post_meta_elementor_data($basename, $old_url, $new_url){
     global $wpdb;
+    // Extraer año/mes desde la URL vieja
+    preg_match('#/uploads/(\d{4})/(\d{2})/#', $old_url, $matches);
+    $year_month_path = !empty($matches[0]) ? $matches[0] : null;
+    if (!$year_month_path) {
+        // Evita procesar si no tienes la ruta esperada
+        return;
+    }
     $meta_key = '_elementor_data';
     $rows     = $wpdb->get_results(
         $wpdb->prepare(
@@ -173,8 +180,12 @@ function update_post_meta_elementor_data($basename, $old_url, $new_url){
         foreach ($rows as $row) {
             $json_data = json_decode($row['meta_value'], true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
-                array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url) {
+                array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url, $year_month_path, $basename) {
                     if (is_string($value) && strpos($value, $old_url) !== false) {
+                        // Asegura que la coincidencia sea específica a la carpeta esperada
+                        if (strpos($value, $year_month_path . $basename) === false) {
+                            return; // No reemplazar si el path no coincide
+                        }
                         $value = str_replace($old_url, $new_url, $value);
                     }
                 });

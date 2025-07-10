@@ -379,9 +379,10 @@ function getIconSize($size){
     }
     .image-row {
         cursor: pointer;
+        transition: background-color 0.3s ease;
     }
     .image-row:hover {
-        background-color:rgb(213, 213, 213);
+        background-color:rgb(213, 213, 213) !important;
     }
 </style>
 

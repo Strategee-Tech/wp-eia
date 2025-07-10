@@ -42,7 +42,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     // --- Preparación de las cláusulas WHERE dinámicas ---
     $where_conditions = [
         "p.post_type = 'attachment'",
-        "p.post_mime_type LIKE 'image/%'"
+        "p.post_mime_type NOT LIKE 'image/%'"
     ];
     $query_params = []; // Array para almacenar los parámetros de prepare
 

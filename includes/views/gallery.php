@@ -229,98 +229,85 @@ function getIconExtension($extension){
         <?php endif; ?>
     </form>
 
-    <table class="wp-list-table widefat fixed striped">
-        <thead>
+<table class="wp-list-table widefat fixed striped">
+    <thead>
+        <tr>
+            <th style="width: 30px;"><input type="checkbox" id="select-all-images"></th> <th style="width: 60px;">ID</th>
+            <th>Título</th>
+            <th style="width: 80px; text-align: center;">Extensión</th>
+            <th style="width: 80px; text-align: center;">Tamaño (px)</th>
+            <th style="width: 100px; text-align: center;">Peso (KB)</th>
+            <th>slug</th>
+            <th>Alt</th>
+            <th style="width: 125px;">Estado</th>
+            <th style="width: 100px;">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <?php
+        if ( empty( $image_data['records'] ) ) :
+        ?>
             <tr>
-                <!-- <th>Ruta Relativa</th> -->
-                <th style="width: 60px;">ID</th>
-                <th>Título</th>
-                <th style="width: 100px; text-align: center;">Extensión</th>
-                <th style="width: 100px; text-align: center;">Tamaño (px)</th>
-                <th style="width: 100px; text-align: center;">Peso (KB)</th>
-                <th>slug</th>
-                <th>Alt</th>
-                <th style="width: 125px;">Estado</th>
-                <th style="width: 100px;">Acciones</th>
-            </tr>
-        </thead>
+                <td colspan="10">No se encontraron imágenes en el directorio especificado.</td> </tr>
+        <?php
+        else :
+            foreach ( $image_data['records'] as $image ) :
+        ?>
+                <tr class="image-row">
+                    <td><input type="checkbox" class="image-selector" value="<?php echo esc_attr( $image['attachment_id'] ); ?>"></td> <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
+                    <td><?php echo esc_html( $image['post_title'] ); ?></td>
 
-        <tbody>
-            <?php
-            if ( empty( $image_data['records'] ) ) :
-            ?>
-                <tr>
-                    <td colspan="7">No se encontraron imágenes en el directorio especificado.</td>
+                    <td style="text-align: center;">
+                        <span
+                            style="<?php echo esc_html( getIconExtension($image['post_mime_type'])[1] ); ?>"
+                            class="<?php echo esc_html( getIconExtension($image['post_mime_type'])[0] ); ?>"
+                        ></span>
+                        <?php echo esc_html( str_replace('image/', '', $image['post_mime_type']) ); ?>
+                    </td>
+
+                    <td style="text-align: center;">
+                        <span
+                            style="<?php echo esc_html( getIconDimensions($image['image_width'])[1] ); ?>"
+                            class="<?php echo esc_html( getIconDimensions($image['image_width'])[0] ); ?>"
+                        ></span>
+                        <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
+                    </td>
+
+                    <td style="text-align: center;">
+                        <span
+                            style="<?php echo esc_html( getIconSize($image['image_filesize'])[1] ); ?>"
+                            class="<?php echo esc_html( getIconSize($image['image_filesize'])[0] ); ?>"
+                        ></span>
+                        <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 0) );?>KB
+                    </td>
+
+                    <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
+                    <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
+
+                    <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
+                        <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
+                        <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
+                    </td>
+                    <td style="text-align: center;">
+                        <span
+                            style="cursor: pointer;"
+                            class="edit-attachment-trigger dashicons dashicons-edit"
+                            data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
+                            data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>" data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>" data-attachment-description="<?php echo esc_attr( $image['post_content'] ); ?>" data-attachment-slug="<?php echo esc_attr( basename($image['file_path_relative']) ); ?>" data-attachment-size="<?php echo esc_attr( $image['image_width'] . 'x' . $image['image_height'] ); ?>" data-attachment-url="<?php echo esc_attr( $image['guid'] ); ?>" ></span>
+                        <?php if ( !empty( $image['usage'] ) ) : // Cambié $image['usage'] a !empty($image['usage']) para verificar si está siendo usado ?>
+                            <span class="dashicons dashicons-trash"></span>
+                        <?php endif; ?>
+                        <a href="<?php echo esc_url( $image['guid'] ); ?>" target="_blank"> <span class="dashicons dashicons-visibility"></span>
+                        </a>
+                    </td>
                 </tr>
-            <?php
-            else :
-                foreach ( $image_data['records'] as $image ) :
-            ?>
-                    <tr class="image-row">
-                        <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
-                        <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
-                        <td><?php echo esc_html( $image['post_title'] ); ?></td>
-
-                        <td style="text-align: center;">
-                            <span
-                                style="<?php echo esc_html( getIconExtension($image['post_mime_type'])[1] ); ?>"
-                                class="<?php echo esc_html( getIconExtension($image['post_mime_type'])[0] ); ?>"
-                            ></span>
-                            <?php echo esc_html( str_replace('image/', '', $image['post_mime_type']) ); ?>
-                        </td>
-
-                        <td style="text-align: center;">
-                            <span
-                                style="<?php echo esc_html( getIconDimensions($image['image_width'])[1] ); ?>"
-                                class="<?php echo esc_html( getIconDimensions($image['image_width'])[0] ); ?>"
-                            ></span>
-                            <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
-                        </td>
-
-                        <td style="text-align: center;">
-                            <span
-                                style="<?php echo esc_html( getIconSize($image['image_filesize'])[1] ); ?>"
-                                class="<?php echo esc_html( getIconSize($image['image_filesize'])[0] ); ?>"
-                            ></span>
-                            <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 0) );?>KB
-                        </td>
-
-                        <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
-                        <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
-
-                        <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
-                            <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
-                            <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
-                        </td>
-                        <td style="text-align: center;">
-                            <span 
-                                style="cursor: pointer;"
-                                class="edit-attachment-trigger dashicons dashicons-edit"
-                                data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
-                                data-attachment-title="<?php echo esc_attr( $image['title'] ); ?>"
-                                data-attachment-alt="<?php echo esc_attr( $image['alt'] ); ?>"
-                                data-attachment-description="<?php echo esc_attr( $image['description'] ); ?>"
-                                data-attachment-slug="<?php echo esc_attr( $image['filename'] ); ?>"
-                                data-attachment-size="<?php echo esc_attr( $image['dimensions'] ); ?>"
-                                data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>"
-                            ></span>
-                            <?php if ( $image['usage'] ) : ?>
-                                <span class="dashicons dashicons-trash"></span>
-                            <?php endif; ?>
-                            <a href="<?php echo esc_url( $image['attachment_url'] ); ?>" target="_blank">
-                                <span class="dashicons dashicons-visibility"></span>
-                            </a>
-                        </td>
-                    </tr>
-                    <?php   
-                endforeach;
-            endif;
-            ?>
-        </tbody>
-
-        
-        
-    </table>
+                <?php
+            endforeach;
+        endif;
+        ?>
+    </tbody>
+</table>
 
 
     <?php if ( $image_data['total_pages'] > 1 ) : ?>

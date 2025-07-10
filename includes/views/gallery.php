@@ -93,19 +93,19 @@ function getStatusIcon($status){
 }
 
 function getIconSize($size){
-    $size = number_format(($size / 1024), 0);
+    $size = intval($size);
     $iconSize = '';
     $colorSize = '';
     switch ($size ) {
-        case $size < 400 && $size > 0:
+        case $size < 400000 && $size > 0:
         $iconSize = 'dashicons dashicons-yes';
         $colorSize = 'color: #2ECC71;';
         break;
-    case $size < 800 && $size > 400:
+    case $size < 800000 && $size > 400000:
         $iconSize = 'dashicons dashicons-flag';
         $colorSize = 'color: #FFBF00;';
         break;
-    case $size > 800:
+    case $size > 800000:
         $iconSize = 'dashicons dashicons-warning';
         $colorSize = 'color: #DC143C;';
         break;
@@ -196,7 +196,7 @@ function getIconSize($size){
                 <!-- <th>Ruta Relativa</th> -->
                 <th style="width: 60px;">ID</th>
                 <th>Título</th>
-                <th style="width: 80px; text-align: center;">Peso (KB)</th>
+                <th style="width: 100px; text-align: center;">Peso (KB)</th>
                 <th>slug</th>
                 <th>Alt</th>
                 <th style="width: 125px;">Estado</th>

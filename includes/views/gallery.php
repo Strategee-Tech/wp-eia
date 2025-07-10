@@ -261,6 +261,14 @@ function getIconExtension($extension){
 
                         <td style="text-align: center;">
                             <span
+                                style="<?php echo esc_html( getIconExtension($image['image_mime_type'])[1] ); ?>"
+                                class="<?php echo esc_html( getIconExtension($image['image_mime_type'])[0] ); ?>"
+                            ></span>
+                            <?php echo esc_html( getIconExtension($image['image_mime_type'])[2] ); ?>
+                        </td>
+
+                        <td style="text-align: center;">
+                            <span
                                 style="<?php echo esc_html( getIconDimensions($image['image_width'])[1] ); ?>"
                                 class="<?php echo esc_html( getIconDimensions($image['image_width'])[0] ); ?>"
                             ></span>
@@ -278,20 +286,10 @@ function getIconExtension($extension){
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
 
-                        <td style="text-align: center;">
-                            <span
-                                style="<?php echo esc_html( getIconExtension($image['image_mime_type'])[1] ); ?>"
-                                class="<?php echo esc_html( getIconExtension($image['image_mime_type'])[0] ); ?>"
-                            ></span>
-                            <?php echo esc_html( getIconExtension($image['image_mime_type'])[2] ); ?>
-                        </td>
-
-
                         <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
                             <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
                             <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
                         </td>
-
                         <td style="text-align: center;">
                             <span 
                                 style="cursor: pointer;"

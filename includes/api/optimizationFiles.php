@@ -83,7 +83,7 @@ function optimization($request) {
 			}
 
 		 	if (file_exists($temp_path)) {
-    			//unlink($original_path);
+    			unlink($original_path);
     			rename($temp_path, $new_path);
 			}
 			$file_size_bytes_after = filesize($new_path);
@@ -109,7 +109,10 @@ function optimization($request) {
 		            'exit_code' => $return_code,
 		        ], 500);
 		    }
-		    rename($temp_path, $new_path);
+		    if (file_exists($temp_path)) {
+    			unlink($original_path);
+    			rename($temp_path, $new_path);
+			}
 		    $file_size_bytes_after = filesize($new_path);
 		} else {
 			return new WP_REST_Response(['status' => 'error', 'message' => __('La extensión del archivo no se puede comprimir.')], 500);

@@ -92,6 +92,26 @@ function getStatusIcon($status){
     return $icon;
 }
 
+function getSizeStyle($size){
+    $size = number_format(($size / 1024), 0);
+    $stylesForSize = '';
+    switch ($size ) {
+        case $size < 400 && $size > 0:
+        $stylesForSize = 'background-color: #2ECC71; color: #ffffff;';
+        break;
+    case $size < 800 && $size > 400:
+        $stylesForSize = 'background-color: #FFBF00; color: #333333;';
+        break;
+    case $size > 800:
+        $stylesForSize = 'background-color: #DC143C; color: #ffffff;';
+        break;
+    default:
+        $stylesForSize = 'background-color: #2ECC71; color: #2E7D32;';
+        break;
+    }
+    return $stylesForSize;
+}
+
 ?>
 
 
@@ -171,7 +191,7 @@ function getStatusIcon($status){
                 <!-- <th>Ruta Relativa</th> -->
                 <th style="width: 60px;">ID</th>
                 <th>Título</th>
-                <th>Peso (KB)</th>
+                <th style="width: 80px; text-align: center;">Peso (KB)</th>
                 <th>slug</th>
                 <th>Alt</th>
                 <th style="width: 125px;">Estado</th>
@@ -194,7 +214,9 @@ function getStatusIcon($status){
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
-                        <td><?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB</td>
+                        <td style="text-align: center; <?php echo getSizeStyle($image['image_filesize']); ?>">
+                            <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB
+                        </td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
 

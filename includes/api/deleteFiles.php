@@ -4,7 +4,6 @@ if ( ! function_exists( 'wp_crop_image' ) ) {
     include( ABSPATH . 'wp-admin/includes/image.php' );
 }
 require_once dirname(__DIR__) . '/utils/auth.php';
-require_once(dirname(__FILE__) . '/wp-load.php');
 
 add_action( 'rest_api_init', 'wp_borrar_archivos' );
 

@@ -115,7 +115,10 @@ function optimization($request) {
 			}
 		    $file_size_bytes_after = filesize($new_path);
 		} else {
-			return new WP_REST_Response(['status' => 'error', 'message' => __('La extensión del archivo no se puede comprimir.')], 500);
+			// Solo renombrar el archivo si no se puede comprimir
+		    if ($original_path != $new_path) {
+		        rename($original_path, $new_path);
+		    }
 		}
 
 		// Obtener ruta relativa y URL pública

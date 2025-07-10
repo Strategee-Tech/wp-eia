@@ -137,6 +137,23 @@ function getIconDimensions($width){
     return array($iconSize, $colorSize);
 }
 
+function getIconExtension($extension){
+    $extension = str_replace('image/', '', $extension);
+    $iconSize = '';
+    $colorSize = '';
+    switch ($extension) {
+        case $extension === 'webp':
+        $iconSize = 'dashicons dashicons-yes';
+        $colorSize = 'color: #2ECC71;';
+        break;
+    default:
+        $iconSize = 'dashicons dashicons-no-alt';
+        $colorSize = 'color: #DC143C;';
+        break;
+    }
+    return array($iconSize, $colorSize, $extension);
+}
+
 ?>
 
 
@@ -216,6 +233,7 @@ function getIconDimensions($width){
                 <!-- <th>Ruta Relativa</th> -->
                 <th style="width: 60px;">ID</th>
                 <th>Título</th>
+                <th style="width: 100px; text-align: center;">Extensión</th>
                 <th style="width: 100px; text-align: center;">Tamaño (px)</th>
                 <th style="width: 100px; text-align: center;">Peso (KB)</th>
                 <th>slug</th>
@@ -259,6 +277,14 @@ function getIconDimensions($width){
 
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
+
+                        <td style="text-align: center;">
+                            <span
+                                style="<?php echo esc_html( getIconExtension($image['image_mime_type'])[1] ); ?>"
+                                class="<?php echo esc_html( getIconExtension($image['image_mime_type'])[0] ); ?>"
+                            ></span>
+                            <?php echo esc_html( getIconExtension($image['image_mime_type'])[2] ); ?>
+                        </td>
 
                         <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
                             <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>

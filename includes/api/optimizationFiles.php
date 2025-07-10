@@ -51,7 +51,7 @@ function optimization($request) {
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
 		$file_size_bytes_before = filesize($original_path);
-
+		
 		// Ruta completa a ffmpeg
 		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
 		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac'];

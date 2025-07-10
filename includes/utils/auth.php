@@ -194,3 +194,32 @@ function update_post_meta_elementor_data($basename, $old_url, $new_url){
         }
     }
 }
+
+function update_elementor_css_url($old_url, $new_url) {
+    global $wpdb;
+    $meta_key = '_elementor_css';
+    $rows     = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT post_id, meta_value 
+             FROM {$wpdb->prefix}postmeta
+             WHERE meta_key = %s 
+             AND meta_value LIKE %s",
+            $meta_key,
+            '%' . $wpdb->esc_like($old_url) . '%'
+        ),
+        ARRAY_A
+    );
+
+    if(!empty($rows)) {   
+        foreach ($rows as $row) {
+            $meta_value = maybe_unserialize($row['meta_value']);
+            if (!empty($meta_value['css']) && is_string($meta_value['css'])) {
+                // Reemplazar la URL antigua por la nueva
+                $meta_value['css'] = str_replace($old_url, $new_url, $meta_value['css']);
+
+                // Actualizar el campo
+                update_post_meta($row['post_id'], $meta_key, $meta_value);
+            }
+        }
+    }
+}

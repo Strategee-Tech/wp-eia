@@ -106,7 +106,7 @@ function getIconSize($size){
         $colorSize = 'color: #FFBF00;';
         break;
     case $size > 800:
-        $iconSize = 'dashicons dashicons-trash';
+        $iconSize = 'dashicons dashicons-warning';
         $colorSize = 'color: #DC143C;';
         break;
     default:
@@ -114,6 +114,8 @@ function getIconSize($size){
         $colorSize = 'color: #2ECC71;';
         break;
     }
+    echo $iconSize;
+    echo $colorSize;
     return array($iconSize, $colorSize);
 }
 

@@ -121,14 +121,14 @@ function getIconAlt($alt){
     $iconSize = '';
     $colorSize = '';
     switch ($alt) {
-        case !empty($alt):
-        $iconSize = 'dashicons dashicons-yes';
-        $colorSize = 'color: #2ECC71;';
-        break;
-    default:
-        $iconSize = 'dashicons dashicons-no-alt';
-        $colorSize = 'color: #DC143C;';
-        break;
+        case empty($alt):
+            $iconSize = 'dashicons dashicons-no-alt';
+            $colorSize = 'color: #DC143C;';
+            break;
+        default:
+            $iconSize = 'dashicons dashicons-yes';
+            $colorSize = 'color: #2ECC71;';
+            break;
     }
     return array($iconSize, $colorSize);
 }

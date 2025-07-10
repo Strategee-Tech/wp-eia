@@ -221,8 +221,8 @@ function getIconSize($size){
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
                         <td style="text-align: center;">
                             <span
-                                style="<?php echo $image['image_filesize'][0]; ?>"
-                                class="dashicons <?php echo $image['image_filesize'][1]; ?>"
+                                style="<?php echo getIconSize($image['image_filesize'])[0]; ?>"
+                                class="dashicons <?php echo getIconSize($image['image_filesize'])[1]; ?>"
                             ></span>
                             <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 2) );?>KB
                         </td>

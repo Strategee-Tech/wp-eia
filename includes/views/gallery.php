@@ -194,7 +194,7 @@ function getStatusIcon($status){
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
-                        <td><?php echo esc_html( $image['size_bytes'] / 1024 );?>KB</td>
+                        <td><?php echo esc_html( $image['image_filesize'] / 1024 );?>KB</td>
                         <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
                         <td><?php echo esc_html( $image['image_alt_text'] ); ?></td>
 

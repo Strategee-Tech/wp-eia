@@ -39,7 +39,6 @@ function optimization($request) {
 
 	try {
 		global $wpdb;
-
 		$where          = array('ID' => $post->ID);
 		$slug           = sanitize_file_name($params['slug']);
 		$slug_unico     = slug_unico($slug, $params['post_id']);
@@ -146,7 +145,10 @@ function optimization($request) {
 		// Actualizar derivados del metadata
     	update_post_meta($post->ID, '_wp_attached_file', $relative_path);
 
-    	// Actualizar post_content
+		// Actualizar los _elementor_data
+		update_post_meta_elementor_data($info['basename'], $new_url, $old_url);
+
+		// Actualizar post_content
 		update_yoast_info($new_url, $old_url, $post->ID);
 
 		wp_cache_flush();

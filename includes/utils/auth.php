@@ -154,3 +154,32 @@ function update_yoast_info($new_url, $old_url, $post_id) {
     }
 }
 
+function update_post_meta_elementor_data($basename, $old_url, $new_url){
+    global $wpdb;
+    $meta_key = '_elementor_data';
+    $rows     = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT post_id, meta_value 
+             FROM {$wpdb->prefix}postmeta
+             WHERE meta_key = %s 
+             AND meta_value LIKE %s",
+            $meta_key,
+            '%' . $wpdb->esc_like($basename) . '%' //nombredelarchivo.[ext]
+        ),
+        ARRAY_A
+    );
+
+    if(!empty($rows)) {
+        foreach ($rows as $row) {
+            $json_data = json_decode($row['meta_value'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
+                array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url) {
+                    if (is_string($value) && strpos($value, $old_url) !== false) {
+                        $value = str_replace($old_url, $new_url, $value);
+                    }
+                });
+                update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
+            }
+        }
+    }
+}

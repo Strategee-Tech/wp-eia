@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Obtiene imágenes paginadas de WordPress,
  * incluyendo metadatos para SEO y detalles de paginación.
@@ -34,7 +33,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
                 SELECT post_id, meta_value 
                 FROM {$wpdb->prefix}postmeta AS wpostmeta
                 LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-                WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
+                WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id', 'enclosure')
                 AND wpost.post_status IN('publish', 'private', 'draft')
             ");
     }
@@ -42,7 +41,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
     // --- Preparación de las cláusulas WHERE dinámicas ---
     $where_conditions = [
         "p.post_type = 'attachment'",
-        "p.post_mime_type NOT LIKE 'image/%'"
+        "p.post_mime_type LIKE 'image/%'"
     ];
     $query_params = []; // Array para almacenar los parámetros de prepare
 
@@ -195,7 +194,7 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
                     $attachment['optimization_status'] = 'eliminar';
                     update_post_meta($attachment['attachment_id'], '_stg_optimized_status', 'eliminar');
                     foreach ($AllPostsWithAttachment as $post) {
-                        if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment['attachment_id']) {
+                        if (strpos($post->meta_value, $filenamewithfolder) !== false || $post->meta_value == $attachment['attachment_id'] || strpos($post->meta_value, $attachment['file_path_relative']) !== false) {
                             $attachment['optimization_status'] = 'por optimizar';
                             update_post_meta($attachment['attachment_id'], '_stg_optimized_status', 'por optimizar');
                             break;

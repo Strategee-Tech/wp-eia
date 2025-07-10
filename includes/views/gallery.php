@@ -286,10 +286,12 @@ function getIconExtension($extension){
                             <?php echo esc_html( getIconExtension($image['image_mime_type'])[2] ); ?>
                         </td>
 
+
                         <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
                             <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
                             <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
                         </td>
+
                         <td style="text-align: center;">
                             <span 
                                 style="cursor: pointer;"

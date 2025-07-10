@@ -117,6 +117,26 @@ function getIconSize($size){
     return array($iconSize, $colorSize);
 }
 
+function getIconDimensions($width){
+    $iconSize = '';
+    $colorSize = '';
+    switch ($width) {
+        case $width < 1920 && $width > 0:
+        $iconSize = 'dashicons dashicons-yes';
+        $colorSize = 'color: #2ECC71;';
+        break;
+    case $width > 1920:
+        $iconSize = 'dashicons dashicons-flag';
+        $colorSize = 'color: #FFBF00;';
+        break;
+    default:
+        $iconSize = 'dashicons dashicons-no';
+        $colorSize = 'color: #2ECC71;';
+        break;
+    }
+    return array($iconSize, $colorSize);
+}
+
 ?>
 
 
@@ -196,6 +216,7 @@ function getIconSize($size){
                 <!-- <th>Ruta Relativa</th> -->
                 <th style="width: 60px;">ID</th>
                 <th>Título</th>
+                <th style="width: 100px; text-align: center;">Tamaño (px)</th>
                 <th style="width: 100px; text-align: center;">Peso (KB)</th>
                 <th>slug</th>
                 <th>Alt</th>
@@ -219,6 +240,14 @@ function getIconSize($size){
                         <!-- <td><?php echo esc_html( $image['relative_path'] ); ?></td> -->
                         <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                         <td><?php echo esc_html( $image['post_title'] ); ?></td>
+
+                        <td style="text-align: center;">
+                            <span
+                                style="<?php echo esc_html( getIconDimensions($image['image_width'])[1] ); ?>"
+                                class="<?php echo esc_html( getIconDimensions($image['image_width'])[0] ); ?>"
+                            ></span>
+                            <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
+                        </td>
 
                         <td style="text-align: center;">
                             <span

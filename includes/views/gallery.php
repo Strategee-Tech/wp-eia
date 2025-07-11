@@ -186,6 +186,16 @@ function getIconExtension($extension){
             <input id="optimize-input" type="hidden" name="optimize" value="0">
             <div>
                 <lsabel for="status">Tipo de archivo</lsabel>
+                <!--
+                    Select para elegir el tipo de archivo a mostrar.
+                    Valores:
+                        - all: muestra todos los tipos de archivo
+                        - image: solo muestra imagenes
+                        - audio: solo muestra audios
+                        - video: solo muestra videos
+                        - text: solo muestra textos
+                        - application: solo muestra documentos
+                -->
                 <select name="mime_type" id="">
                     <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
                     <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>

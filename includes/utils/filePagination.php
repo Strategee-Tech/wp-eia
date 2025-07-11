@@ -2,13 +2,13 @@
 /**
  * Obtiene archivos paginados de WordPress,
  * incluyendo metadatos para SEO y detalles de paginación.
- * Permite filtrar por subcarpeta.
+ * Permite filtrar por subcarpeta y opcionalmente por tipo MIME.
  *
  * @param int         $page       El número de página actual (por defecto 1).
  * @param int         $per_page   El número de elementos por página (por defecto 10).
  * @param string|null $folder     Filtra por subcarpeta de uploads (ej. '2024/07'). Null para no filtrar.
  * @param string|null $mime_type  Filtra por tipo MIME principal (image, audio, video, text, application).
- * Null para no filtrar por tipo MIME.
+ * Null para no filtrar por tipo MIME (traerá todos los tipos).
  * @return array Un array asociativo con los registros de archivos y los datos de paginación.
  */
 function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_type = null ) { // Cambiado a null por defecto
@@ -28,6 +28,8 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     $query_params = []; // Array para almacenar los parámetros de prepare
 
     // Condición para el filtro de tipo MIME
+    // Solo si se pasa un $mime_type válido y no vacío, se agrega la condición.
+    // Si $mime_type es null o vacío, esta condición no se agrega, trayendo todos los tipos.
     if ( ! is_null( $mime_type ) && ! empty( $mime_type ) ) {
         $where_conditions[] = $wpdb->prepare( "p.post_mime_type LIKE %s", $wpdb->esc_like( $mime_type ) . '/%' );
     }
@@ -105,7 +107,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
-        // Añadir metadatos adicionales y el estado de optimización (siempre se trae, pero no se filtra por él)
+        // Añadir metadatos adicionales según el tipo MIME
         foreach ( $attachments_in_folder as &$attachment ) {
             $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
             

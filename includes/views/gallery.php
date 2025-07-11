@@ -4,7 +4,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
-require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedFiles.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
 ?>
 

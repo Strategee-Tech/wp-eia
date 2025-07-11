@@ -111,7 +111,7 @@ function optimization($request) {
 		    }
 		    $file_size_bytes_after = filesize($new_path);
 		}
-		die();
+		die(); //frenar
 
 		// Obtener ruta relativa y URL pública
 		$upload_dir    = wp_upload_dir();

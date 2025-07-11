@@ -104,7 +104,7 @@ function optimization_files($request) {
 		if(!empty($miniaturas)) {
     		foreach ($miniaturas as $key => $path) {
     			if(file_exists($path)) {
-    				unlink($path);
+    				//unlink($path);
     			}
     		}
     	}

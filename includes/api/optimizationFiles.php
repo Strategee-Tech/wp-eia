@@ -59,10 +59,25 @@ function optimization($request) {
 
 		// Si NO es PDF → Comprimir con FFmpeg
 		if (in_array($ext, $ext_multimedia)) {
-			$temp_path = call_compress_api('multimedia', $original_path, $temp_path);
-			//@unlink($original_path);
-			rename($temp_path, $new_path);
-			$file_size_bytes_after = filesize($new_path);
+			try {
+			    $compress_file = call_compress_api('multimedia', $original_path, $temp_path);
+
+			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+			        throw new Exception('El archivo comprimido no se recibió correctamente.');
+			    }
+
+			    // Reemplazar el original
+			    @unlink($original_path);
+			    rename($compress_file, $new_path);
+			    $file_size_bytes_after = filesize($new_path);
+
+			} catch (Exception $e) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Falló la compresión del archivo multimedia.',
+			        'detalle' => $e->getMessage()
+			    ], 500);
+			}
 
 		} elseif(in_array($ext, $ext_documentos)) {
 

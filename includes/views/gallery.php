@@ -4,6 +4,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedFiles.php';
 
 ?>
 
@@ -14,6 +15,8 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 
 $page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;
 $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 20;
+
+$mime_type                  = isset( $_GET['mime_type'] ) ? sanitize_text_field( wp_unslash( $_GET['mime_type'] ) ) : 'image';
 
 $status                     = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : null;
 $year                       = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : null;
@@ -45,7 +48,8 @@ if($optimize === '0'){
     $optimize = null;
 }
 
-$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
+//$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
+$image_data = getPaginatedFiles($page, $per_page, $status, $folder, $mime_type);
 
 function getStatusStyle($status){
     $stylesForStatus = '';
@@ -180,6 +184,17 @@ function getIconExtension($extension){
             <input id="scan-input" type="hidden" name="scan" value="0">
             <input id="delete-input" type="hidden" name="delete" value="0">
             <input id="optimize-input" type="hidden" name="optimize" value="0">
+            <div>
+                <lsabel for="status">Tipo de archivo</lsabel>
+                <select name="mime_type" id="">
+                    <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
+                    <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>
+                    <option <?php echo $mime_type === 'audio' ? 'selected' : ''; ?> value="audio">Audios</option>
+                    <option <?php echo $mime_type === 'video' ? 'selected' : ''; ?> value="video">Videos</option>
+                    <option <?php echo $mime_type === 'text' ? 'selected' : ''; ?> value="text">Textos</option>
+                    <option <?php echo $mime_type === 'application' ? 'selected' : ''; ?> value="application">Documentos</option>
+                </select>
+            </div>
             <div>
                 <lsabel for="status">Estado de Optimización</lsabel>
                 <select name="status" id="">

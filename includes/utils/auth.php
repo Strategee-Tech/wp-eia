@@ -241,7 +241,6 @@ function call_compress_api($type, $file, $temp_path, $resize = false){
     curl_setopt($ch, CURLOPT_TIMEOUT, 6000);
 
     // Ejecutar
-
     $response  = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);

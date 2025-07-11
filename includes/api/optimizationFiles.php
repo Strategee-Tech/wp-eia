@@ -69,7 +69,7 @@ function optimization($request) {
 				        'detalle' => $e->getMessage()
 				    ], 500);
 			    } 
-			    //@unlink($original_path);
+			    @unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
 
@@ -93,7 +93,7 @@ function optimization($request) {
 				        'detalle' => $e->getMessage()
 				    ], 500);
 			    } 
-			    //@unlink($original_path);
+			    @unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
 
@@ -110,8 +110,7 @@ function optimization($request) {
 		        rename($original_path, $new_path);
 		    }
 		    $file_size_bytes_after = filesize($new_path);
-		}
-		die(); //frenar
+		} 
 
 		// Obtener ruta relativa y URL pública
 		$upload_dir    = wp_upload_dir();

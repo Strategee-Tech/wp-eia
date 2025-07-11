@@ -77,7 +77,7 @@ function optimization_files($request) {
 
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
-    		//unlink($original_path); // elimina el original
+    		unlink($original_path); // elimina el original
 	 	}	
     	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
@@ -104,7 +104,7 @@ function optimization_files($request) {
 		if(!empty($miniaturas)) {
     		foreach ($miniaturas as $key => $path) {
     			if(file_exists($path)) {
-    				//unlink($path);
+    				unlink($path);
     			}
     		}
     	}
@@ -127,27 +127,30 @@ function optimization_files($request) {
 
 		// Solo hacer update si hay algo que actualizar
 		if (!empty($update_data)) {
-			//$wpdb->update($wpdb->posts, $update_data, $where);
+			$wpdb->update($wpdb->posts, $update_data, $where);
 		}
 
 		// Actualiza texto alternativo si fue enviado
 		if (!empty($params['alt_text'])) {
-			//update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
+			update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
 		}
 
 		// Actualizar derivados del metadata
-    	// update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
     	// Regenerar metadatos
-    	// regenerate_metadata($post->ID);
+    	regenerate_metadata($post->ID);
+
+    	// Actualizar los _elementor_data
+		update_post_meta_elementor_data($info['basename'], $new_url, $old_url);
 
     	//Actualizar elementor_css_url
-    	// update_elementor_css_url($new_url, $old_url);
+    	update_elementor_css_url($new_url, $old_url);
 
     	// Actualizar post_content y Yoast
-		// update_yoast_info($new_url, $old_url, $post->ID);
+		update_yoast_info($new_url, $old_url, $post->ID);
 
-		// wp_cache_flush();
+		wp_cache_flush();
 
 		$datos_drive = array(
 		    'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',

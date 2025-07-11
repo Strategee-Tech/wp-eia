@@ -330,7 +330,7 @@ function getIconExtension($url){
                             style="cursor: pointer;"
                             class="edit-attachment-trigger dashicons dashicons-edit"
                             data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
-                            data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>" data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>" data-attachment-description="<?php echo esc_attr( $image['post_content'] ); ?>" data-attachment-slug="<?php echo esc_attr( basename($image['file_path_relative']) ); ?>" data-attachment-size="<?php echo esc_attr( $image['image_width'] . 'x' . $image['image_height'] ); ?>" data-attachment-url="<?php echo esc_attr( $image['guid'] ); ?>" ></span>
+                            data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>" data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>" data-attachment-description="<?php echo esc_attr( $image['post_content'] ); ?>" data-attachment-slug="<?php echo esc_attr( basename($image['file_path_relative']) ); ?>" data-attachment-size="<?php echo esc_attr( $image['image_width'] . 'x' . $image['image_height'] ); ?>" data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>" ></span>
                         <?php if ( !empty( $image['usage'] ) ) : // Cambié $image['usage'] a !empty($image['usage']) para verificar si está siendo usado ?>
                             <span class="dashicons dashicons-trash"></span>
                         <?php endif; ?>

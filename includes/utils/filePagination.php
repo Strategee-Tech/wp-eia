@@ -7,11 +7,11 @@
  * @param int         $page       El número de página actual (por defecto 1).
  * @param int         $per_page   El número de elementos por página (por defecto 10).
  * @param string|null $folder     Filtra por subcarpeta de uploads (ej. '2024/07'). Null para no filtrar.
- * @param string      $mime_type  Filtra por tipo MIME principal (image, audio, video, text, application).
- * Por defecto 'image'.
+ * @param string|null $mime_type  Filtra por tipo MIME principal (image, audio, video, text, application).
+ * Null para no filtrar por tipo MIME.
  * @return array Un array asociativo con los registros de archivos y los datos de paginación.
  */
-function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_type = 'image' ) {
+function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_type = null ) { // Cambiado a null por defecto
     global $wpdb;
 
     // Aseguramos que $page y $per_page sean enteros positivos
@@ -24,9 +24,13 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     // --- Preparación de las cláusulas WHERE dinámicas ---
     $where_conditions = [
         "p.post_type = 'attachment'",
-        $wpdb->prepare( "p.post_mime_type LIKE %s", $wpdb->esc_like( $mime_type ) . '/%' )
     ];
     $query_params = []; // Array para almacenar los parámetros de prepare
+
+    // Condición para el filtro de tipo MIME
+    if ( ! is_null( $mime_type ) && ! empty( $mime_type ) ) {
+        $where_conditions[] = $wpdb->prepare( "p.post_mime_type LIKE %s", $wpdb->esc_like( $mime_type ) . '/%' );
+    }
 
     // Condición para el filtro de carpeta (folder)
     if ( ! is_null( $folder ) && ! empty( $folder ) ) {
@@ -113,9 +117,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             
             // Metadatos generales de archivo (tamaño)
             $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
-            
-            // El estado de optimización ya viene de la consulta, pero puedes asegurarte si quieres
-            // $attachment['optimization_status'] = get_post_meta($attachment['attachment_id'], '_stg_optimized_status', true);
         }
 
         // --- 3. Calcular los datos de paginación para retornar ---

@@ -224,11 +224,12 @@ function update_elementor_css_url($new_url, $old_url) {
     }
 }
 
-function call_compress_api($type, $file, $temp_path){
+function call_compress_api($type, $file, $temp_path, $resize = false){
     $endpoint    = 'https://apicompress.strategee.us/comprimir.php';
     $post_fields = [
-        'file' => new CURLFile($file),
-        'type' => $type
+        'file'   => new CURLFile($file),
+        'type'   => $type,
+        'resize' => $resize
     ];
 
     // Inicializar cURL

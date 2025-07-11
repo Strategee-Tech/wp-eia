@@ -63,10 +63,12 @@ function optimization($request) {
 			    $compress_file = call_compress_api('multimedia', $original_path, $temp_path);
 
 			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			        throw new Exception('El archivo comprimido no se recibió correctamente.');
-			    }
-
-			    // Reemplazar el original
+			    	return new WP_REST_Response([
+				        'status'  => 'error',
+				        'message' => 'El archivo comprimido no se recibió correctamente.',
+				        'detalle' => $e->getMessage()
+				    ], 500);
+			    } 
 			    //@unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
@@ -85,10 +87,12 @@ function optimization($request) {
 			    $compress_file = call_compress_api('pdf', $original_path, $temp_path);
 
 			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			        throw new Exception('El archivo comprimido no se recibió correctamente.');
-			    }
-
-			    // Reemplazar el original
+			        return new WP_REST_Response([
+				        'status'  => 'error',
+				        'message' => 'El archivo comprimido no se recibió correctamente.',
+				        'detalle' => $e->getMessage()
+				    ], 500);
+			    } 
 			    //@unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);

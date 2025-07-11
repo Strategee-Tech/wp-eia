@@ -51,16 +51,17 @@ function optimization_files($request) {
     	// Crear archivo temporal WebP en la misma carpeta
     	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
 
-    	// Comprimir a WebP al 80%
-    	if($params['resize'] == true) {
-    		$command = escapeshellcmd("convert '$original_path' -resize 1920x -quality 80 '$temp_img'");
-    	} else {
-    		$command = escapeshellcmd("convert '$original_path' -quality 80 '$temp_img'");
+    	if(!isset($params['resize'])) {
+    		$params['resize'] = false;
     	}
-	    exec($command, $output, $code);
 
-	    if ($code !== 0 || !file_exists($temp_img)) {
-	        return new WP_REST_Response(['status' => 'error', 'message' => 'No se pudo crear la imagen WebP'], 500);
+    	$temp_img = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+	    if (!file_exists($temp_img) || filesize($temp_img) === 0) {
+	    	return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'El archivo comprimido no se recibió correctamente.',
+		        'detalle' => $e->getMessage()
+		    ], 500);
 	    }
 
 	    // Determinar el nuevo nombre (usando el slug)

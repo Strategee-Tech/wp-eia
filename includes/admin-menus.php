@@ -48,6 +48,16 @@ function eia_register_admin_menus() {
         'gallery',
         'render_gallery' // Función callback para añadir
     );
+
+    // Submenú para Añadir Nuevo Elemento
+    add_submenu_page(
+        'wp-eia',
+        'Galeria de Documentos',
+        'Galeria de Documentos',
+        'manage_options',
+        'gallery_documents',
+        'render_gallery_documents' // Función callback para añadir
+    );
 }
 
 // --- Funciones de renderizado (simplemente incluyen el archivo de la vista) ---
@@ -66,4 +76,8 @@ function render_documents() {
 
 function render_gallery() {
     require_once WP_EIA_PLUGIN_DIR . 'includes/views/gallery.php';
+}
+
+function render_gallery_documents() {
+    require_once WP_EIA_PLUGIN_DIR . 'includes/views/gallery_documents.php';
 }

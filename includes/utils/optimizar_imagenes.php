@@ -16,7 +16,7 @@ function comprimir_imagenes($original_path){
 
  	exec($command, $output, $code);
  	if ($code !== 0) {
-        return false
+        return false;
     } else {
         return true;
     }

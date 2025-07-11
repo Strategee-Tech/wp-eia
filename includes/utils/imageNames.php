@@ -41,3 +41,40 @@ function get_original_data_from_thumbnail($thumb_url) {
     // Obtener el adjunto original
     return array('original_url' => $original_url, 'name_clean' => $clean_filename);
 }
+
+
+
+
+
+/**
+ * Extrae la extensión de archivo de una URL dada.
+ *
+ * @param string $url La URL completa del archivo (ej. 'https://example.com/ruta/a/imagen.jpg?v=123').
+ * @return string|null La extensión del archivo (ej. 'jpg', 'pdf', 'webp'), o null si no se puede determinar.
+ */
+function getFileExtensionFromUrl(string $url): ?string
+{
+    // Paso 1: Extraer solo la parte de la ruta del archivo de la URL.
+    // Esto elimina el protocolo, dominio, parámetros de consulta, etc.,
+    // dejando solo '/wp-content/uploads/2025/07/eia-robotics-nuevo-3.webp'
+    $path = parse_url($url, PHP_URL_PATH);
+
+    // Si parse_url no pudo extraer una ruta (ej. URL mal formada o vacía),
+    // o si la ruta es nula, no hay extensión que extraer.
+    if ($path === null || $path === false) {
+        return null;
+    }
+
+    // Paso 2: Usar pathinfo() para obtener la información detallada de la ruta del archivo.
+    // Retorna un array asociativo con 'dirname', 'basename', 'extension', 'filename'.
+    $file_info = pathinfo($path);
+
+    // Paso 3: Acceder al índice 'extension' del array.
+    // Retorna la extensión si existe, de lo contrario, no se define el índice 'extension'.
+    if (isset($file_info['extension'])) {
+        return $file_info['extension'];
+    } else {
+        // No se encontró una extensión (ej. la URL apunta a un directorio o a un archivo sin extensión).
+        return null;
+    }
+}

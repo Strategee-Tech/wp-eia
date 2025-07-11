@@ -4,6 +4,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
 ?>
@@ -155,13 +156,13 @@ function getIconDimensions($width){
     return array($iconSize, $colorSize);
 }
 
-function getIconExtension($extension){
-    $extension = str_replace('image/', '', $extension);
+function getIconExtension($url){
+    $extension = getFileExtensionFromUrl($url);
     $iconSize = '';
     $colorSize = '';
 
     switch ($extension) {
-        case $extension == 'webp':
+        case $extension === 'webp':
         $iconSize = 'dashicons dashicons-yes';
         $colorSize = 'color: #2ECC71;';
         break;
@@ -187,16 +188,6 @@ function getIconExtension($extension){
             <input id="optimize-input" type="hidden" name="optimize" value="0">
             <div>
                 <lsabel for="status">Tipo de archivo</lsabel>
-                <!--
-                    Select para elegir el tipo de archivo a mostrar.
-                    Valores:
-                        - all: muestra todos los tipos de archivo
-                        - image: solo muestra imagenes
-                        - audio: solo muestra audios
-                        - video: solo muestra videos
-                        - text: solo muestra textos
-                        - application: solo muestra documentos
-                -->
                 <select name="mime_type" id="">
                     <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
                     <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>
@@ -302,7 +293,7 @@ function getIconExtension($extension){
                             style="<?php echo esc_html( getIconExtension($image['post_mime_type'])[1] ); ?>"
                             class="<?php echo esc_html( getIconExtension($image['post_mime_type'])[0] ); ?>"
                         ></span>
-                        <?php echo esc_html( str_replace('image/', '', $image['post_mime_type']) ); ?>
+                        <?php echo getFileExtensionFromUrl($image['attachment_url']); ?>
                     </td>
 
                     <td style="text-align: center;">
@@ -343,7 +334,7 @@ function getIconExtension($extension){
                         <?php if ( !empty( $image['usage'] ) ) : // Cambié $image['usage'] a !empty($image['usage']) para verificar si está siendo usado ?>
                             <span class="dashicons dashicons-trash"></span>
                         <?php endif; ?>
-                        <a href="<?php echo esc_url( $image['guid'] ); ?>" target="_blank"> <span class="dashicons dashicons-visibility"></span>
+                        <a href="<?php echo esc_url( $image['attachment_url'] ); ?>" target="_blank"> <span class="dashicons dashicons-visibility"></span>
                         </a>
                     </td>
                 </tr>

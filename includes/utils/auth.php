@@ -223,3 +223,40 @@ function update_elementor_css_url($new_url, $old_url) {
         }
     }
 }
+
+function call_compress_api($type, $file){
+    $endpoint    = 'https://apicompress.strategee.us/comprimir.php';
+    $post_fields = [
+        'file' => new CURLFile($file),
+        'type' => $type
+    ];
+
+    // Inicializar cURL
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $endpoint);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 6000);
+
+    // Ejecutar
+    $response = curl_exec($ch);
+
+
+    echo "<pre>";
+    print_r($response);
+    die(); 
+
+    // Manejar errores
+    if (curl_errno($ch)) {
+        echo 'Error de cURL: ' . curl_error($ch);
+    } else {
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        echo "Código HTTP: $http_code\n";
+        echo "Respuesta:\n$response";
+    }
+
+    // Cerrar conexión
+    curl_close($ch);
+
+}

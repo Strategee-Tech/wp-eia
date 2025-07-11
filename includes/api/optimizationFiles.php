@@ -51,7 +51,7 @@ function optimization($request) {
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
 		$file_size_bytes_before = filesize($original_path);
-		
+
 		// Ruta completa a ffmpeg
 		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
 		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac'];
@@ -60,7 +60,12 @@ function optimization($request) {
 		// Si NO es PDF → Comprimir con FFmpeg
 		if (in_array($ext, $ext_multimedia)) {
 
+
 			$temp_path  = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
+
+			call_compress_api('multimedia', $original_path, $temp_path);
+			die;
+
 
 			$ffmpeg_cmd = sprintf(
 			    '/bin/bash -c "%s -i %s -vcodec libx264 -crf 28 %s"',

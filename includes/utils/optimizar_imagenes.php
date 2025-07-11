@@ -2,8 +2,8 @@
 
 
 function comprimir_imagenes($original_path, $params = []) {
-    $info = pathinfo($original_path);
-    $ext = '.webp';
+    $info      = pathinfo($original_path);
+    $ext       = '.webp';
     $webp_path = $info['dirname'] . '/' . $info['filename'] . '-opt' . $ext;
 
     // Obtener dimensiones

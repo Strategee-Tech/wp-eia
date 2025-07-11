@@ -59,7 +59,7 @@ function optimization($request) {
 
 		// Si NO es PDF → Comprimir con FFmpeg
 		if (in_array($ext, $ext_multimedia)) {
-			$temp_path = call_compress_api('multimedia', $original_path);
+			$temp_path = call_compress_api('multimedia', $original_path, $temp_path);
 			//@unlink($original_path);
 			rename($temp_path, $new_path);
 			$file_size_bytes_after = filesize($new_path);

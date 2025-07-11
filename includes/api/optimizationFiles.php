@@ -53,47 +53,18 @@ function optimization($request) {
 		$file_size_bytes_before = filesize($original_path);
 
 		// Ruta completa a ffmpeg
-		$ffmpeg_exe     = dirname(ABSPATH) . '/ffmpeg/ffmpeg';
 		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac'];
 		$ext_documentos = ['pdf'];
+		$temp_path 		= $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
 		// Si NO es PDF → Comprimir con FFmpeg
 		if (in_array($ext, $ext_multimedia)) {
-
-
-			$temp_path  = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
-
-			call_compress_api('multimedia', $original_path, $temp_path);
-			die;
-
-
-			$ffmpeg_cmd = sprintf(
-			    '/bin/bash -c "%s -i %s -vcodec libx264 -crf 28 %s"',
-			    escapeshellcmd($ffmpeg_exe),
-			    escapeshellarg($original_path),
-			    escapeshellarg($temp_path)
-			);
-
-			exec($ffmpeg_cmd . ' 2>&1', $output, $return_code);
-
-			if ($return_code !== 0 || !file_exists($temp_path)) {
-				return new WP_REST_Response([
-					'message'   => 'Error al comprimir con FFmpeg.',
-					'cmd'       => $ffmpeg_cmd,
-					'output'    => $output,
-					'exit_code' => $return_code,
-				], 500);
-			}
-
-		 	if (file_exists($temp_path)) {
-    			unlink($original_path);
-    			rename($temp_path, $new_path);
-			}
+			$temp_path = call_compress_api('multimedia', $original_path);
+			//@unlink($original_path);
+			rename($temp_path, $new_path);
 			$file_size_bytes_after = filesize($new_path);
 
 		} elseif(in_array($ext, $ext_documentos)) {
-
-		 	$temp_path = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
 		    $gs_cmd = sprintf(
 		        'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen ' .
@@ -124,6 +95,7 @@ function optimization($request) {
 		    }
 		    $file_size_bytes_after = filesize($new_path);
 		}
+		die();
 
 		// Obtener ruta relativa y URL pública
 		$upload_dir    = wp_upload_dir();

@@ -224,7 +224,7 @@ function update_elementor_css_url($new_url, $old_url) {
     }
 }
 
-function call_compress_api($type, $file){
+function call_compress_api($type, $file, $temp_path){
     $endpoint    = 'https://apicompress.strategee.us/comprimir.php';
     $post_fields = [
         'file' => new CURLFile($file),
@@ -240,23 +240,17 @@ function call_compress_api($type, $file){
     curl_setopt($ch, CURLOPT_TIMEOUT, 6000);
 
     // Ejecutar
-    $response = curl_exec($ch);
 
-
-    echo "<pre>";
-    print_r($response);
-    die(); 
-
-    // Manejar errores
-    if (curl_errno($ch)) {
-        echo 'Error de cURL: ' . curl_error($ch);
-    } else {
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        echo "Código HTTP: $http_code\n";
-        echo "Respuesta:\n$response";
-    }
-
-    // Cerrar conexión
+    $response  = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
+    if ($http_code !== 200 || !$response) {
+        throw new Exception("Error al comprimir archivo desde API externa. Código: $http_code");
+    }
+
+    // Guardar el archivo comprimido recibido
+    file_put_contents($temp_path, $response);
+
+    return $temp_path;
 }

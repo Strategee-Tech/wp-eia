@@ -67,7 +67,7 @@ function optimization($request) {
 			    }
 
 			    // Reemplazar el original
-			    @unlink($original_path);
+			    //@unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
 
@@ -81,28 +81,25 @@ function optimization($request) {
 
 		} elseif(in_array($ext, $ext_documentos)) {
 
-		    $gs_cmd = sprintf(
-		        'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen ' .
-		        '-dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s',
-		        escapeshellarg($temp_path),
-		        escapeshellarg($original_path)
-		    );
+			try {
+			    $compress_file = call_compress_api('pdf', $original_path, $temp_path);
 
-		    exec($gs_cmd . ' 2>&1', $output, $return_code);
+			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+			        throw new Exception('El archivo comprimido no se recibió correctamente.');
+			    }
 
-		    if ($return_code !== 0 || !file_exists($temp_path)) {
-		        return new WP_REST_Response([
-		            'message'   => 'Error al comprimir con Ghostscript.',
-		            'cmd'       => $gs_cmd,
-		            'output'    => $output,
-		            'exit_code' => $return_code,
-		        ], 500);
-		    }
-		    if (file_exists($temp_path)) {
-    			unlink($original_path);
-    			rename($temp_path, $new_path);
+			    // Reemplazar el original
+			    //@unlink($original_path);
+			    rename($compress_file, $new_path);
+			    $file_size_bytes_after = filesize($new_path);
+
+			} catch (Exception $e) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Falló la compresión del archivo pdf.',
+			        'detalle' => $e->getMessage()
+			    ], 500);
 			}
-		    $file_size_bytes_after = filesize($new_path);
 		} else {
 			// Solo renombrar el archivo si no se puede comprimir
 		    if ($original_path != $new_path) {

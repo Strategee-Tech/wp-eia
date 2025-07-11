@@ -49,7 +49,7 @@ if($optimize === '0'){
 }
 
 //$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
-$image_data = getPaginatedFiles($page, $per_page, $status, $folder, $mime_type);
+$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type);
 
 function getStatusStyle($status){
     $stylesForStatus = '';

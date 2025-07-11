@@ -1,35 +1,31 @@
 <?php
 
 
-function comprimir_imagenes($original_path, $params = []){
-	$info = pathinfo($original_path);
+function comprimir_imagenes($original_path, $params = []) {
+    $info = pathinfo($original_path);
     $ext = '.webp';
+    $webp_path = $info['dirname'] . '/' . $info['filename'] . '-opt' . $ext;
 
-    // Generar nombre del archivo optimizado
-    $temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt' . $ext;
-
-    // Obtener ancho de la imagen original
+    // Obtener dimensiones
     [$width, $height] = getimagesize($original_path);
 
-    // Decidir si redimensionar
-    $shouldResize = isset($params['resize']) && $params['resize'] === true && $width > 1920;
+    $resize = isset($params['resize']) && $params['resize'] === true && $width > 1920;
 
-    // Construir el comando
-    if ($shouldResize) {
-        $command = "convert " . escapeshellarg($original_path) . " -resize 1920x -quality 80 " . escapeshellarg($temp_img);
-        error_log("Redimensionando y convirtiendo a WebP: $temp_img");
+    // Comando ImageMagick
+    if ($resize) {
+        $command = "convert " . escapeshellarg($original_path) . " -resize 1920x -quality 80 " . escapeshellarg($webp_path);
+        error_log("Redimensionando y convirtiendo: $webp_path");
     } else {
-        $command = "convert " . escapeshellarg($original_path) . " -quality 80 " . escapeshellarg($temp_img);
-        error_log("Solo conversión a WebP: $temp_img");
+        $command = "convert " . escapeshellarg($original_path) . " -quality 80 " . escapeshellarg($webp_path);
+        error_log("Solo conversión a WebP: $webp_path");
     }
 
-    // Ejecutar comando
     exec($command, $output, $code);
 
-    if ($code !== 0) {
-        error_log("Error en la conversión: " . implode("\n", $output));
+    if ($code !== 0 || !file_exists($webp_path)) {
+        error_log("Error en la conversión a WebP: " . implode("\n", $output));
         return false;
     }
 
-    return true;
+    return $webp_path;
 }

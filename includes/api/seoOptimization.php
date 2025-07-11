@@ -55,8 +55,8 @@ function optimization_files($request) {
     		$params['resize'] = false;
     	}
 
-    	$temp_img = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-	    if (!file_exists($temp_img) || filesize($temp_img) === 0) {
+    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+	    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
 	    	return new WP_REST_Response([
 		        'status'  => 'error',
 		        'message' => 'El archivo comprimido no se recibió correctamente.',
@@ -77,9 +77,9 @@ function optimization_files($request) {
 
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
-    		unlink($original_path); // elimina el original
+    		//unlink($original_path); // elimina el original
 	 	}	
-    	rename($temp_img, $new_path); // renombra el WebP para que quede con el nuevo nombre
+    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
     	$dimensions = 'N/A';
         $image_info = @getimagesize( $new_path );
@@ -127,27 +127,27 @@ function optimization_files($request) {
 
 		// Solo hacer update si hay algo que actualizar
 		if (!empty($update_data)) {
-			$wpdb->update($wpdb->posts, $update_data, $where);
+			//$wpdb->update($wpdb->posts, $update_data, $where);
 		}
 
 		// Actualiza texto alternativo si fue enviado
 		if (!empty($params['alt_text'])) {
-			update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
+			//update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
 		}
 
 		// Actualizar derivados del metadata
-    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+    	// update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
     	// Regenerar metadatos
-    	regenerate_metadata($post->ID);
+    	// regenerate_metadata($post->ID);
 
     	//Actualizar elementor_css_url
-    	update_elementor_css_url($new_url, $old_url);
+    	// update_elementor_css_url($new_url, $old_url);
 
     	// Actualizar post_content y Yoast
-		update_yoast_info($new_url, $old_url, $post->ID);
+		// update_yoast_info($new_url, $old_url, $post->ID);
 
-		wp_cache_flush();
+		// wp_cache_flush();
 
 		$datos_drive = array(
 		    'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',

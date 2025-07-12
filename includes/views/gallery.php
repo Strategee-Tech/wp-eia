@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 iaGenerateBtn.style.display = 'none';
             } else {
                 imgModal.style.display = 'block';
-                iaGenerateBtn.style.display = 'block';
+                iaGenerateBtn.style.display = 'flex';
             }
 
             inputSlug.value = currentSlug;

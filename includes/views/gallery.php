@@ -269,8 +269,8 @@ function getIconExtension($url){
             <th style="width: 100px; text-align: center;">Peso (KB)</th>
             <th>slug</th>
             <th style="width: 60px; text-align: center;">Alt</th>
-            <th style="width: 125px;">Estado</th>
-            <th style="width: 100px;">Acciones</th>
+            <th style="width: 125px; text-align: center;">Estado</th>
+            <th style="width: 100px; text-align: center;">Acciones</th>
         </tr>
     </thead>
 
@@ -299,7 +299,7 @@ function getIconExtension($url){
                     </td>
 
                     <td style="text-align: center;">
-                        <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 0) );?>KB
+                        <?php echo esc_html( number_format(($image['file_filesize'] / 1024), 0) );?>KB
                     </td>
 
                     <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
@@ -326,6 +326,7 @@ function getIconExtension($url){
                         <?php endif; ?>
 
                         <a href="<?php echo esc_url( $image['attachment_url'] ); ?>" target="_blank"> <span class="dashicons dashicons-visibility"></span>
+
                         </a>
                     </td>
                 </tr>

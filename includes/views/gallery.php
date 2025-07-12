@@ -7,6 +7,15 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
+
+wp_enqueue_script(
+    'geminiPost',
+    plugins_url( 'includes/utils/geminiPost.js', __FILE__ ),
+    array(),
+    '1.0.0',
+    true
+);
+
 ?>
 
 <h1>Galeria de Imágenes</h1>
@@ -380,7 +389,7 @@ function getIconExtension($url){
         <form id="edit-metadata-form">
             <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 10px;">
 
-                <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px;">
+                <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px; max-height: 300px; object-fit: contain;">
 
                 <div style="flex-grow: 1; width: 100%;">
                     <div>

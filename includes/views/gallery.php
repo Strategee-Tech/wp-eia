@@ -425,25 +425,25 @@ function getIconExtension($url){
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const scanBtn = document.getElementById('scan-btn');
-        const deleteBtn = document.getElementById('delete-btn');
-        const optimizeBtn = document.getElementById('optimize-btn');
-        const filterForm = document.getElementById('filter-form');
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const scanBtn = document.getElementById('scan-btn');
+    //     const deleteBtn = document.getElementById('delete-btn');
+    //     const optimizeBtn = document.getElementById('optimize-btn');
+    //     const filterForm = document.getElementById('filter-form');
 
-        scanBtn.addEventListener('click', function() {
-            document.getElementById('scan-input').value = '1';
-            filterForm.submit();
-        });
-        deleteBtn.addEventListener('click', function() {
-            document.getElementById('delete-input').value = '1';
-            filterForm.submit();
-        });
-        optimizeBtn.addEventListener('click', function() {
-            document.getElementById('optimize-input').value = '1';
-            filterForm.submit();
-        });
-    });
+    //     scanBtn.addEventListener('click', function() {
+    //         document.getElementById('scan-input').value = '1';
+    //         filterForm.submit();
+    //     });
+    //     deleteBtn.addEventListener('click', function() {
+    //         document.getElementById('delete-input').value = '1';
+    //         filterForm.submit();
+    //     });
+    //     optimizeBtn.addEventListener('click', function() {
+    //         document.getElementById('optimize-input').value = '1';
+    //         filterForm.submit();
+    //     });
+    // });
 
 
 </script>
@@ -608,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentDescription = this.dataset.attachmentDescription;
             const currentSlug = this.dataset.attachmentSlug;
             const currentUrl = this.dataset.attachmentUrl;
-            resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
+            // resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
 
             inputSlug.value = currentSlug;

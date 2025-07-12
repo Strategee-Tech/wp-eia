@@ -386,12 +386,12 @@ function getIconExtension($url){
         <h3>Optimizar Archivo de Medios</h3>
 
         <form id="edit-metadata-form">
-            <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: start; gap: 10px;">
+            <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 10px;">
                 <?php if ( strpos( $image['post_mime_type'], 'image' ) !== false ) : ?>
                     <img src="<?php echo esc_url( $image['attachment_url'] ); ?>" alt="<?php echo esc_attr( $image['post_title'] ); ?>" style="width: 100%; max-width: 300px;">
                 <?php endif; ?>
 
-                <div style="flex-grow: 1;">
+                <div style="flex-grow: 1; width: 100%;">
                     <div>
                         <label for="modal-slug">Slug:</label><br>
                         <input type="text" id="modal-slug" name="slug" style="width: 100%;" />

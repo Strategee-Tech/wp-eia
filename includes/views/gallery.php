@@ -40,8 +40,8 @@ if($month !== 'all' && $year !== 'all'){
 } else if($month === 'all' && $year !== 'all'){
     $folder = $year . '/';
 }
-if($status === 'all'){
-    $status = null;
+if($status === null){
+    $status = 'all';
 }
 if($scan === '0'){
     $scan = null;

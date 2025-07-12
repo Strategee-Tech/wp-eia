@@ -3,6 +3,7 @@
 require_once dirname(__DIR__) . '/utils/auth.php';
 
 function optimizar_archivos($original_path, $params = []) {
+    set_time_limit(3600);
     $info       = pathinfo($original_path);
     $ext        = $info['extension'];
     $resize     = false;

@@ -155,6 +155,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $current_page_count = count( $attachments_in_folder );
 
         $pagination_data = [
+            'search_term'             => $search_term,
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,
             'total_pages'             => $total_pages,

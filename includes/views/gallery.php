@@ -20,6 +20,7 @@ $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( 
 $mime_type                  = isset( $_GET['mime_type'] ) ? sanitize_text_field( wp_unslash( $_GET['mime_type'] ) ) : null;
 $mime_type                  = $mime_type === 'all' ? null : $mime_type;
 
+
 $search                     = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : null;
 
 $status                     = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : null;
@@ -53,7 +54,7 @@ if($optimize === '0'){
 }
 
 //$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
-$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search);
+$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search, $status);
 
 function getStatusStyle($status){
     $stylesForStatus = '';

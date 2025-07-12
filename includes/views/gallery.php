@@ -20,6 +20,8 @@ $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( 
 $mime_type                  = isset( $_GET['mime_type'] ) ? sanitize_text_field( wp_unslash( $_GET['mime_type'] ) ) : null;
 $mime_type                  = $mime_type === 'all' ? null : $mime_type;
 
+$search                     = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : null;
+
 $status                     = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : null;
 $year                       = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : null;
 $month                      = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : null;
@@ -55,47 +57,26 @@ $image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type);
 
 function getStatusStyle($status){
     $stylesForStatus = '';
-
-    switch ($status) {
-        case 'pendiente':
-        $stylesForStatus = 'background-color: #FFBF00; color: #333333;';
-        break;
-    case 'por optimizar':
-        $stylesForStatus = 'background-color: #00BFFF; color: #FFFFFF;';
-        break;
-    case 'optimizadas':
-        $stylesForStatus = 'background-color: #2ECC71; color: #FFFFFF;';
-        break;
-    case 'eliminar':
-        $stylesForStatus = 'background-color: #DC143C; color: #FFFFFF;';
-        break;
-    default:
-        $stylesForStatus = 'background-color: #2ECC71; color: #2E7D32;';
-        break;
-    }
-    return $stylesForStatus;
-}
-
-function getStatusIcon($status){
     $icon = '';
     switch ($status) {
-        case 'pendiente':
-        $icon = 'dashicons dashicons-warning';
-        break;
     case 'por optimizar':
+        $stylesForStatus = 'background-color: #00BFFF; color: #FFFFFF;';
         $icon = 'dashicons dashicons-flag';
         break;
     case 'optimizadas':
+        $stylesForStatus = 'background-color: #2ECC71; color: #FFFFFF;';
         $icon = 'dashicons dashicons-yes';
         break;
     case 'eliminar':
+        $stylesForStatus = 'background-color: #DC143C; color: #FFFFFF;';
         $icon = 'dashicons dashicons-trash';
         break;
     default:
-        $icon = 'dashicons dashicons-yes';
+        $stylesForStatus = 'background-color: #FFBF00; color: #333333;';
+        $icon = 'dashicons dashicons-warning';
         break;
     }
-    return $icon;
+    return array($stylesForStatus, $icon);
 }
 
 function getIconSize($size){
@@ -182,12 +163,16 @@ function getIconExtension($url){
 
     <form id="filter-form" method="get" class="filter-container" action="">
         <div>
+            <label for="search">Buscar</label>
+            <input type="search" name="search" id="search" placeholder="Buscar...">
+        </div>
+        <div>
             <input type="hidden" name="page" value="gallery" />
             <input id="scan-input" type="hidden" name="scan" value="0">
             <input id="delete-input" type="hidden" name="delete" value="0">
             <input id="optimize-input" type="hidden" name="optimize" value="0">
             <div>
-                <lsabel for="status">Tipo de archivo</lsabel>
+                <label for="status">Tipo de archivo</label>
                 <select name="mime_type" id="">
                     <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
                     <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>
@@ -198,7 +183,7 @@ function getIconExtension($url){
                 </select>
             </div>
             <div>
-                <lsabel for="status">Estado de Optimización</lsabel>
+                <label for="status">Estado de Optimización</label>
                 <select name="status" id="">
                     <option <?php echo $status === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
                     <option <?php echo $status === 'pendiente' ? 'selected' : ''; ?> value="pendiente">Pendientes</option>
@@ -243,7 +228,7 @@ function getIconExtension($url){
             <span class="dashicons dashicons-filter"></span>
             Filtrar
         </button>
-        <button id="scan-btn" class="btn" type="button">
+        <!-- <button id="scan-btn" class="btn" type="button">
             <span class="dashicons dashicons-search"></span>
             Escanear
         </button>
@@ -256,7 +241,7 @@ function getIconExtension($url){
             <span class="dashicons dashicons-trash"></span>
             Eliminar
         </button>
-        <?php endif; ?>
+        <?php endif; ?> -->
     </form>
 
 <table class="wp-list-table widefat fixed striped">
@@ -311,8 +296,8 @@ function getIconExtension($url){
                         ></span>
                     </td>
 
-                    <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status']); ?>">
-                        <span class="dashicons <?php echo getStatusIcon($image['optimization_status']); ?>"></span>
+                    <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status'])[0]; ?>">
+                        <span class="dashicons <?php echo getStatusStyle($image['optimization_status'])[1]; ?>"></span>
                         <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
                     </td>
                     <td style="text-align: center;">

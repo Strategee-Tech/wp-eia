@@ -278,6 +278,7 @@ function getIconExtension($url){
                     data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>"
                     data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>"
                     data-attachment-description="<?php echo esc_attr( $image['file_description'] ); ?>"
+                    data-attachment-dimensions="<?php if(isset($image['image_width']) && $image['image_width'] > 0): echo esc_attr( $image['image_width'] . ' x ' . $image['image_height'] ); else: null; endif; ?>"
 
                     
                     
@@ -378,9 +379,8 @@ function getIconExtension($url){
     <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
         <form id="edit-metadata-form">
             <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 10px;">
-                <?php if ( strpos( $image['post_mime_type'], 'image' ) !== false ) : ?>
-                    <img src="<?php echo esc_url( $image['attachment_url'] ); ?>" alt="<?php echo esc_attr( $image['post_title'] ); ?>" style="width: 100%; max-width: 300px;">
-                <?php endif; ?>
+
+                <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px;">
 
                 <div style="flex-grow: 1; width: 100%;">
                     <div>
@@ -578,6 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('edit-metadata-form');
     const inputSlug = document.getElementById('modal-slug');
     const inputTitle = document.getElementById('modal-title');
+    const imgModal = document.getElementById('modal-image');
     const inputAlt = document.getElementById('modal-alt');
     const inputDescription = document.getElementById('modal-description');
     const saveBtn = document.getElementById('save-metadata-btn');
@@ -605,13 +606,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentTitle = this.dataset.attachmentTitle || '';
             const currentAlt = this.dataset.attachmentAlt || '';
             const currentDescription = this.dataset.attachmentDescription || '';
-            const currentSlug = this.dataset.attachmentSlug || '';
+            const currentSlug = this.dataset.attachmentName || '';
             const currentUrl = this.dataset.attachmentUrl || '';
+            const currentDimensions = this.dataset.attachmentDimensions || '';
             // resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
+            if(!currentDimensions){
+                imgModal.style.display = 'none';
+            }
 
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
+            imgModal.src = currentUrl;
             inputAlt.value = currentAlt;
             inputDescription.value = currentDescription;
             modalUrl.value = currentUrl;

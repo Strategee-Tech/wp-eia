@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveBtn = document.getElementById('save-metadata-btn');
     const cancelBtn = document.getElementById('cancel-metadata-btn');
     const statusMessage = document.getElementById('save-status-message');
-    const generateBtn = document.getElementById('regenerate-alt-btn');
+    const iaGenerateBtn = document.getElementById('regenerate-alt-btn');
     const modalUrl = document.getElementById('modal-url');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
@@ -622,8 +622,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if(!currentDimensions){
                 imgModal.style.display = 'none';
+                iaGenerateBtn.style.display = 'none';
             } else {
                 imgModal.style.display = 'block';
+                iaGenerateBtn.style.display = 'block';
             }
 
             inputSlug.value = currentSlug;
@@ -721,17 +723,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    generateBtn.addEventListener('click', async function() {
+    iaGenerateBtn.addEventListener('click', async function() {
 
         document.getElementById('gemini-icon').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
-        generateBtn.disabled = true;
+        iaGenerateBtn.disabled = true;
         cancelBtn.disabled = true;
         saveBtn.disabled = true;
         const result = await geminiPost(modalUrl.value);
         document.getElementById('gemini-icon').style.display = 'block';
         document.getElementById('loader').style.display = 'none';
-        generateBtn.disabled = false;
+        iaGenerateBtn.disabled = false;
         cancelBtn.disabled = false;
         saveBtn.disabled = false;
         inputAlt.value = result.alt;

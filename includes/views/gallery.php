@@ -53,7 +53,7 @@ if($optimize === '0'){
 }
 
 //$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
-$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type);
+$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search);
 
 function getStatusStyle($status){
     $stylesForStatus = '';
@@ -72,7 +72,7 @@ function getStatusStyle($status){
         $icon = 'dashicons dashicons-trash';
         break;
     default:
-        $stylesForStatus = 'background-color: #FFBF00; color: #333333;';
+        $stylesForStatus = 'background-color:rgba(255, 191, 0, 0.2); color: #333333;';
         $icon = 'dashicons dashicons-warning';
         break;
     }

@@ -3,14 +3,14 @@
  * Obtiene archivos paginados de WordPress,
  * incluyendo metadatos para SEO y detalles de paginación.
  * Permite filtrar por subcarpeta, opcionalmente por tipo MIME,
- * y opcionalmente por un término de búsqueda de texto completo en el título.
+ * y opcionalmente por un término de búsqueda de texto simple en el título (usando LIKE).
  *
  * @param int         $page       El número de página actual (por defecto 1).
  * @param int         $per_page   El número de elementos por página (por defecto 10).
  * @param string|null $folder     Filtra por subcarpeta de uploads (ej. '2024/07'). Null para no filtrar.
  * @param string|null $mime_type  Filtra por tipo MIME principal (image, audio, video, text, application).
  * Null para no filtrar por tipo MIME (traerá todos los tipos).
- * @param string|null $search_term Término de búsqueda para full-text search en post_title. Null o vacío para no aplicar.
+ * @param string|null $search_term Término de búsqueda para texto simple en post_title. Null o vacío para no aplicar.
  * @return array Un array asociativo con los registros de archivos y los datos de paginación.
  */
 function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_type = null, $search_term = null ) {
@@ -41,40 +41,40 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $query_params[] = '%' . $wpdb->esc_like( $clean_folder ) . '%';
     }
 
-    // Condición para el filtro de búsqueda de texto completo en post_title
+    // Condición para el filtro de búsqueda de texto simple en post_title (usando LIKE)
     if ( ! is_null( $search_term ) && ! empty( $search_term ) ) {
         $clean_search_term = sanitize_text_field( $search_term );
-        $words = explode( ' ', $clean_search_term );
-        $fulltext_words = [];
+        $words = explode( ' ', $clean_search_term ); // Dividir el término en palabras
+        $like_conditions = [];
+
         foreach ( $words as $word ) {
-            // MySQL ignora palabras muy cortas en FULLTEXT search por defecto (configuración ft_min_word_len)
-            // Se recomienda que los términos tengan al menos 2 caracteres aquí para evitar consultas vacías,
-            // pero el umbral real dependerá de la configuración de tu MySQL.
-            if ( strlen( $word ) >= 2 ) { 
-                $fulltext_words[] = '+' . $word . '*'; // '+' asegura que la palabra debe estar presente, '*' permite prefijos
+            $word = trim( $word );
+            if ( ! empty( $word ) ) {
+                $like_conditions[] = $wpdb->prepare( "p.post_title LIKE %s", '%' . $wpdb->esc_like( $word ) . '%' );
             }
         }
 
-        if ( ! empty( $fulltext_words ) ) {
-            $fulltext_query_string = implode( ' ', $fulltext_words );
-            $where_conditions[] = "MATCH (p.post_title) AGAINST (%s IN BOOLEAN MODE)";
-            $query_params[] = $fulltext_query_string;
+        if ( ! empty( $like_conditions ) ) {
+            // Unir las condiciones LIKE con OR para que coincida con CUALQUIERA de las palabras
+            // Opcional: usar AND si quieres que todas las palabras estén presentes.
+            // Para "todas las palabras": $where_conditions[] = '(' . implode(' AND ', $like_conditions) . ')';
+            $where_conditions[] = '(' . implode(' OR ', $like_conditions) . ')'; 
         }
     }
 
     // Unir todas las condiciones WHERE
-    $where_clause = implode( ' AND ', $where_conditions );
+    // Asegurarse de que si $where_conditions está vacío, no se añada una cláusula WHERE vacía.
+    $where_clause = '';
+    if ( ! empty( $where_conditions ) ) {
+        $where_clause = ' WHERE ' . implode( ' AND ', $where_conditions );
+    }
 
     // --- 1. Consulta para el TOTAL de registros (sin paginación) ---
     $total_query_sql_template = "
         SELECT COUNT(DISTINCT p.ID)
         FROM " . $wpdb->posts . " AS p
-        JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'";
-    
-    // Solo añadimos la cláusula WHERE si hay condiciones
-    if ( ! empty( $where_clause ) ) {
-        $total_query_sql_template .= " WHERE " . $where_clause;
-    }
+        JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'"
+        . $where_clause; // Añadir la cláusula WHERE aquí
 
     $total_query = $wpdb->prepare(
         $total_query_sql_template,
@@ -87,7 +87,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     $total_pages = ceil( $total_records / $per_page );
 
     // Aseguramos que la página actual no exceda el total de páginas si no hay registros
-    // Y ajustamos el offset en consecuencia
     if ( $total_records > 0 && $page > $total_pages ) {
         $page = $total_pages;
         $offset = ( $page - 1 ) * $per_page;
@@ -119,13 +118,8 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             LEFT JOIN
                 " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
             LEFT JOIN
-                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimized_status'";
-            
-        if ( ! empty( $where_clause ) ) {
-            $attachments_query_sql_template .= " WHERE " . $where_clause;
-        }
-        
-        $attachments_query_sql_template .= "
+                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimized_status'"
+            . $where_clause . "
             ORDER BY
                 p.post_date DESC
             LIMIT %d OFFSET %d";

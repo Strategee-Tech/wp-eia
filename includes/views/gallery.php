@@ -271,7 +271,10 @@ function getIconExtension($url){
         else :
             foreach ( $image_data['records'] as $image ) :
         ?>
-                <tr class="image-row">
+                <tr 
+                    class="image-row edit-attachment-trigger" 
+                    data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
+                >
                     <td><input type="checkbox" class="image-selector" value="<?php echo esc_attr( $image['attachment_id'] ); ?>"></td> <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
                     <td><?php echo esc_html( $image['post_title'] ); ?></td>
 
@@ -377,6 +380,50 @@ function getIconExtension($url){
     <?php endif; ?>
 </div>
 
+
+<div id="edit-metadata-modal" style="display: none; background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
+        <h3>Optimizar Archivo de Medios</h3>
+
+        <form id="edit-metadata-form">
+            <div>
+                <label for="modal-slug">Slug:</label><br>
+                <input type="text" id="modal-slug" name="slug" style="width: 100%;" />
+            </div>
+            <div>
+                <label for="modal-title">Título:</label><br>
+                <input type="text" id="modal-title" name="title" style="width: 100%;" />
+            </div>
+            <div>
+                <label for="modal-alt">Texto Alternativo (Alt):</label><br>
+                <input type="text" id="modal-alt" name="alt" style="width: 100%;" />
+            </div>
+            <div>
+                <label for="modal-description">Descripción:</label><br>
+                <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
+            </div>
+            <input type="hidden" id="modal-url" name="url" />
+
+
+            <span id="save-status-message" style="margin-left: 10px;"></span>
+            <div class="modal-footer">
+                <button type="button" id="regenerate-alt-btn" class="button">
+                    <svg id="gemini-icon" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
+                        <path class="cls-1" d="M121.24,60.61c-33.48,0-60.62,27.14-60.62,60.62,0-33.48-27.14-60.62-60.62-60.62,33.48,0,60.62-27.14,60.62-60.61,0,33.47,27.14,60.61,60.62,60.61Z"/>
+                    </svg>
+                    <div id="loader" class="loader"></div> 
+                    <span id="regenerate-alt-text">Generar con IA</span>
+                </button>
+                <div style="flex-grow: 1;"></div>
+                <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
+                <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const scanBtn = document.getElementById('scan-btn');
@@ -445,6 +492,51 @@ function getIconExtension($url){
     .image-row:hover {
         background-color:rgb(235, 235, 235) !important;
     }
+
+
+
+    .modal-footer {
+        display: flex;
+        gap: 10px;
+    }
+    #regenerate-alt-btn {
+        align-self: flex-end;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    #regenerate-alt-btn svg{
+        width: 20px;
+        height: 20px;
+        fill: #2171b1;
+    }
+    .loader {
+        display: none;
+        width: 15px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 3px solid #2171b1;
+        animation:
+            l20-1 0.8s infinite linear alternate,
+            l20-2 1.6s infinite linear;
+    }
+    @keyframes l20-1{
+        0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+        12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+        25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+        50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+        62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+        75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+        100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+    }
+    @keyframes l20-2{ 
+        0%    {transform:scaleY(1)  rotate(0deg)}
+        49.99%{transform:scaleY(1)  rotate(135deg)}
+        50%   {transform:scaleY(-1) rotate(0deg)}
+        100%  {transform:scaleY(-1) rotate(-135deg)}
+    }
+
 </style>
 
 <?php
@@ -462,3 +554,178 @@ echo '<pre>';
 print_r($image_data);
 echo '</pre>';
 ?>  
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const user = 'it@strategee.us';
+const password = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
+const credentials = btoa(`${user}:${password}`);
+// admin-media-editor.js (Asegúrate de que este script esté encolado solo en tu página de administración)
+
+document.addEventListener('DOMContentLoaded', function() {
+    const editTriggers = document.querySelectorAll('.edit-attachment-trigger');
+
+    const modal = document.getElementById('edit-metadata-modal');
+    const modalAttachmentIdSpan = document.getElementById('modal-attachment-id');
+    const form = document.getElementById('edit-metadata-form');
+    const inputSlug = document.getElementById('modal-slug');
+    const inputTitle = document.getElementById('modal-title');
+    const inputAlt = document.getElementById('modal-alt');
+    const inputDescription = document.getElementById('modal-description');
+    const saveBtn = document.getElementById('save-metadata-btn');
+    const cancelBtn = document.getElementById('cancel-metadata-btn');
+    const statusMessage = document.getElementById('save-status-message');
+    const generateBtn = document.getElementById('regenerate-alt-btn');
+    const modalUrl = document.getElementById('modal-url');
+
+    let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
+
+    // URL de la API REST de WordPress.
+    // Esto debería venir de wp_localize_script desde PHP para seguridad y portabilidad.
+    // Ejemplo si lo pasas desde PHP: const restApiBaseUrl = yourPluginVar.restApiUrl;
+    // const nonce = yourPluginVar.nonce;
+    const restApiBaseUrl = window.location.origin + '/wp-json/api/v1'; // Ajusta esto si tu base de la API es diferente
+    const nonce = 'TU_NONCE_GENERADO_EN_PHP'; // <--- ¡IMPORTANTE! Genera esto con wp_create_nonce('wp_rest') en PHP y pásalo via wp_localize_script
+
+
+    let resize = false;
+
+    editTriggers.forEach(trigger => {
+        trigger.addEventListener('click', async function() {
+
+            currentAttachmentId = this.dataset.attachmentId;
+            const currentTitle = this.dataset.attachmentTitle;
+            const currentAlt = this.dataset.attachmentAlt;
+            const currentDescription = this.dataset.attachmentDescription;
+            const currentSlug = this.dataset.attachmentSlug;
+            const currentUrl = this.dataset.attachmentUrl;
+            resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
+            
+
+            inputSlug.value = currentSlug;
+            inputTitle.value = currentTitle;
+            inputAlt.value = currentAlt;
+            inputDescription.value = currentDescription;
+            modalUrl.value = currentUrl;
+            modal.style.display = 'flex'; // Muestra el modal
+        });
+    });
+
+    // Cierra el modal al hacer clic en Cancelar
+    cancelBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+        statusMessage.textContent = ''; // Limpia el mensaje de estado
+    });
+
+    // Cierra el modal si se hace clic fuera del contenido (en el fondo oscuro)
+    // modal.addEventListener('click', function(e) {
+    //     if (e.target === modal) {
+    //         modal.style.display = 'none';
+    //         statusMessage.textContent = '';
+    //     }
+    // });
+
+
+    // Manejar el envío del formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+        saveBtn.disabled = true; // Deshabilita el botón mientras se guarda
+        statusMessage.textContent = 'Guardando...';
+        statusMessage.style.color = 'blue';
+
+        const updatedData = {
+            title: inputTitle.value,
+            alt: inputAlt.value,
+            description: inputDescription.value,
+            slug: inputSlug.value
+        };
+
+        try {
+            // Llamada a la API REST de WordPress para actualizar el adjunto
+            // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
+            // URL: /wp-json/wp/v2/media/{id}
+            const response = await fetch(`https://eia2025.strategee.us/wp-json/api/v1/seo-optimization`, {
+                method: 'POST', // Las actualizaciones en la API REST de WP suelen ser POST o PUT
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${credentials}`
+                },
+                body: JSON.stringify({
+                    title: updatedData.title,
+                    alt_text: updatedData.alt, // Para el alt text, el campo es 'alt_text' en la API
+                    description: updatedData.description,
+                    slug: updatedData.slug,
+                    post_id: currentAttachmentId,
+                    resize: resize
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error desconocido al guardar.');
+            }
+
+            const result = await response.json();
+            console.log('Adjunto actualizado:', result);
+            statusMessage.textContent = 'Guardado exitoso!';
+            statusMessage.style.color = 'green';
+
+            // Opcional: Actualizar la tabla visible en el DOM
+            const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
+            if (row) {
+                // Asumiendo el orden de las columnas: Alt y Title
+                row.children[4].textContent = updatedData.title; // Columna 'Alt'
+                row.children[5].textContent = updatedData.alt;   // Columna 'Title'
+            }
+
+            // Opcional: Cerrar el modal después de un breve retraso
+            setTimeout(() => {
+                modal.style.display = 'none';
+                statusMessage.textContent = '';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Error al guardar metadatos:', error);
+            statusMessage.textContent = `Error: ${error.message}`;
+            statusMessage.style.color = 'red';
+        } finally {
+            saveBtn.disabled = false; // Habilita el botón de nuevo
+        }
+    });
+
+
+
+    generateBtn.addEventListener('click', async function() {
+
+        document.getElementById('gemini-icon').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+        generateBtn.disabled = true;
+        cancelBtn.disabled = true;
+        saveBtn.disabled = true;
+        const result = await geminiPost(modalUrl.value);
+        document.getElementById('gemini-icon').style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
+        generateBtn.disabled = false;
+        cancelBtn.disabled = false;
+        saveBtn.disabled = false;
+        inputAlt.value = result.alt;
+        inputTitle.value = result.title;
+        inputDescription.value = result.description;
+        inputSlug.value = result.slug;
+        statusMessage.textContent = 'Generado exitoso!';
+        statusMessage.style.color = 'green';
+
+    });
+});
+</script>
+

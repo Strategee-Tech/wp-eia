@@ -4,13 +4,14 @@ require_once dirname(__DIR__) . '/utils/auth.php';
 
 function optimizar_archivos($original_path, $params = []) {
     $info       = pathinfo($original_path);
-    $webp_path  = $info['dirname'] . '/' . $info['filename'] . '-opt' . $ext;
+    $ext        = $info['extension'];
 
     if($params['type'] == 'imagen') {
         // Obtener dimensiones
+        $resize     = false;  
+        $webp_path  = $info['dirname'] . '/' . $info['filename'] . '-opt.webp';
         [$width, $height] = getimagesize($original_path);
-        $resize = false;
-        $ext    = '.webp';   
+
         if($width > 1920) {
             $resize = true;
         } 
@@ -21,6 +22,7 @@ function optimizar_archivos($original_path, $params = []) {
             return false;
         } 
     } else if($params['type'] == 'multimedia') {
+        $webp_path  = $info['dirname'] . '/' . $info['filename'] . '-opt.' . $ext;
         try {
             call_compress_api($params['type'], $original_path, $webp_path);
         } catch (Exception $e) {
@@ -29,6 +31,7 @@ function optimizar_archivos($original_path, $params = []) {
         }
 
     } else if($params['type'] == 'pdf') {
+        $webp_path  = $info['dirname'] . '/' . $info['filename'] . '-opt.' . $ext;
         try {
             call_compress_api($params['type'], $original_path, $webp_path);
         } catch (Exception $e) {

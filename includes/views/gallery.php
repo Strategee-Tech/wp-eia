@@ -162,15 +162,16 @@ function getIconExtension($url){
 <div class="wrap">
 
     <form id="filter-form" method="get" class="filter-container" action="">
-        <div>
-            <label for="search">Buscar</label>
-            <input type="search" name="search" id="search" placeholder="Buscar...">
-        </div>
+        
         <div>
             <input type="hidden" name="page" value="gallery" />
             <input id="scan-input" type="hidden" name="scan" value="0">
             <input id="delete-input" type="hidden" name="delete" value="0">
             <input id="optimize-input" type="hidden" name="optimize" value="0">
+            <div>
+                <label for="search">Buscar</label>
+                <input type="search" name="search" id="search" placeholder="Buscar...">
+            </div>
             <div>
                 <label for="status">Tipo de archivo</label>
                 <select name="mime_type" id="">

@@ -170,6 +170,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     } catch ( \Throwable $th ) {
         error_log( 'WPIL Error fetching paginated files: ' . $th->getMessage() );
         return [
+            'search_term'             => $search_term,
             'records'                 => [],
             'current_page'            => $page,
             'total_pages'             => 0,

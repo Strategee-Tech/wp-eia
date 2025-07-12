@@ -72,7 +72,7 @@ function getStatusStyle($status){
         $icon = 'dashicons dashicons-trash';
         break;
     default:
-        $stylesForStatus = 'background-color:rgba(255, 191, 0, 0.2); color: #333333;';
+        $stylesForStatus = 'background-color:rgba(255, 191, 0, 0.5); color: #333333;';
         $icon = 'dashicons dashicons-warning';
         break;
     }

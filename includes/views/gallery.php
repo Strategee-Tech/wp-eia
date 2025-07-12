@@ -171,7 +171,7 @@ function getIconExtension($url){
             <input id="optimize-input" type="hidden" name="optimize" value="0">
             <div>
                 <label for="search">Buscar</label>
-                <input type="search" name="search" id="search" placeholder="Buscar...">
+                <input type="search" name="search" id="search" placeholder="Buscar..." value="<?php echo esc_attr( $search ); ?>">
             </div>
             <div>
                 <label for="status">Tipo de archivo</label>
@@ -257,7 +257,6 @@ function getIconExtension($url){
             <th>slug</th>
             <th style="width: 60px; text-align: center;">Alt</th>
             <th style="width: 125px; text-align: center;">Estado</th>
-            <th style="width: 100px; text-align: center;">Acciones</th>
         </tr>
     </thead>
 
@@ -304,20 +303,6 @@ function getIconExtension($url){
                     <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status'])[0]; ?>">
                         <span class="dashicons <?php echo getStatusStyle($image['optimization_status'])[1]; ?>"></span>
                         <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
-                    </td>
-                    <td style="text-align: center;">
-                        <span
-                            style="cursor: pointer;"
-                            class="edit-attachment-trigger dashicons dashicons-edit"
-                            data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
-                            data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>" data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>" data-attachment-description="<?php echo esc_attr( $image['post_content'] ); ?>" data-attachment-slug="<?php echo esc_attr( basename($image['file_path_relative']) ); ?>" data-attachment-size="<?php echo esc_attr( $image['image_width'] . 'x' . $image['image_height'] ); ?>" data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>" ></span>
-                        <?php if ( !empty( $image['usage'] ) ) : ?>
-                            <span class="dashicons dashicons-trash"></span>
-                        <?php endif; ?>
-
-                        <a href="<?php echo esc_url( $image['attachment_url'] ); ?>" target="_blank"> <span class="dashicons dashicons-visibility"></span>
-
-                        </a>
                     </td>
                 </tr>
                 <?php
@@ -383,8 +368,6 @@ function getIconExtension($url){
 
 <div id="edit-metadata-modal" style="display: none; background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
-        <h3>Optimizar Archivo de Medios</h3>
-
         <form id="edit-metadata-form">
             <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 10px;">
                 <?php if ( strpos( $image['post_mime_type'], 'image' ) !== false ) : ?>
@@ -610,12 +593,12 @@ document.addEventListener('DOMContentLoaded', function() {
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {
 
-            currentAttachmentId = this.dataset.attachmentId;
-            const currentTitle = this.dataset.attachmentTitle;
-            const currentAlt = this.dataset.attachmentAlt;
-            const currentDescription = this.dataset.attachmentDescription;
-            const currentSlug = this.dataset.attachmentSlug;
-            const currentUrl = this.dataset.attachmentUrl;
+            currentAttachmentId = this.dataset.attachmentId || '';
+            const currentTitle = this.dataset.attachmentTitle || '';
+            const currentAlt = this.dataset.attachmentAlt || '';
+            const currentDescription = this.dataset.attachmentDescription || '';
+            const currentSlug = this.dataset.attachmentSlug || '';
+            const currentUrl = this.dataset.attachmentUrl || '';
             // resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
 

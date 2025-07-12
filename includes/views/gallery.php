@@ -387,22 +387,30 @@ function getIconExtension($url){
 
         <form id="edit-metadata-form">
             <div>
-                <label for="modal-slug">Slug:</label><br>
-                <input type="text" id="modal-slug" name="slug" style="width: 100%;" />
+                <?php if ( strpos( $image['post_mime_type'], 'image' ) !== false ) : ?>
+                    <img src="<?php echo esc_url( $image['attachment_url'] ); ?>" alt="<?php echo esc_attr( $image['post_title'] ); ?>" style="width: 100%; max-width: 300px;">
+                <?php endif; ?>
+
+                <div>
+                    <div>
+                        <label for="modal-slug">Slug:</label><br>
+                        <input type="text" id="modal-slug" name="slug" style="width: 100%;" />
+                    </div>
+                    <div>
+                        <label for="modal-title">Título:</label><br>
+                        <input type="text" id="modal-title" name="title" style="width: 100%;" />
+                    </div>
+                    <div>
+                        <label for="modal-alt">Texto Alternativo (Alt):</label><br>
+                        <input type="text" id="modal-alt" name="alt" style="width: 100%;" />
+                    </div>
+                    <div>
+                        <label for="modal-description">Descripción:</label><br>
+                        <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
+                    </div>
+                    <input type="hidden" id="modal-url" name="url" />
+                </div>
             </div>
-            <div>
-                <label for="modal-title">Título:</label><br>
-                <input type="text" id="modal-title" name="title" style="width: 100%;" />
-            </div>
-            <div>
-                <label for="modal-alt">Texto Alternativo (Alt):</label><br>
-                <input type="text" id="modal-alt" name="alt" style="width: 100%;" />
-            </div>
-            <div>
-                <label for="modal-description">Descripción:</label><br>
-                <textarea id="modal-description" name="description" rows="5" style="width: 100%;"></textarea>
-            </div>
-            <input type="hidden" id="modal-url" name="url" />
 
 
             <span id="save-status-message" style="margin-left: 10px;"></span>

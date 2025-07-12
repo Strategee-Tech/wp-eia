@@ -386,7 +386,7 @@ function getIconExtension($url){
         <h3>Optimizar Archivo de Medios</h3>
 
         <form id="edit-metadata-form">
-            <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: start; gap: 10px;">
+            <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: start; gap: 10px;">
                 <?php if ( strpos( $image['post_mime_type'], 'image' ) !== false ) : ?>
                     <img src="<?php echo esc_url( $image['attachment_url'] ); ?>" alt="<?php echo esc_attr( $image['post_title'] ); ?>" style="width: 100%; max-width: 300px;">
                 <?php endif; ?>

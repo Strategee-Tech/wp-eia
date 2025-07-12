@@ -264,8 +264,8 @@ function getIconExtension($url){
         <tr>
             <th style="width: 30px;"><input type="checkbox" id="select-all-images"></th> <th style="width: 60px;">ID</th>
             <th>Título</th>
-            <th style="width: 80px; text-align: center;">Extensión</th>
-            <th style="width: 80px; text-align: center;">Tamaño (px)</th>
+            <th style="width: 50px; text-align: center;">Ext.</th>
+            <th style="width: 100px; text-align: center;">Tamaño (px)</th>
             <th style="width: 100px; text-align: center;">Peso (KB)</th>
             <th>slug</th>
             <th style="width: 60px; text-align: center;">Alt</th>
@@ -289,26 +289,16 @@ function getIconExtension($url){
                     <td><?php echo esc_html( $image['post_title'] ); ?></td>
 
                     <td style="text-align: center;">
-                        <span
-                            style="<?php echo esc_html( getIconExtension($image['post_mime_type'])[1] ); ?>"
-                            class="<?php echo esc_html( getIconExtension($image['post_mime_type'])[0] ); ?>"
-                        ></span>
                         <?php echo getFileExtensionFromUrl($image['attachment_url']); ?>
                     </td>
 
                     <td style="text-align: center;">
-                        <span
-                            style="<?php echo esc_html( getIconDimensions($image['image_width'])[1] ); ?>"
-                            class="<?php echo esc_html( getIconDimensions($image['image_width'])[0] ); ?>"
-                        ></span>
-                        <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
+                        <?php if(isset($image['image_width'])): ?>
+                            <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
+                        <?php endif; ?>
                     </td>
 
                     <td style="text-align: center;">
-                        <span
-                            style="<?php echo esc_html( getIconSize($image['image_filesize'])[1] ); ?>"
-                            class="<?php echo esc_html( getIconSize($image['image_filesize'])[0] ); ?>"
-                        ></span>
                         <?php echo esc_html( number_format(($image['image_filesize'] / 1024), 0) );?>KB
                     </td>
 

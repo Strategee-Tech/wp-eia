@@ -53,7 +53,7 @@ function optimization($request) {
 		$file_size_bytes_before = filesize($original_path);
 
 		// Ruta completa a ffmpeg
-		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac'];
+		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];
 		$ext_documentos = ['pdf'];
 		$temp_path 		= $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 

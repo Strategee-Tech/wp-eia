@@ -613,6 +613,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if(!currentDimensions){
                 imgModal.style.display = 'none';
+            } else {
+                imgModal.style.display = 'block';
             }
 
             inputSlug.value = currentSlug;

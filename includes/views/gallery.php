@@ -10,7 +10,7 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
 wp_enqueue_script(
     'geminiPost',
-    plugins_url( 'includes/utils/geminiPost.js', __FILE__ ),
+    plugins_url( '../utils/geminiPost.js', __FILE__ ),
     array(),
     '1.0.0',
     true

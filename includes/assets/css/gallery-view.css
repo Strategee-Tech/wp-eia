@@ -1,0 +1,85 @@
+.filter-container {
+    display: flex;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.filter-container > div {
+    display: flex;
+    gap: 10px;
+}
+.filter-container > div > div {
+    display: flex;
+    flex-direction: column;
+}
+.filter-container > div > label {
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.btn {
+
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-direction: column;
+}
+
+.delete-btn {
+    background-color:rgb(185, 34, 34);
+    transition: background-color 0.3s ease;
+    color: #fff;
+    padding: 3px 10px;
+}  
+.delete-btn:hover {
+    background-color:rgb(170, 36, 36);
+}
+.image-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.image-row:hover {
+    background-color:rgb(235, 235, 235) !important;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+}
+#regenerate-alt-btn {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+#regenerate-alt-btn svg{
+    width: 20px;
+    height: 20px;
+    fill: #2171b1;
+}
+.loader {
+    display: none;
+    width: 15px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 3px solid #2171b1;
+    animation:
+        l20-1 0.8s infinite linear alternate,
+        l20-2 1.6s infinite linear;
+}
+@keyframes l20-1{
+    0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+    12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+    25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+    50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+    62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+    75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+    100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+}
+@keyframes l20-2{ 
+    0%    {transform:scaleY(1)  rotate(0deg)}
+    49.99%{transform:scaleY(1)  rotate(135deg)}
+    50%   {transform:scaleY(-1) rotate(0deg)}
+    100%  {transform:scaleY(-1) rotate(-135deg)}
+}

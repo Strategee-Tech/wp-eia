@@ -16,6 +16,13 @@ wp_enqueue_script(
     true
 );
 
+wp_enqueue_style(
+    'gallery-view',
+    plugins_url( '../assets/css/gallery-view.css', __FILE__ ),
+    array(),
+    '1.0.0'
+);
+
 ?>
 
 <h1>Galeria de Imágenes</h1>
@@ -165,7 +172,6 @@ function getIconExtension($url){
     }
     return array($iconSize, $colorSize, $extension);
 }
-
 ?>
 
 
@@ -255,83 +261,80 @@ function getIconExtension($url){
         <?php endif; ?> -->
     </form>
 
-<table class="wp-list-table widefat fixed striped">
-    <thead>
-        <tr>
-            <th style="width: 30px;"><input type="checkbox" id="select-all-images"></th> <th style="width: 60px;">ID</th>
-            <th>Título</th>
-            <th style="width: 50px; text-align: center;">Ext.</th>
-            <th style="width: 100px; text-align: center;">Tamaño (px)</th>
-            <th style="width: 100px; text-align: center;">Peso (KB)</th>
-            <th>slug</th>
-            <th style="width: 60px; text-align: center;">Alt</th>
-            <th style="width: 125px; text-align: center;">Estado</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <?php
-        if ( empty( $image_data['records'] ) ) :
-        ?>
+    <table class="wp-list-table widefat fixed striped">
+        <thead>
             <tr>
-                <td colspan="10">No se encontraron imágenes en el directorio especificado.</td> </tr>
-        <?php
-        else :
-            foreach ( $image_data['records'] as $image ) :
-        ?>
-                <tr 
-                    class="image-row edit-attachment-trigger" 
-                    data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
-                    data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>"
-                    data-attachment-name="<?php echo esc_attr( $image['post_name'] ); ?>"
-                    data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>"
-                    data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>"
-                    data-attachment-description="<?php echo esc_attr( $image['file_description'] ); ?>"
-                    data-attachment-dimensions="<?php if(isset($image['image_width']) && $image['image_width'] > 0): echo esc_attr( $image['image_width'] . ' x ' . $image['image_height'] ); else: null; endif; ?>"
+                <th style="width: 30px;"><input type="checkbox" id="select-all-images"></th> <th style="width: 60px;">ID</th>
+                <th>Título</th>
+                <th style="width: 50px; text-align: center;">Ext.</th>
+                <th style="width: 100px; text-align: center;">Tamaño (px)</th>
+                <th style="width: 100px; text-align: center;">Peso (KB)</th>
+                <th>slug</th>
+                <th style="width: 60px; text-align: center;">Alt</th>
+                <th style="width: 125px; text-align: center;">Estado</th>
+            </tr>
+        </thead>
 
-                    
-                    
-                >
-                    <td><input type="checkbox" class="image-selector" value="<?php echo esc_attr( $image['attachment_id'] ); ?>"></td> <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
-                    <td><?php echo esc_html( $image['post_title'] ); ?></td>
+        <tbody>
+            <?php
+            if ( empty( $image_data['records'] ) ) :
+            ?>
+                <tr>
+                    <td colspan="10">No se encontraron imágenes en el directorio especificado.</td> </tr>
+            <?php
+            else :
+                foreach ( $image_data['records'] as $image ) :
+            ?>
+                    <tr 
+                        class="image-row edit-attachment-trigger" 
+                        data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
+                        data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>"
+                        data-attachment-name="<?php echo esc_attr( $image['post_name'] ); ?>"
+                        data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>"
+                        data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>"
+                        data-attachment-description="<?php echo esc_attr( $image['file_description'] ); ?>"
+                        data-attachment-dimensions="<?php if(isset($image['image_width']) && $image['image_width'] > 0): echo esc_attr( $image['image_width'] . ' x ' . $image['image_height'] ); else: null; endif; ?>"
 
-                    <td style="text-align: center;">
-                        <?php echo getFileExtensionFromUrl($image['attachment_url']); ?>
-                    </td>
+                        
+                        
+                    >
+                        <td><input type="checkbox" class="image-selector" value="<?php echo esc_attr( $image['attachment_id'] ); ?>"></td> <td><?php echo esc_html( $image['attachment_id'] ); ?></td>
+                        <td><?php echo esc_html( $image['post_title'] ); ?></td>
 
-                    <td style="text-align: center;">
-                        <?php if(isset($image['image_width'])): ?>
-                            <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
-                        <?php endif; ?>
-                    </td>
+                        <td style="text-align: center;">
+                            <?php echo getFileExtensionFromUrl($image['attachment_url']); ?>
+                        </td>
 
-                    <td style="text-align: center;">
-                        <?php echo esc_html( number_format(($image['file_filesize'] / 1024), 0) );?>KB
-                    </td>
+                        <td style="text-align: center;">
+                            <?php if(isset($image['image_width'])): ?>
+                                <?php echo esc_html( $image['image_width'] ); ?> x <?php echo esc_html( $image['image_height'] ); ?>
+                            <?php endif; ?>
+                        </td>
 
-                    <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
+                        <td style="text-align: center;">
+                            <?php echo esc_html( number_format(($image['file_filesize'] / 1024), 0) );?>KB
+                        </td>
 
-                    <td style="text-align: center;">
-                        <span
-                            style="<?php echo esc_html( getIconAlt($image['image_alt_text'])[1] ); ?>"
-                            class="<?php echo esc_html( getIconAlt($image['image_alt_text'])[0] ); ?>"
-                        ></span>
-                    </td>
+                        <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
 
-                    <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status'])[0]; ?>">
-                        <span class="dashicons <?php echo getStatusStyle($image['optimization_status'])[1]; ?>"></span>
-                        <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
-                    </td>
-                </tr>
-                <?php
-            endforeach;
-        endif;
-        ?>
-    </tbody>
-</table>
+                        <td style="text-align: center;">
+                            <span
+                                style="<?php echo esc_html( getIconAlt($image['image_alt_text'])[1] ); ?>"
+                                class="<?php echo esc_html( getIconAlt($image['image_alt_text'])[0] ); ?>"
+                            ></span>
+                        </td>
 
-
-
+                        <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status'])[0]; ?>">
+                            <span class="dashicons <?php echo getStatusStyle($image['optimization_status'])[1]; ?>"></span>
+                            <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
+                        </td>
+                    </tr>
+                    <?php
+                endforeach;
+            endif;
+            ?>
+        </tbody>
+    </table>
 
     <?php if ( $image_data['total_pages'] > 1 ) : ?>
         <div class="tablenav bottom">
@@ -383,7 +386,6 @@ function getIconExtension($url){
     <?php endif; ?>
 </div>
 
-
 <div id="edit-metadata-modal" style="display: none; background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: white; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
         <form id="edit-metadata-form">
@@ -412,7 +414,6 @@ function getIconExtension($url){
                 </div>
             </div>
 
-
             <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">
                 <button type="button" id="regenerate-alt-btn" class="button">
@@ -430,7 +431,6 @@ function getIconExtension($url){
         </form>
     </div>
 </div>
-
 
 <script>
     // document.addEventListener('DOMContentLoaded', function() {
@@ -452,99 +452,10 @@ function getIconExtension($url){
     //         filterForm.submit();
     //     });
     // });
-
-
 </script>
 
 <style>
-    .filter-container {
-        display: flex;
-        margin-bottom: 10px;
-        gap: 8px;
-    }
-
-    .filter-container > div {
-        display: flex;
-        gap: 10px;
-    }
-    .filter-container > div > div {
-        display: flex;
-        flex-direction: column;
-    }
-    .filter-container > div > label {
-        margin-bottom: 5px;
-        font-size: 12px;
-    }
-
-    .btn {
-
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        flex-direction: column;
-    }
-
-    .delete-btn {
-        background-color:rgb(185, 34, 34);
-        transition: background-color 0.3s ease;
-        color: #fff;
-        padding: 3px 10px;
-    }  
-    .delete-btn:hover {
-        background-color:rgb(170, 36, 36);
-    }
-    .image-row {
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    .image-row:hover {
-        background-color:rgb(235, 235, 235) !important;
-    }
-
-
-
-    .modal-footer {
-        display: flex;
-        gap: 10px;
-    }
-    #regenerate-alt-btn {
-        align-self: flex-end;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-    #regenerate-alt-btn svg{
-        width: 20px;
-        height: 20px;
-        fill: #2171b1;
-    }
-    .loader {
-        display: none;
-        width: 15px;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        border: 3px solid #2171b1;
-        animation:
-            l20-1 0.8s infinite linear alternate,
-            l20-2 1.6s infinite linear;
-    }
-    @keyframes l20-1{
-        0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
-        12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
-        25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
-        50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-        62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-        75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
-        100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
-    }
-    @keyframes l20-2{ 
-        0%    {transform:scaleY(1)  rotate(0deg)}
-        49.99%{transform:scaleY(1)  rotate(135deg)}
-        50%   {transform:scaleY(-1) rotate(0deg)}
-        100%  {transform:scaleY(-1) rotate(-135deg)}
-    }
-
+    
 </style>
 
 <?php
@@ -562,14 +473,6 @@ echo '<pre>';
 print_r($image_data);
 echo '</pre>';
 ?>  
-
-
-
-
-
-
-
-
 
 
 <script>

@@ -327,9 +327,8 @@ function getIconExtension($url){
                             ></span>
                         </td>
 
-                        <td style="text-align: center; <?php echo getStatusStyle($image['optimization_status'])[0]; ?>">
-                            <span class="dashicons <?php echo getStatusStyle($image['optimization_status'])[1]; ?>"></span>
-                            <?php echo esc_html( ucwords($image['optimization_status']) ); ?>
+                        <td style="text-align: center; ">
+                            <?php echo esc_html( ucwords($image['stg_status']) ); ?>
                         </td>
                     </tr>
                     <?php

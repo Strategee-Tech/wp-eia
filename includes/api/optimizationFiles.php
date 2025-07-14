@@ -57,6 +57,16 @@ function optimization($request) {
 		$ext_documentos = ['pdf'];
 		$temp_path 		= $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
+		$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif'];
+
+		if (in_array($ext, $extensiones_imagen)) {
+		   return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'El archivo a optimizar no es un archivo multimedia.',
+		        'detalle' => $e->getMessage()
+		    ], 500);
+		} 
+
 		// Si NO es PDF → Comprimir con FFmpeg
 		if (in_array($ext, $ext_multimedia)) {
 			try {

@@ -203,10 +203,60 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         // Obtén todos los resultados de una vez
         $programas = $wpdb->get_results($programas_sql);
 
+        $post_types = [
+            'post',
+            'page',
+            'custom_post_type', // Reemplaza con tus tipos de post personalizados si es necesario
+            'lp_course',
+            'service',
+            'portfolio',
+            'gva_event',
+            'gva_header',
+            'footer',
+            'team',
+            'elementskit_template',
+            'elementskit_content',
+            'elementor_library'
+        ];
+
+        $post_type_placeholders = implode(', ', array_fill(0, count($post_types), '%s'));
+        $post_type_args = $post_types;
+
+        $where_content_clauses = [];
+        $prepare_content_args = [];
+
+
+        foreach ($path_list as $path) {
+            // Añade una condición LIKE para cada ruta
+            $where_content_clauses[] = "post_content LIKE %s";
+            // Escapa la ruta para seguridad y envuélvela en comodines '%'
+            $prepare_content_args[] = '%' . $wpdb->esc_like($path) . '%';
+        }
+
+        $where_content_sql = implode(' OR ', $where_content_clauses);
+
+        $final_prepare_args = array_merge($prepare_content_args, $post_type_args);
+
+
+        $in_content_query_sql = $wpdb->prepare(
+            "SELECT ID, post_title, post_content, post_type 
+             FROM $wpdb->posts
+             WHERE ({$where_content_sql}) 
+             AND post_status IN ('publish', 'private', 'draft')
+             AND post_type IN ({$post_type_placeholders})",
+            ...$final_prepare_args // PHP 5.6+ para desempaquetar el array
+        );
+
+
+        $found_posts = $wpdb->get_results($in_content_query_sql);
+
+
+
         // --- 3. Calcular los datos de paginación para retornar ---
         $current_page_count = count( $attachments_in_folder );
 
         $pagination_data = [
+            'found_posts'             => $found_posts,
             'programas'               => $programas,
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,

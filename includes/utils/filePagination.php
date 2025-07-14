@@ -246,14 +246,41 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
              AND post_type IN ({$post_type_placeholders})",
             ...$final_prepare_args // PHP 5.6+ para desempaquetar el array
         );
-
-
         $found_posts = $wpdb->get_results($in_content_query_sql);
 
-        foreach ($found_posts as $post) {
-            foreach ($attachments_in_folder as &$attachment) {
+        $in_elementor_query_sql = $wpdb->prepare(
+            "SELECT post_id, meta_value 
+            FROM {$wpdb->prefix}postmeta AS wpostmeta
+            LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+            WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
+            AND wpost.post_status IN('publish', 'private', 'draft') "
+        );
+        $elementor_posts = $wpdb->get_results($in_elementor_query_sql);
+
+
+        foreach ($attachments_in_folder as &$attachment) {
+            foreach ($found_posts as $post) {
                 if (strpos($post->post_content, $attachment['file_path_relative']) !== false) {
                     $attachment['in_content'] = true;
+                } else {
+                    $attachment['in_content'] = false;
+                }
+            }
+            foreach ($programas as $programa) {
+                if (strpos($programa->post_content, $attachment['file_path_relative']) !== false) {
+                    $attachment['in_programs'] = true;
+                } else {
+                    $attachment['in_programs'] = false;
+                }
+            }
+            $filenamewithfolder = str_replace('/', '/', $attachment['file_path_relative']);
+            $attachment_id = $attachment['attachment_id'];
+            foreach ($elementor_posts as $elementor_post) {
+
+                if (strpos($elementor_post->meta_value, $filenamewithfolder) !== false || $elementor_post->meta_value == $attachment_id) {
+                    $attachment['in_elementor'] = true;
+                } else {
+                    $attachment['in_elementor'] = false;
                 }
             }
         }
@@ -265,8 +292,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $current_page_count = count( $attachments_in_folder );
 
         $pagination_data = [
-            'found_posts'             => $found_posts,
-            'programas'               => $programas,
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,
             'total_pages'             => $total_pages,

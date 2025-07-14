@@ -48,6 +48,17 @@ function optimization_files($request) {
     	$mimeType      = 'image/webp';
     	$old_url       = $post->guid;
 
+    	$extension 		    = strtolower($info['extension']); // minúsculas por seguridad
+		$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif'];
+
+		if (!in_array($extension, $extensiones_imagen)) {
+		   return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'El archivo a optimizar no es una imagen.',
+		        'detalle' => $e->getMessage()
+		    ], 500);
+		} 
+
     	// Crear archivo temporal WebP en la misma carpeta
     	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
 
@@ -56,13 +67,13 @@ function optimization_files($request) {
     	}
 
     	// $compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-	    // if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-	    // 	return new WP_REST_Response([
-		   //      'status'  => 'error',
-		   //      'message' => 'El archivo comprimido no se recibió correctamente.',
-		   //      'detalle' => $e->getMessage()
-		   //  ], 500);
-	    // }
+	    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+	    	return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'El archivo comprimido no se recibió correctamente.',
+		        'detalle' => $e->getMessage()
+		    ], 500);
+	    }
 
 	    // Determinar el nuevo nombre (usando el slug)
 		$slug 		    = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
@@ -77,9 +88,9 @@ function optimization_files($request) {
 
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
-    		//unlink($original_path); // elimina el original
+    		unlink($original_path); // elimina el original
 	 	}	
-    	//rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
+    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
     	$dimensions = 'N/A';
         $image_info = @getimagesize( $new_path );

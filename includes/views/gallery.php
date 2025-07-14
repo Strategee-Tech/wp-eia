@@ -316,6 +316,7 @@ function getIconAlt($alt){
                 <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px; max-height: 300px; object-fit: contain;">
 
                 <div style="flex-grow: 1; width: 100%;">
+                    <input type="hidden" id="input-width" name="width" value="0"/>
                     <div>
                         <label for="modal-slug">Slug:</label><br>
                         <input type="text" id="modal-slug" name="slug" style="width: 100%;" />

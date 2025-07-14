@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusMessage = document.getElementById('save-status-message');
     const iaGenerateBtn = document.getElementById('regenerate-alt-btn');
     const modalUrl = document.getElementById('modal-url');
+    const inputWidth = document.getElementById('input-width');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentSlug = this.dataset.attachmentName || '';
             const currentUrl = this.dataset.attachmentUrl || '';
             const currentDimensions = this.dataset.attachmentDimensions || '';
-            // resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
+            resize = parseInt(currentDimensions.split('x')[0]) > 1920;
             
             if(!currentDimensions){
                 imgModal.style.display = 'none';
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inputAlt.value = currentAlt;
             inputDescription.value = currentDescription;
             modalUrl.value = currentUrl;
+            inputWidth.value = currentDimensions;
             modal.style.display = 'flex'; // Muestra el modal
         });
     });
@@ -80,15 +82,17 @@ document.addEventListener('DOMContentLoaded', function() {
             title: inputTitle.value,
             alt: inputAlt.value,
             description: inputDescription.value,
-            slug: inputSlug.value
+            slug: inputSlug.value,
+            width: inputWidth.value
         };
+
 
         try {
             // Llamada a la API REST de WordPress para actualizar el adjunto
             // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
             // URL: /wp-json/wp/v2/media/{id}
             let endpoint ='';
-            if(currentDimensions){
+            if(updatedData.width > 0){
                 endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/seo-optimization';
             } else {
                 endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/optimization-file';
@@ -105,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     description: updatedData.description,
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
-                    resize: resize
+                    resize: updatedData.width > 1920,
                 })
             });
 

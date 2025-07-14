@@ -124,7 +124,7 @@ function optimization($request) {
 		$relative_path = str_replace(trailingslashit($upload_dir['basedir']), '', $new_path);
 		$folder        = dirname($relative_path);                               // /2025/06
 		$new_url       = trailingslashit($upload_dir['baseurl']) . $relative_path;
-		$old_rel_path  = '/wp-content/uploads'.$folder.'/'.$info['basename'];
+		$old_rel_path  = '/wp-content/uploads/'.$folder.'/'.$info['basename'];
 
 		// Preparar actualización de campos
 		if (!empty($params['title']))      $update_data['post_title']   = sanitize_text_field($params['title']);

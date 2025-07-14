@@ -327,7 +327,7 @@ function getIconExtension($url){
                             ></span>
                         </td>
 
-                        <td style="text-align: center; ">
+                        <td style="text-align: center; <?php if($image['stg_status'] === 'En Uso'): ?>background-color: green;<?php else: ?>background-color: red;<?php endif; ?>">
                             <?php echo esc_html( ucwords($image['stg_status']) ); ?>
                         </td>
                     </tr>

@@ -91,26 +91,26 @@ function optimization($request) {
 
 		} elseif(in_array($ext, $ext_documentos)) {
 
-			// try {
-			//     $compress_file = call_compress_api('pdf', $original_path, $temp_path);
+			try {
+			    $compress_file = call_compress_api('pdf', $original_path, $temp_path);
 
-			//     if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			//         return new WP_REST_Response([
-			// 	        'status'  => 'error',
-			// 	        'message' => 'El archivo comprimido no se recibió correctamente.',
-			// 	    ], 500);
-			//     } 
-			//     @unlink($original_path);
-			//     rename($compress_file, $new_path);
-			//     $file_size_bytes_after = filesize($new_path);
+			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+			        return new WP_REST_Response([
+				        'status'  => 'error',
+				        'message' => 'El archivo comprimido no se recibió correctamente.',
+				    ], 500);
+			    } 
+			    @unlink($original_path);
+			    rename($compress_file, $new_path);
+			    $file_size_bytes_after = filesize($new_path);
 
-			// } catch (Exception $e) {
-			//     return new WP_REST_Response([
-			//         'status'  => 'error',
-			//         'message' => 'Falló la compresión del archivo pdf.',
-			//         'detalle' => $e->getMessage()
-			//     ], 500);
-			// }
+			} catch (Exception $e) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Falló la compresión del archivo pdf.',
+			        'detalle' => $e->getMessage()
+			    ], 500);
+			}
 		} else {
 			// Solo renombrar el archivo si no se puede comprimir
 		    if ($original_path != $new_path) {

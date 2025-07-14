@@ -259,18 +259,17 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
 
         foreach ($attachments_in_folder as &$attachment) {
+            $attachment['in_content'] = false;
+            $attachment['in_programs'] = false;
+            $attachment['in_elementor'] = false;
             foreach ($found_posts as $post) {
                 if (strpos($post->post_content, $attachment['file_path_relative']) !== false) {
                     $attachment['in_content'] = true;
-                } else {
-                    $attachment['in_content'] = false;
-                }
+                } 
             }
             foreach ($programas as $programa) {
                 if (strpos($programa->post_content, $attachment['file_path_relative']) !== false) {
                     $attachment['in_programs'] = true;
-                } else {
-                    $attachment['in_programs'] = false;
                 }
             }
             $filenamewithfolder = str_replace('/', '/', $attachment['file_path_relative']);
@@ -279,9 +278,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
                 if (strpos($elementor_post->meta_value, $filenamewithfolder) !== false || $elementor_post->meta_value == $attachment_id) {
                     $attachment['in_elementor'] = true;
-                } else {
-                    $attachment['in_elementor'] = false;
-                }
+                } 
             }
         }
         unset($attachment);

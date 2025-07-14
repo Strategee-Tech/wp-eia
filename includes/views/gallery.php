@@ -8,6 +8,14 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
 wp_enqueue_script(
+    'delete-files', // Handle o identificador único
+    plugins_url( '../assets/js/delete-files.js', __FILE__ ), // URL del script dentro de tu plugin
+    array(), // Dependencias (ninguna en este caso)
+    '1.0.0', // Versión
+    true // Cargar en el footer
+);
+
+wp_enqueue_script(
     'geminiService',
     plugins_url( '../assets/js/geminiService.js', __FILE__ ),
     array(),
@@ -28,8 +36,12 @@ wp_enqueue_style(
     plugins_url( '../assets/css/gallery-view.css', __FILE__ ),
     array(),
     '1.0.0'
-)
+);
+
+
 ?>
+
+
 
 <h1>Galeria de Imágenes</h1>
 
@@ -249,9 +261,9 @@ function getIconExtension($url){
             Filtrar
         </button>
         <?php if(count($image_data['files_to_delete']) > 0): ?>
-        <button id="delete-btn" class="btn delete-btn" type="button">
+        <button id="delete-all-btn" class="btn delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
-            Eliminar Sin Uso (<?php echo count($image_data['files_to_delete']); ?>)
+            Eliminar (<?php echo count($image_data['files_to_delete']); ?>)
         </button>
         <?php endif; ?>
         <!-- <button id="scan-btn" class="btn" type="button">

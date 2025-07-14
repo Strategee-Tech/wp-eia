@@ -297,6 +297,14 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         // --- 3. Calcular los datos de paginación para retornar ---
         $current_page_count = count( $attachments_in_folder );
 
+
+        wp_localize_script(
+            'delete-files',                    // El handle del script al que deseas adjuntar los datos
+            'filesToDelete',               // El nombre del objeto JavaScript global
+            array($files_to_delete)           // Tus datos PHP
+        );
+    
+
         $pagination_data = [
             'files_to_delete'         => $files_to_delete,
             'records'                 => $attachments_in_folder,
@@ -308,9 +316,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             'prev_page'               => ( $page > 1 ) ? $page - 1 : null,
             'next_page'               => ( $page < $total_pages ) ? $page + 1 : null,
         ];
-
-
-
 
         return $pagination_data;
 

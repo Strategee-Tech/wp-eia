@@ -63,7 +63,6 @@ function optimization($request) {
 		   return new WP_REST_Response([
 		        'status'  => 'error',
 		        'message' => 'El archivo a optimizar no es un archivo multimedia.',
-		        'detalle' => $e->getMessage()
 		    ], 500);
 		} 
 
@@ -76,7 +75,6 @@ function optimization($request) {
 			    	return new WP_REST_Response([
 				        'status'  => 'error',
 				        'message' => 'El archivo comprimido no se recibió correctamente.',
-				        'detalle' => $e->getMessage()
 				    ], 500);
 			    } 
 			    @unlink($original_path);
@@ -100,7 +98,6 @@ function optimization($request) {
 			        return new WP_REST_Response([
 				        'status'  => 'error',
 				        'message' => 'El archivo comprimido no se recibió correctamente.',
-				        'detalle' => $e->getMessage()
 				    ], 500);
 			    } 
 			    @unlink($original_path);

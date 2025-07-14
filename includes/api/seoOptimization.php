@@ -55,7 +55,6 @@ function optimization_files($request) {
 		   return new WP_REST_Response([
 		        'status'  => 'error',
 		        'message' => 'El archivo a optimizar no es una imagen.',
-		        'detalle' => $e->getMessage()
 		    ], 500);
 		} 
 
@@ -66,14 +65,22 @@ function optimization_files($request) {
     		$params['resize'] = false;
     	}
 
-    	// $compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-	    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-	    	return new WP_REST_Response([
+    	try {
+	    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+		    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+		    	return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'El archivo comprimido no se recibió correctamente.',
+			    ], 500);
+		    } 
+
+	  	} catch (Exception $e) {
+		    return new WP_REST_Response([
 		        'status'  => 'error',
-		        'message' => 'El archivo comprimido no se recibió correctamente.',
+		        'message' => 'Falló la compresión de la imagen.',
 		        'detalle' => $e->getMessage()
 		    ], 500);
-	    }
+		}
 
 	    // Determinar el nuevo nombre (usando el slug)
 		$slug 		    = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo

@@ -472,7 +472,5 @@ function getIconExtension($url){
     echo '<br>';
     echo '$optimize: ' . $optimize;
     echo '<br>';
-    echo '<pre>';
-    print_r($image_data);
-    echo '</pre>';
+    echo '<pre>' . htmlspecialchars(print_r($image_data, true)) . '</pre>';
 ?>  

@@ -301,7 +301,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         wp_localize_script(
             'delete-files',                    // El handle del script al que deseas adjuntar los datos
             'filesToDelete',               // El nombre del objeto JavaScript global
-            array($files_to_delete)           // Tus datos PHP
+            array($files_to_delete, [])           // Tus datos PHP
         );
     
 

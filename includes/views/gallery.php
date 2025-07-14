@@ -248,10 +248,10 @@ function getIconExtension($url){
             <span class="dashicons dashicons-filter"></span>
             Filtrar
         </button>
-        <?php if(count($image_data['files_to_delete_count']) > 0): ?>
+        <?php if(count($image_data['files_to_delete']) > 0): ?>
         <button id="delete-btn" class="btn delete-btn" type="button">
             <span class="dashicons dashicons-trash"></span>
-            Eliminar Sin Uso (<?php echo count($image_data['files_to_delete_count']); ?>)
+            Eliminar Sin Uso (<?php echo count($image_data['files_to_delete']); ?>)
         </button>
         <?php endif; ?>
         <!-- <button id="scan-btn" class="btn" type="button">

@@ -280,6 +280,12 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                     $attachment['in_elementor'] = true;
                 } 
             }
+
+            if($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) {
+                $attachment['stg_status'] = 'Por Optimizar';
+            } else {
+                $attachment['stg_status'] = 'Eliminar';
+            }
         }
         unset($attachment);
 

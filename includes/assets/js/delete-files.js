@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const credentials = btoa(`${user}:${password}`);
 
     // Es crucial verificar si el objeto existe antes de intentar usarlo
-    console.log(filesToDelete);
+    console.log(JSON.stringify(filesToDelete));
     sendBtn.addEventListener('click', async function() {
         
         if (typeof filesToDelete !== 'undefined' && filesToDelete !== null) {
@@ -19,22 +19,26 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // const res = await fetch(url);
                 // const data = await res.json();
                 // console.log(JSON.stringify(data));
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Basic ${credentials}`
-                    },
-                    body: JSON.stringify(filesToDelete)
-                })
 
-                if (!response.ok) {
-                    throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
-                }
+                console.log(JSON.stringify(filesToDelete));
+
+
+                // const response = await fetch(url, {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': `Basic ${credentials}`
+                //     },
+                //     body: JSON.stringify(filesToDelete)
+                // })
+
+                // if (!response.ok) {
+                //     throw new Error('Network response from external endpoint was not ok. Status: ' + response.status + ' ' + response.statusText);
+                // }
                 
-                alert('Archivos eliminados correctamente.');
-                const data = await response.json();
-                console.log(JSON.parse(JSON.stringify(data)));
+                // alert('Archivos eliminados correctamente.');
+                // const data = await response.json();
+                // console.log(JSON.parse(JSON.stringify(data)));
             }
         } else {
             console.warn('Advertencia: filesToDelete NO está definido o es nulo. Esto puede indicar un problema con wp_localize_script.');

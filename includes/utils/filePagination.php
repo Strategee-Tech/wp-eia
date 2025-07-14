@@ -121,7 +121,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     // --- 2. Consulta para los registros de la PÁGINA ACTUAL ---
     try {
         $attachments_query_params = array_merge([], $query_params, [$per_page, $offset]);
-
         $attachments_query_sql_template = "
             SELECT
                 p.ID AS attachment_id,
@@ -163,10 +162,15 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             error_log( 'WPDB Error in Attachments Query: ' . $wpdb->last_error );
         }
 
+        $id_list = array();
+        $path_list = array();
+        
         // Añadir metadatos adicionales según el tipo MIME
         foreach ( $attachments_in_folder as &$attachment ) {
             $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
             
+            $id_list[] = $attachment['attachment_id'];
+            $path_list[] = $attachment['file_path_relative'];
             // Metadatos específicos de imagen
             if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
                 $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
@@ -177,10 +181,33 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
         }
 
+
+        $where_clauses = [];
+        $prepare_args = [];
+        foreach ($path_list as $path) {
+            // Añade una condición LIKE para cada ruta
+            $where_clauses[] = "post_content LIKE %s";
+            // Escapa la ruta para seguridad y envuélvela en comodines '%'
+            $prepare_args[] = '%' . $wpdb->esc_like($path) . '%';
+        }
+
+        $where_clause = implode(' OR ', $where_clauses);
+
+        $programas_sql = $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}learnpress_courses
+             WHERE ({$where_clause}) 
+             AND post_status IN ('publish', 'private', 'draft')",
+            ...$prepare_args
+        );
+        
+        // Obtén todos los resultados de una vez
+        $programas = $wpdb->get_results($programas_sql);
+
         // --- 3. Calcular los datos de paginación para retornar ---
         $current_page_count = count( $attachments_in_folder );
 
         $pagination_data = [
+            'programas'               => $programas,
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,
             'total_pages'             => $total_pages,
@@ -190,6 +217,9 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             'prev_page'               => ( $page > 1 ) ? $page - 1 : null,
             'next_page'               => ( $page < $total_pages ) ? $page + 1 : null,
         ];
+
+
+
 
         return $pagination_data;
 

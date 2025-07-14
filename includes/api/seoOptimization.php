@@ -43,6 +43,10 @@ function optimization_files($request) {
 		$update_data   = array();
 		$where         = array('ID' => $post->ID);
     	$info          = pathinfo($original_path);
+
+    	echo "<pre>";
+    	print_r($info);
+    	die(); 
     	$miniaturas    = find_all_related_thumbnails($original_path);
     	$ext           = '.webp';
     	$mimeType      = 'image/webp';

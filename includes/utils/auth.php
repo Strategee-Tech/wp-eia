@@ -65,7 +65,7 @@ function slug_unico($slug_deseado, $id_actual = 0) {
     return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }
 
-function update_yoast_info($new_url, $old_url, $post_id) {
+function update_yoast_info($new_url, $old_url, $post_id, $old_partial) {
     global $wpdb;
     //actualizar post_content de una imagen dentro de una pagina
     $wpdb->query(
@@ -94,6 +94,16 @@ function update_yoast_info($new_url, $old_url, $post_id) {
     // Tabla de Yoast SEO
     $tabla_yoast_seo_links = $wpdb->prefix . 'yoast_seo_links';
     $tabla_indexable       = $wpdb->prefix . 'yoast_indexable';
+    $tabla_redirection     = $wpdb->prefix . 'redirection_items';
+
+    // Actualiza la fila cuyo match_url contenga la ruta parcial de la tabla de redirecciones
+    $wpdb->query(
+        $wpdb->prepare(
+            "UPDATE $tabla_redirection SET action_data = %s WHERE match_url LIKE %s",
+            $new_url,
+            '%' . $wpdb->esc_like($old_partial) . '%'
+        )
+    );
     
     // Actualizar tabla yoast_indexable (open graph y twitter image)
     $wpdb->query(

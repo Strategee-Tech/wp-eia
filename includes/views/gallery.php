@@ -28,8 +28,7 @@ wp_enqueue_style(
     plugins_url( '../assets/css/gallery-view.css', __FILE__ ),
     array(),
     '1.0.0'
-);
-
+)
 ?>
 
 <h1>Galeria de Imágenes</h1>

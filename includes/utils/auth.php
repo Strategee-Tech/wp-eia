@@ -72,7 +72,7 @@ function update_yoast_info($new_url, $old_url, $post_id) {
         $wpdb->prepare(
             "UPDATE {$wpdb->posts} 
             SET post_content = REPLACE(post_content, %s, %s) 
-            WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
+            WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft', 'revision') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
             $old_url,
             $new_url,
             '%' . basename($old_url) . '%'
@@ -84,7 +84,7 @@ function update_yoast_info($new_url, $old_url, $post_id) {
         $wpdb->prepare(
             "UPDATE {$wpdb->prefix}learnpress_courses 
             SET post_content = REPLACE(post_content, %s, %s) 
-            WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft')",
+            WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft', 'revision')",
             $old_url,
             $new_url,
             '%' . basename($old_url) . '%'

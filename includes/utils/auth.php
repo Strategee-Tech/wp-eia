@@ -247,8 +247,7 @@ function regenerate_metadata($attachment_id, $fileType = 'image'){
                 $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
             } elseif($fileType == 'multimedia') {
                 $file     = get_attached_file( $attachment_id );
-                //$metadata = wp_read_video_metadata( $file );
-
+                
                 // Leer solo los metadatos del video
                 $video_data = wp_read_video_metadata($file);
 
@@ -261,10 +260,12 @@ function regenerate_metadata($attachment_id, $fileType = 'image'){
                         'file' => wp_basename($file),
                     ];
                 }
-                // Fusionamos
+                //Fusionamos
                 $metadata = array_merge($existing_data, $video_data);
             }
-            update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
+            if(!empty($metadata)) {
+                update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
+            }
             return new WP_REST_Response(array('status' => 'success', 'message' => 'Metadata regenerada correctamente'), 200);
         } else {
             return new WP_REST_Response(array('status' => 'error', 'message' => 'Attachment no encontrado'), 404);

@@ -167,18 +167,18 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         
         // Añadir metadatos adicionales según el tipo MIME
         foreach ( $attachments_in_folder as &$attachment ) {
-            // $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
+            $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
             
             $id_list[] = $attachment['attachment_id'];
             $path_list[] = $attachment['file_path_relative'];
             // Metadatos específicos de imagen
-            // if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
-            //     $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
-            //     $attachment['image_height']   = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
-            // }
+            if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
+                $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
+                $attachment['image_height']   = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
+            }
             
             // Metadatos generales de archivo (tamaño)
-            // $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
+            $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
         }
 
 
@@ -282,9 +282,9 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             }
 
             if($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) {
-                $attachment['stg_status'] = 'Por Optimizar';
+                $attachment['stg_status'] = 'En Uso';
             } else {
-                $attachment['stg_status'] = 'Eliminar';
+                $attachment['stg_status'] = 'Sin Uso';
             }
         }
         unset($attachment);

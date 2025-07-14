@@ -43,10 +43,6 @@ function optimization_files($request) {
 		$update_data   = array();
 		$where         = array('ID' => $post->ID);
     	$info          = pathinfo($original_path);
-
-    	echo "<pre>";
-    	print_r($info);
-    	die(); 
     	$miniaturas    = find_all_related_thumbnails($original_path);
     	$ext           = '.webp';
     	$mimeType      = 'image/webp';
@@ -59,14 +55,14 @@ function optimization_files($request) {
     		$params['resize'] = false;
     	}
 
-    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-	    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-	    	return new WP_REST_Response([
-		        'status'  => 'error',
-		        'message' => 'El archivo comprimido no se recibió correctamente.',
-		        'detalle' => $e->getMessage()
-		    ], 500);
-	    }
+    	// $compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+	    // if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+	    // 	return new WP_REST_Response([
+		   //      'status'  => 'error',
+		   //      'message' => 'El archivo comprimido no se recibió correctamente.',
+		   //      'detalle' => $e->getMessage()
+		   //  ], 500);
+	    // }
 
 	    // Determinar el nuevo nombre (usando el slug)
 		$slug 		    = sanitize_file_name($params['slug']); // limpiar para que sea válido como nombre de archivo
@@ -81,9 +77,9 @@ function optimization_files($request) {
 
 	 	// Eliminar el archivo original
 	 	if(file_exists($original_path)){
-    		unlink($original_path); // elimina el original
+    		//unlink($original_path); // elimina el original
 	 	}	
-    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
+    	//rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
     	$dimensions = 'N/A';
         $image_info = @getimagesize( $new_path );
@@ -99,6 +95,7 @@ function optimization_files($request) {
 		// Obtener la subcarpeta donde está el archivo original
 		$relative_path = str_replace($wp_uploads_basedir, '', $original_path);  // /2025/06/Banner-Web2-intento-1.webp
 		$folder        = dirname($relative_path);                               // /2025/06
+		$old_rel_path  = '/wp-content/uploads'.$folder.'/'.$info['basename'];
 
 		// Construir la nueva URL en la misma carpeta del archivo original
 		$new_url = trailingslashit($wp_uploads_baseurl . $folder) . $new_filename;
@@ -152,7 +149,7 @@ function optimization_files($request) {
     	update_elementor_css_url($new_url, $old_url);
 
     	// Actualizar post_content y Yoast
-		update_yoast_info($new_url, $old_url, $post->ID);
+		update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);
 
 		wp_cache_flush();
 

@@ -191,7 +191,7 @@ function update_post_meta_elementor_data($basename, $new_url, $old_url){
             $aux_url = false;
             $json_data = json_decode($row['meta_value'], true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
-                array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url, $year_month_path, $basename) {
+                array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url, $year_month_path, $basename, &$aux_url) {
                     if(strpos($value, $year_month_path.$basename) !== false) {
                         $value   = str_replace($year_month_path.$basename, $year_month_path.basename($new_url), $value);
                         $aux_url = true;

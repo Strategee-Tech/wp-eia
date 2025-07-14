@@ -49,7 +49,7 @@ function optimization_files($request) {
     	$old_url       = $post->guid;
 
     	$extension 		    = strtolower($info['extension']); // minúsculas por seguridad
-		$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif'];
+		$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
 
 		if (!in_array($extension, $extensiones_imagen)) {
 		   return new WP_REST_Response([

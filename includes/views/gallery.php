@@ -64,6 +64,7 @@ $month                      = isset( $_GET['month'] ) ? sanitize_text_field( wp_
 
 
 $folder = null;
+
 if($month !== 'all' && $year !== 'all'){
     $folder = $year . '/' . $month;
 } else if($month !== 'all' && $year === 'all'){
@@ -74,67 +75,10 @@ if($month !== 'all' && $year !== 'all'){
 if($status === null){
     $status = 'all';
 }
-if($scan === '0'){
-    $scan = null;
-}
-if($delete === '0'){
-    $delete = null;
-}
-if($optimize === '0'){
-    $optimize = null;
-}
 
 //$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
 $image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search, $status);
 
-function getStatusStyle($status){
-    $stylesForStatus = '';
-    $icon = '';
-    switch ($status) {
-    case 'por optimizar':
-        $stylesForStatus = 'background-color: #00BFFF; color: #FFFFFF;';
-        $icon = 'dashicons dashicons-flag';
-        break;
-    case 'optimizadas':
-        $stylesForStatus = 'background-color: #2ECC71; color: #FFFFFF;';
-        $icon = 'dashicons dashicons-yes';
-        break;
-    case 'eliminar':
-        $stylesForStatus = 'background-color: #DC143C; color: #FFFFFF;';
-        $icon = 'dashicons dashicons-trash';
-        break;
-    default:
-        $stylesForStatus = 'background-color:rgba(255, 191, 0, 0.5); color: #333333;';
-        $icon = 'dashicons dashicons-warning';
-        break;
-    }
-    return array($stylesForStatus, $icon);
-}
-
-function getIconSize($size){
-    $size = intval($size);
-    $iconSize = '';
-    $colorSize = '';
-    switch ($size ) {
-        case $size < 400000 && $size > 0:
-        $iconSize = 'dashicons dashicons-yes';
-        $colorSize = 'color: #2ECC71;';
-        break;
-    case $size < 800000 && $size > 400000:
-        $iconSize = 'dashicons dashicons-flag';
-        $colorSize = 'color: #FFBF00;';
-        break;
-    case $size > 800000:
-        $iconSize = 'dashicons dashicons-warning';
-        $colorSize = 'color: #DC143C;';
-        break;
-    default:
-        $iconSize = 'dashicons dashicons-no';
-        $colorSize = 'color: #2ECC71;';
-        break;
-    }
-    return array($iconSize, $colorSize);
-}
 
 function getIconAlt($alt){
     $iconSize = '';
@@ -147,45 +91,6 @@ function getIconAlt($alt){
         $colorSize = 'color: #2ECC71;';
     }
     return array($iconSize, $colorSize);    
-}
-
-function getIconDimensions($width){
-    $iconSize = '';
-    $colorSize = '';
-    switch ($width) {
-        case $width < 1920 && $width > 0:
-        $iconSize = 'dashicons dashicons-yes';
-        $colorSize = 'color: #2ECC71;';
-        break;
-    case $width > 1920:
-        $iconSize = 'dashicons dashicons-flag';
-        $colorSize = 'color: #FFBF00;';
-        break;
-    default:
-        $iconSize = 'dashicons dashicons-no';
-        $colorSize = 'color: #2ECC71;';
-        break;
-    }
-    return array($iconSize, $colorSize);
-}
-
-function getIconExtension($url){
-    $extension = getFileExtensionFromUrl($url);
-    $iconSize = '';
-    $colorSize = '';
-
-    switch ($extension) {
-        case $extension === 'webp':
-        $iconSize = 'dashicons dashicons-yes';
-        $colorSize = 'color: #2ECC71;';
-        break;
-
-        default:
-        $iconSize = 'dashicons dashicons-no-alt';
-        $colorSize = 'color: #DC143C;';
-        break;
-    }
-    return array($iconSize, $colorSize, $extension);
 }
 ?>
 
@@ -433,6 +338,8 @@ function getIconExtension($url){
 
             <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">
+
+
                 <button type="button" id="regenerate-alt-btn" class="button">
                     <svg id="gemini-icon" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
                         <path class="cls-1" d="M121.24,60.61c-33.48,0-60.62,27.14-60.62,60.62,0-33.48-27.14-60.62-60.62-60.62,33.48,0,60.62-27.14,60.62-60.61,0,33.47,27.14,60.61,60.62,60.61Z"/>
@@ -440,6 +347,13 @@ function getIconExtension($url){
                     <div id="loader" class="loader"></div> 
                     <span id="regenerate-alt-text">Generar con IA</span>
                 </button>
+
+                <!-- <button type="button" style="display: none; align-items: center; gap: 5px;" id="delete-btn" class="btn delete-btn">
+                    <span class="dashicons dashicons-trash"></span>
+                    Eliminar
+                </button> -->
+
+
                 <div style="flex-grow: 1;"></div>
                 <button type="button" id="cancel-metadata-btn" class="button">Cancelar</button>
                 <button type="submit" id="save-metadata-btn" class="button button-primary">Guardar Cambios</button>

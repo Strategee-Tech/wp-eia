@@ -1,51 +1,50 @@
+
 const user = 'it@strategee.us';
 const password = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
 const credentials = btoa(`${user}:${password}`);
 // admin-media-editor.js (Asegúrate de que este script esté encolado solo en tu página de administración)
 
 document.addEventListener('DOMContentLoaded', function() {
-    const editTriggers = document.querySelectorAll('.edit-attachment-trigger')
+    const editTriggers = document.querySelectorAll('.edit-attachment-trigger');
     const modal = document.getElementById('edit-metadata-modal');
     const modalAttachmentIdSpan = document.getElementById('modal-attachment-id');
     const form = document.getElementById('edit-metadata-form');
     const inputSlug = document.getElementById('modal-slug');
     const inputTitle = document.getElementById('modal-title');
-    const imgModal = document.getElementById('modal-image');
     const inputAlt = document.getElementById('modal-alt');
     const inputDescription = document.getElementById('modal-description');
     const saveBtn = document.getElementById('save-metadata-btn');
     const cancelBtn = document.getElementById('cancel-metadata-btn');
     const statusMessage = document.getElementById('save-status-message');
-    const iaGenerateBtn = document.getElementById('regenerate-alt-btn');
+    const generateBtn = document.getElementById('regenerate-alt-btn');
     const modalUrl = document.getElementById('modal-url');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
+
+    // URL de la API REST de WordPress.
+    // Esto debería venir de wp_localize_script desde PHP para seguridad y portabilidad.
+    // Ejemplo si lo pasas desde PHP: const restApiBaseUrl = yourPluginVar.restApiUrl;
+    // const nonce = yourPluginVar.nonce;
+    const restApiBaseUrl = window.location.origin + '/wp-json/api/v1'; // Ajusta esto si tu base de la API es diferente
+    const nonce = 'TU_NONCE_GENERADO_EN_PHP'; // <--- ¡IMPORTANTE! Genera esto con wp_create_nonce('wp_rest') en PHP y pásalo via wp_localize_script
+
 
     let resize = false;
 
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {
 
-            currentAttachmentId = this.dataset.attachmentId || '';
-            const currentTitle = this.dataset.attachmentTitle || '';
-            const currentAlt = this.dataset.attachmentAlt || '';
-            const currentDescription = this.dataset.attachmentDescription || '';
-            const currentSlug = this.dataset.attachmentName || '';
-            const currentUrl = this.dataset.attachmentUrl || '';
-            const currentDimensions = this.dataset.attachmentDimensions || '';
-            // resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
+            currentAttachmentId = this.dataset.attachmentId;
+            const currentTitle = this.dataset.attachmentTitle;
+            const currentAlt = this.dataset.attachmentAlt;
+            const currentDescription = this.dataset.attachmentDescription;
+            const currentSlug = this.dataset.attachmentSlug;
+            const currentUrl = this.dataset.attachmentUrl;
+            resize = parseInt(this.dataset.attachmentSize.split('x')[0]) > 1920;
             
-            if(!currentDimensions){
-                imgModal.style.display = 'none';
-                iaGenerateBtn.style.display = 'none';
-            } else {
-                imgModal.style.display = 'block';
-                iaGenerateBtn.style.display = 'flex';
-            }
 
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
-            imgModal.src = currentUrl;
             inputAlt.value = currentAlt;
             inputDescription.value = currentDescription;
             modalUrl.value = currentUrl;
@@ -87,13 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Llamada a la API REST de WordPress para actualizar el adjunto
             // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
             // URL: /wp-json/wp/v2/media/{id}
-            let endpoint ='';
-            if(currentDimensions){
-                endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/seo-optimization';
-            } else {
-                endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/optimization-file';
-            }
-            const response = await fetch(endpoint, {
+            const response = await fetch(`https://eia2025.strategee.us/wp-json/api/v1/seo-optimization`, {
                 method: 'POST', // Las actualizaciones en la API REST de WP suelen ser POST o PUT
                 headers: {
                     'Content-Type': 'application/json',
@@ -123,8 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
             if (row) {
                 // Asumiendo el orden de las columnas: Alt y Title
-                row.children[2].textContent = updatedData.title; // Columna 'Alt'
-                row.children[6].textContent = updatedData.alt;   // Columna 'Title'
+                row.children[4].textContent = updatedData.title; // Columna 'Alt'
+                row.children[5].textContent = updatedData.alt;   // Columna 'Title'
             }
 
             // Opcional: Cerrar el modal después de un breve retraso
@@ -144,17 +137,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    iaGenerateBtn.addEventListener('click', async function() {
+    generateBtn.addEventListener('click', async function() {
 
         document.getElementById('gemini-icon').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
-        iaGenerateBtn.disabled = true;
+        generateBtn.disabled = true;
         cancelBtn.disabled = true;
         saveBtn.disabled = true;
         const result = await geminiPost(modalUrl.value);
         document.getElementById('gemini-icon').style.display = 'block';
         document.getElementById('loader').style.display = 'none';
-        iaGenerateBtn.disabled = false;
+        generateBtn.disabled = false;
         cancelBtn.disabled = false;
         saveBtn.disabled = false;
         inputAlt.value = result.alt;

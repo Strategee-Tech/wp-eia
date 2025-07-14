@@ -53,12 +53,12 @@ function borrar_archivos($request) {
             $carpeta     = file_exists($path) ? dirname(str_replace(wp_upload_dir()['basedir'], '', $path)) : 'N/A';
             $fecha       = date('Y-m-d H:i:s');
             // Eliminar el attachment
-            //if (wp_delete_attachment($attachment_id, true)) {
+            if (wp_delete_attachment($attachment_id, true)) {
                 $datos_drive['values'][] = [$url, $peso_mb, $carpeta, $fecha];
                 file_put_contents($logPath, "Eliminado attachment ID: $attachment_id\n", FILE_APPEND);
-            //} else {
-                //file_put_contents($logPath, "Error al eliminar attachment ID: $attachment_id\n", FILE_APPEND);
-            //}
+            } else {
+                file_put_contents($logPath, "Error al eliminar attachment ID: $attachment_id\n", FILE_APPEND);
+            }
         }
     }
     if(!empty($params['1'])) {
@@ -73,11 +73,11 @@ function borrar_archivos($request) {
                 $carpeta     = file_exists($full_path) ? dirname($rel_path) : 'N/A';
                 $fecha       = date('Y-m-d H:i:s');
                 $datos_drive['values'][] = [$url, $peso_mb, $carpeta, $fecha];
-                //if (unlink($full_path)) {
+                if (unlink($full_path)) {
                     file_put_contents($logPath, "Eliminado archivo en ruta: $full_path\n", FILE_APPEND);
-                //} else {
-                    //file_put_contents($logPath, "Error al eliminar archivo en ruta: $full_path\n", FILE_APPEND);
-                //}
+                } else {
+                    file_put_contents($logPath, "Error al eliminar archivo en ruta: $full_path\n", FILE_APPEND);
+                }
             } else {
                 file_put_contents($logPath, "Archivo no encontrado en ruta: $full_path\n", FILE_APPEND);
             }

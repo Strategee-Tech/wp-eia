@@ -313,7 +313,10 @@ function getIconAlt($alt){
         <form id="edit-metadata-form">
             <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 10px;">
 
-                <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px; max-height: 300px; object-fit: contain;">
+                <a id="file-link" href="#" target="_blank">
+                    <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px; max-height: 300px; object-fit: contain;">
+                    <span id="file-link-text">Ver archivo</span>
+                </a>
 
                 <div style="flex-grow: 1; width: 100%;">
                     <input type="hidden" id="input-width" name="width" value="0"/>

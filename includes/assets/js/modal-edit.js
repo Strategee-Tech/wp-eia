@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const iaGenerateBtn = document.getElementById('regenerate-alt-btn');
     const modalUrl = document.getElementById('modal-url');
     const inputWidth = document.getElementById('input-width');
+    const fileLink = document.getElementById('file-link');
+    const fileLinkText = document.getElementById('file-link-text');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
@@ -39,10 +41,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if(!currentDimensions){
                 imgModal.style.display = 'none';
                 iaGenerateBtn.style.display = 'none';
+                fileLinkText.style.display = 'block';
             } else {
                 imgModal.style.display = 'block';
                 iaGenerateBtn.style.display = 'flex';
+                fileLinkText.style.display = 'none';
             }
+
+            
 
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;
@@ -52,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modalUrl.value = currentUrl;
             inputWidth.value = currentDimensions;
             modal.style.display = 'flex'; // Muestra el modal
+            fileLink.href = currentUrl;
         });
     });
 
@@ -128,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (row) {
                 // Asumiendo el orden de las columnas: Alt y Title
                 row.children[2].textContent = updatedData.title; // Columna 'Alt'
-                row.children[6].textContent = updatedData.alt;   // Columna 'Title'
+                row.children[5].textContent = updatedData.alt;   // Columna 'Title'
             }
 
             // Opcional: Cerrar el modal después de un breve retraso

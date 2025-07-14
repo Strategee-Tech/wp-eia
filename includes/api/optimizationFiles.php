@@ -146,6 +146,9 @@ function optimization($request) {
 		// Actualizar derivados del metadata
     	update_post_meta($post->ID, '_wp_attached_file', $relative_path);
 
+    	// Regenerar metadatos
+    	regenerate_metadata($post->ID);
+
 		// Actualizar los _elementor_data
 		update_post_meta_elementor_data($info['basename'], $new_url, $old_url);
 

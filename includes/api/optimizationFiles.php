@@ -184,7 +184,7 @@ function optimization($request) {
 			'new_url'       => $new_url,
 			'new_path'      => $new_path,
 			'relative_path' => $relative_path,
-			'size'          => $file_size_bytes_after,
+			'size'          => number_format($file_size_bytes_after),
 		], 200);
 
 	} catch (\Throwable $th) {

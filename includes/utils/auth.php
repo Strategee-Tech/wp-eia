@@ -1,5 +1,8 @@
 <?php
 
+if ( ! function_exists( 'wp_crop_image' ) ) {
+    include( ABSPATH . 'wp-admin/includes/image.php' );
+}
 
 // Función de validación de permisos con autenticación básica
 function basic_auth_permission_check() {
@@ -231,6 +234,22 @@ function update_elementor_css_url($new_url, $old_url) {
                 update_post_meta($row['post_id'], $meta_key, $meta_value);
             }
         }
+    }
+}
+
+function regenerate_metadata($attachment_id){
+    $attachment = get_post( $attachment_id );
+    try {
+        $attachment = get_post( $attachment_id );
+        if ( $attachment && $attachment->post_type === 'attachment' ) {
+            $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
+            update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
+            return new WP_REST_Response(array('status' => 'success', 'message' => 'Metadata regenerada correctamente'), 200);
+        } else {
+            return new WP_REST_Response(array('status' => 'error', 'message' => 'Attachment no encontrado'), 404);
+        }
+    } catch (\Throwable $th) {
+        return new WP_REST_Response(array('status' => 'error', 'message' => $th->getMessage()), 500);
     }
 }
 

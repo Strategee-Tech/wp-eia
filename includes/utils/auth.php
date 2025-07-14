@@ -186,20 +186,20 @@ function update_post_meta_elementor_data($basename, $new_url, $old_url){
         ARRAY_A
     );
 
-    if(!empty($rows)) {
+    if (!empty($rows)) {
         foreach ($rows as $row) {
+            $aux_url = false;
             $json_data = json_decode($row['meta_value'], true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
                 array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url, $year_month_path, $basename) {
-                    if (is_string($value) && strpos($value, $old_url) !== false) {
-                        // Asegura que la coincidencia sea específica a la carpeta esperada
-                        if (strpos($value, $year_month_path . $basename) === false) {
-                            return; // No reemplazar si el path no coincide
-                        }
-                        $value = str_replace($old_url, $new_url, $value);
+                    if(strpos($value, $year_month_path.$basename) !== false) {
+                        $value   = str_replace($year_month_path.$basename, $year_month_path.basename($new_url), $value);
+                        $aux_url = true;
                     }
                 });
-                update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
+                if($aux_url == true) {
+                    update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
+                }
             }
         }
     }

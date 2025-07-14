@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
                 
                 alert('Archivos eliminados correctamente.');
-                document.location.reload();
+                location.reload();
                 const data = await response.json();
                 console.log(JSON.parse(JSON.stringify(data)));
             }

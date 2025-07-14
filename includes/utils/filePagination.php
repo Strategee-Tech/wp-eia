@@ -251,9 +251,13 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $found_posts = $wpdb->get_results($in_content_query_sql);
 
         foreach ($found_posts as $post) {
-            foreach ($attachments_in_folder as $attachment) {
+            foreach ($attachments_in_folder as &$attachment) {
+                if (strpos($post->post_content, $attachment['file_path_relative']) !== false) {
+                    $attachment['in_content'] = true;
+                }
             }
         }
+        unset($attachment);
 
 
 

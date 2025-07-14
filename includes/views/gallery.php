@@ -49,9 +49,6 @@ $status                     = isset( $_GET['status'] ) ? sanitize_text_field( wp
 $year                       = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : null;
 $month                      = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : null;
 
-$scan                       = isset( $_GET['scan'] ) ? sanitize_text_field( wp_unslash( $_GET['scan'] ) ) : null;
-$delete                     = isset( $_GET['delete'] ) ? sanitize_text_field( wp_unslash( $_GET['delete'] ) ) : null;
-$optimize                   = isset( $_GET['optimize'] ) ? sanitize_text_field( wp_unslash( $_GET['optimize'] ) ) : null;
 
 
 $folder = null;
@@ -251,6 +248,12 @@ function getIconExtension($url){
             <span class="dashicons dashicons-filter"></span>
             Filtrar
         </button>
+        <?php if(count($image_data['files_to_delete_count']) > 0): ?>
+        <button id="delete-btn" class="btn delete-btn" type="button">
+            <span class="dashicons dashicons-trash"></span>
+            Eliminar Sin Uso (<?php echo count($image_data['files_to_delete_count']); ?>)
+        </button>
+        <?php endif; ?>
         <!-- <button id="scan-btn" class="btn" type="button">
             <span class="dashicons dashicons-search"></span>
             Escanear

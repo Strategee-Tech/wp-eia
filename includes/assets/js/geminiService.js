@@ -66,11 +66,6 @@ async function geminiPost(imageUrl) {
     return result;
 }
 
-
-
-
-
-
 async function imageUrlToBase64(imageUrl) {
     try {
         // 1. Obtener la imagen usando fetch

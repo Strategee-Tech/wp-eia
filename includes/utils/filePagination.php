@@ -257,6 +257,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         );
         $elementor_posts = $wpdb->get_results($in_elementor_query_sql);
 
+        $files_to_delete = array();
 
         foreach ($attachments_in_folder as &$attachment) {
             $attachment['in_content'] = false;
@@ -285,16 +286,19 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $attachment['stg_status'] = 'En Uso';
             } else {
                 $attachment['stg_status'] = 'Sin Uso';
+                $files_to_delete[] = $attachment['attachment_id'];
             }
         }
         unset($attachment);
 
+        
 
 
         // --- 3. Calcular los datos de paginación para retornar ---
         $current_page_count = count( $attachments_in_folder );
 
         $pagination_data = [
+            'files_to_delete'         => $files_to_delete,
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,
             'total_pages'             => $total_pages,
@@ -313,6 +317,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     } catch ( \Throwable $th ) {
         error_log( 'WPIL Error fetching paginated files: ' . $th->getMessage() );
         return [
+            'files_to_delete'         => [],
             'records'                 => [],
             'current_page'            => $page,
             'total_pages'             => 0,

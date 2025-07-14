@@ -51,13 +51,14 @@ function optimization($request) {
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
 		$file_size_bytes_before = filesize($original_path);
-
+		
 		// Ruta completa a ffmpeg
 		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];
 		$ext_documentos = ['pdf'];
 		$temp_path 		= $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
-		$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
+		$extensiones_imagen  = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
+		$regenerate_metadata = false;
 
 		if (in_array($ext, $extensiones_imagen)) {
 		   return new WP_REST_Response([
@@ -80,6 +81,7 @@ function optimization($request) {
 			    @unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
+			    $regenerate_metadata = true;
 
 			} catch (Exception $e) {
 			    return new WP_REST_Response([
@@ -147,7 +149,9 @@ function optimization($request) {
     	update_post_meta($post->ID, '_wp_attached_file', $relative_path);
 
     	// Regenerar metadatos
-    	regenerate_metadata($post->ID);
+    	if($regenerate_metadata == true){
+    		regenerate_metadata($post->ID, 'multimedia');
+    	}
 
 		// Actualizar los _elementor_data
 		update_post_meta_elementor_data($info['basename'], $new_url, $old_url);

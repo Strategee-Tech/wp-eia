@@ -2,6 +2,8 @@
 
 if ( ! function_exists( 'wp_crop_image' ) ) {
     include( ABSPATH . 'wp-admin/includes/image.php' );
+    require_once ABSPATH . 'wp-admin/includes/media.php';
+    require_once ABSPATH . 'wp-admin/includes/file.php';
 }
 
 // Función de validación de permisos con autenticación básica
@@ -237,12 +239,16 @@ function update_elementor_css_url($new_url, $old_url) {
     }
 }
 
-function regenerate_metadata($attachment_id){
-    $attachment = get_post( $attachment_id );
+function regenerate_metadata($attachment_id, $fileType = 'image'){
     try {
         $attachment = get_post( $attachment_id );
-        if ( $attachment && $attachment->post_type === 'attachment' ) {
-            $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
+        if ( $attachment->post_type == 'attachment' ) {
+            if($fileType == 'image'){
+                $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
+            } elseif($fileType == 'multimedia') {
+                $file     = get_attached_file( $attachment_id );
+                $metadata = wp_read_video_metadata( $file );
+            }
             update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
             return new WP_REST_Response(array('status' => 'success', 'message' => 'Metadata regenerada correctamente'), 200);
         } else {

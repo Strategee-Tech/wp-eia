@@ -195,7 +195,7 @@ function optimization_files($request) {
         		'status'        => 'success', 
         		'message'       => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.',
         		'new_url'       => $new_url,
-        		'size'          => $file_size_bytes_after,
+        		'size'          => number_format($file_size_bytes_after),
         		'new_name_file' => $new_filename,
         		'dimensions'    => $dimensions,
         	), 200);

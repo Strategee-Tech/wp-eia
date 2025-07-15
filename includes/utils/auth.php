@@ -326,6 +326,9 @@ function actualizar_post_postmeta($params = array(), $wpdb, $update_slug = false
     if($update_slug == false){
         unset($params['post_name']);
         unset($params['guid']);
+        if(isset($params['post_mime_type'])) {
+            unset($params['post_mime_type']);
+        }   
     }   
 
     // Preparar actualización de campos

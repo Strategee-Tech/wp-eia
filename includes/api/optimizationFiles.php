@@ -38,6 +38,16 @@ function optimization($request) {
 	}
 
 	try {
+		$info = pathinfo($original_path);
+		$ext  = strtolower($info['extension']);
+		$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
+		if (in_array($ext, $extensiones_imagen)) {
+		   return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'El archivo a optimizar no es un archivo multimedia.',
+		    ], 500);
+		} 
+
 		global $wpdb;
 		if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
@@ -47,27 +57,15 @@ function optimization($request) {
 			], 200);
 
 		} else {
-
 			$params['slug'] = slug_unico(
 			    sanitize_file_name($params['slug']),
 			    $params['post_id']
 			);
-
-			$info         = pathinfo($original_path);
-			$ext          = strtolower($info['extension']);
 			$dir          = $info['dirname'];
 			$new_filename = $params['slug'] . '.' . $ext;
 			$new_path     = $dir . '/' . $new_filename;
 			$old_url      = $post->guid;
 			$file_size_bytes_before = filesize($original_path);
-
-			$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
-			if (in_array($ext, $extensiones_imagen)) {
-			   return new WP_REST_Response([
-			        'status'  => 'error',
-			        'message' => 'El archivo a optimizar no es un archivo multimedia.',
-			    ], 500);
-			} 
 
 			// Ruta completa a ffmpeg
 			$ext_multimedia        = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];

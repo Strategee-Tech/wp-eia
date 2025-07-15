@@ -60,10 +60,10 @@ function optimization_files($request) {
 			], 200);
 		} else {
 
-			$miniaturas    = find_all_related_thumbnails($original_path);
-	    	$ext           = '.webp';
-	    	$mimeType      = 'image/webp';
-	    	$old_url       = $post->guid;
+			$miniaturas = find_all_related_thumbnails($original_path);
+	    	$ext        = '.webp';
+	    	$mimeType   = 'image/webp';
+	    	$old_url    = $post->guid;
 
 	    	// Crear archivo temporal WebP en la misma carpeta
 	    	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
@@ -138,7 +138,7 @@ function optimization_files($request) {
 			$params['guid']           = esc_url_raw($new_url); 
 			$params['post_mime_type'] = $mimeType;
 	    	actualizar_post_postmeta($params, $wpdb, true);
-	    	
+
 			// Actualizar derivados del metadata
 	    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 

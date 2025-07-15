@@ -100,7 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // URL: /wp-json/wp/v2/media/{id}
             let endpoint ='';
             console.log(updatedData);
-            if(updatedData.width > 0){
+            let width = parseInt(updatedData.width.split('x')[0]);
+            if(width > 0){
                 endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/seo-optimization';
             } else {
                 endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/optimization-file';
@@ -117,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     description: updatedData.description,
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
-                    resize: updatedData.width > 1920,
+                    resize: width > 1920,
                 })
             });
 

@@ -196,6 +196,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             $elementor_attachments = check_attachments_in_elementor( $attachments_in_folder );
             $learnpress_attachments = check_attachment_in_learnpress( $path_list );
             $content_attachments = check_attachments_in_content( $path_list);
+            
     
             foreach ($attachments_in_folder as &$attachment) {
                 $attachment['in_content'] = false;

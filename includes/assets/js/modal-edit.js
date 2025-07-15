@@ -101,12 +101,16 @@ document.addEventListener('DOMContentLoaded', function() {
         statusMessage.textContent = 'Guardando...';
         statusMessage.style.color = 'blue';
 
+        let width = parseInt(inputWidth.value.split('x')[0]);
+
         const updatedData = {
             title: inputTitle.value,
             alt: inputAlt.value,
             description: inputDescription.value,
             slug: inputSlug.value,
-            width: inputWidth.value
+            width: inputWidth.value,
+            resize: width > 1920,
+            fast_edit: fastEdit.checked ? 1 : 0,
         };
 
 
@@ -116,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // URL: /wp-json/wp/v2/media/{id}
             let endpoint ='';
             console.log(updatedData);
-            let width = parseInt(updatedData.width.split('x')[0]);
             if(width > 0){
                 endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/seo-optimization';
             } else {
@@ -134,8 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     description: updatedData.description,
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
-                    resize: width > 1920,
-                    fast_edit: fastEdit.checked ? 1 : 0,
+                    resize: updatedData.resize,
+                    fast_edit: updatedData.fast_edit,
                 })
             });
 
@@ -157,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.children[6].textContent = updatedData.slug;   // Columna 'Title'
                 row.children[7].children[0].classList.remove('dashicons-no-alt');   // Columna 'Title'
                 row.children[7].children[0].classList.add('dashicons-yes');   // Columna 'Title'
+                row.children[7].children[1].style.color = '#2ECC71';
             }
 
             // Opcional: Cerrar el modal después de un breve retraso

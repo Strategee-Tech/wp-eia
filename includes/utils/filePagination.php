@@ -72,9 +72,10 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $where_conditions[] = "pm_in_use.meta_value = %s";
                 $query_params[] = 'En Uso';
                 break;
-            case 'Sin Uso':
-                // Crucial: Filter for 'Sin Uso' OR if the meta_value is NULL or empty
-                $where_conditions[] = "(pm_in_use.meta_value = %s OR pm_in_use.meta_value IS NULL OR pm_in_use.meta_value = '')";
+                case 'Sin Uso':
+                    // Crucial: Filter for 'Sin Uso' OR if the meta_value is NULL or empty
+                $where_conditions[] = "pm_in_use.meta_value = %s";
+                $where_conditions[] = "(pm_in_use.meta≈_value = %s OR pm_in_use.meta_value IS NULL OR pm_in_use.meta_value = '')";
                 $query_params[] = 'Sin Uso'; // This %s will bind to 'Sin Uso'
                 break;
             case 'Con Alt':

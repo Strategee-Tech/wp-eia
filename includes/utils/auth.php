@@ -337,7 +337,9 @@ function actualizar_post_postmeta($params = array()){
     // Actualiza texto alternativo si fue enviado
     if (!empty($params['alt_text'])) {
         update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
+        update_post_meta($params['post_id'], '_stg_status_alt', 'Con Alt');
     }
+
 }
 
 function call_compress_api($type, $file, $temp_path, $resize = false){

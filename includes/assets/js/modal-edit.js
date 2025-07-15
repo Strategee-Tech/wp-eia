@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('edit-metadata-modal');
     const modalAttachmentIdSpan = document.getElementById('modal-attachment-id');
     const form = document.getElementById('edit-metadata-form');
+    const modalSlugLabel = document.getElementById('modal-slug-label');
     const inputSlug = document.getElementById('modal-slug');
     const inputTitle = document.getElementById('modal-title');
     const imgModal = document.getElementById('modal-image');
@@ -26,6 +27,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
     let resize = false;
+
+    fastEdit.addEventListener('change', function() {
+        resize = this.checked;
+        if(resize){
+            inputSlug.style.display = 'none';
+            modalSlugLabel.style.display = 'none';
+        } else {
+            inputSlug.style.display = 'block';
+            modalSlugLabel.style.display = 'block';
+        }
+    });
 
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {

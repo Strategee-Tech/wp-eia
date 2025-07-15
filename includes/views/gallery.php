@@ -306,7 +306,7 @@ function getIconAlt($alt){
                 <div style="flex-grow: 1; width: 100%;">
                     <input type="hidden" id="input-width" name="width" value="0"/>
                     <div>
-                        <label for="modal-slug">Slug:</label><br>
+                        <label id="modal-slug-label" for="modal-slug">Slug:</label><br>
                         <input type="text" id="modal-slug" name="slug" style="width: 100%;" />
                     </div>
                     <div>

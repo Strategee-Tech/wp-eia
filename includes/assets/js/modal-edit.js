@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (row) {
                 // Asumiendo el orden de las columnas: Alt y Title
                 row.children[2].textContent = updatedData.title; // Columna 'Alt'
-                row.children[5].textContent = updatedData.alt;   // Columna 'Title'
+                row.children[6].textContent = updatedData.alt;   // Columna 'Title'
             }
 
             // Opcional: Cerrar el modal después de un breve retraso

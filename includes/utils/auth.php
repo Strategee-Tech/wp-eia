@@ -203,7 +203,6 @@ function update_post_meta_elementor_data($basename, $new_url, $old_url, $attachm
     );
     $rows_attachments = $wpdb->get_results($query, ARRAY_A);
 
-
     if (!empty($rows)) {
         foreach ($rows as $row) {
             $updated   = false;
@@ -229,28 +228,6 @@ function update_post_meta_elementor_data($basename, $new_url, $old_url, $attachm
             }
         }
     }
-
-    // if (!empty($rows)) {
-    //     foreach ($rows as $row) {
-    //         $aux_url   = false;
-    //         $json_data = json_decode($row['meta_value'], true);
-    //         if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
-    //             array_walk_recursive($json_data, function (&$value, $key) use ($old_url, $new_url, $year_month_path, $basename, &$aux_url) {
-    //                 if(strpos($value, $year_month_path.$basename) !== false) {
-    //                     $value   = str_replace($year_month_path.$basename, $year_month_path.basename($new_url), $value);
-    //                     $aux_url = true;
-    //                 }
-    //                 if($key == 'id' && $value == $attachment_id) {
-    //                     $aux_url = true;
-    //                 }
-    //             });
-
-    //             if($aux_url == true) {
-    //                 update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
-    //             }
-    //         }
-    //     }
-    // }
 }
 
 function update_elementor_structure_recursive($data, $basename, $new_url, $year_month_path, $attachment_id, &$updated) {

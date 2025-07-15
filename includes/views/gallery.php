@@ -325,13 +325,13 @@ function getIconAlt($alt){
                 </div>
             </div>
 
-            <input type="checkbox" id="modal-fast-resize" name="fast_resize" />
-            <label for="modal-fast-resize">Edición rápida</label>
-
+            
             <span id="save-status-message" style="margin-left: 10px;"></span>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <input type="checkbox" id="modal-fast-resize" name="fast_resize" />
+                <label for="modal-fast-resize">Edición rápida</label>
+            </div>
             <div class="modal-footer">
-
-
                 <button type="button" id="regenerate-alt-btn" class="button">
                     <svg id="gemini-icon" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">
                         <path class="cls-1" d="M121.24,60.61c-33.48,0-60.62,27.14-60.62,60.62,0-33.48-27.14-60.62-60.62-60.62,33.48,0,60.62-27.14,60.62-60.61,0,33.47,27.14,60.61,60.62,60.61Z"/>

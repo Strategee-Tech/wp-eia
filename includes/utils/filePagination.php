@@ -101,11 +101,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     
     $total_records = $wpdb->get_var( $total_query );
 
-    // --- DEPURACIÓN: Errores de la consulta COUNT ---
-    if ( $wpdb->last_error ) {
-        error_log( 'WPDB Error in Total Query: ' . $wpdb->last_error );
-    }
-
     // Calcular las páginas totales
     $total_pages = ceil( $total_records / $per_page );
 
@@ -132,23 +127,24 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 p.post_excerpt AS file_legend,
                 pm_file.meta_value AS file_path_relative,
                 pm_alt.meta_value AS image_alt_text,
-                pm_optimized.meta_value AS stg_status
+                pm_optimized.meta_value AS stg_status,
+                pm_in_use.meta_value AS stg_status_in_use,  -- Nuevo campo para el estado de uso
+                pm_has_alt.meta_value AS stg_status_alt    -- Nuevo campo para el estado del alt text
             FROM " . $wpdb->posts . " AS p
-            -- CAMBIO A LEFT JOIN PARA pm_file
             LEFT JOIN
                 " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
             LEFT JOIN
                 " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
             LEFT JOIN
-                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimized_status'"
-            . $where_clause . "
+                " . $wpdb->postmeta . " AS pm_optimized ON p.ID = pm_optimized.post_id AND pm_optimized.meta_key = '_stg_optimized_status'
+            LEFT JOIN
+                " . $wpdb->postmeta . " AS pm_in_use ON p.ID = pm_in_use.post_id AND pm_in_use.meta_key = '_stg_status_in_use' -- JOIN para el estado de uso
+            LEFT JOIN
+                " . $wpdb->postmeta . " AS pm_has_alt ON p.ID = pm_has_alt.post_id AND pm_has_alt.meta_key = '_stg_status_alt'   -- JOIN para el estado del alt
+            " . $where_clause . "
             ORDER BY
                 p.post_date DESC
             LIMIT %d OFFSET %d";
-
-        // --- DEPURACIÓN: Ver la consulta y los parámetros antes de ejecutar ---
-        error_log( 'Attachments Query SQL (Template): ' . $attachments_query_sql_template );
-        error_log( 'Attachments Query Params: ' . print_r( $attachments_query_params, true ) );
 
         $attachments_query = $wpdb->prepare(
             $attachments_query_sql_template,
@@ -157,134 +153,151 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
-        // $id_list = array();
-        // $path_list = array();
+        $id_list = array();
+        $path_list = array();
         
-        // // Añadir metadatos adicionales según el tipo MIME
-        // foreach ( $attachments_in_folder as &$attachment ) {
-        //     $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
+        // Añadir metadatos adicionales según el tipo MIME
+        foreach ( $attachments_in_folder as &$attachment ) {
+            $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
+
             
-        //     $id_list[] = $attachment['attachment_id'];
-        //     $path_list[] = $attachment['file_path_relative'];
-        //     // Metadatos específicos de imagen
-        //     if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
-        //         $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
-        //         $attachment['image_height']   = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
-        //     }
+            // Metadatos específicos de imagen
+            if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
+                $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
+                $attachment['image_height']   = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
+            }
+            $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
+
+            if($attachment['stg_status_in_use'] !== 'En Uso' && $attachment['stg_status_in_use'] !== 'Sin Uso') {
+                continue;
+            } 
+            if($attachment['stg_status_alt'] !== 'Con Alt' && $attachment['stg_status_alt'] !== 'Sin Alt') {
+                continue;
+            }
             
-        //     // Metadatos generales de archivo (tamaño)
-        //     $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
-        // }
+            $id_list[] = $attachment['attachment_id'];
+            $path_list[] = $attachment['file_path_relative'];
+            // Metadatos generales de archivo (tamaño)
+        }
 
 
-        // $where_clauses = [];
-        // $prepare_args = [];
-        // foreach ($path_list as $path) {
-        //     // Añade una condición LIKE para cada ruta
-        //     $where_clauses[] = "post_content LIKE %s";
-        //     // Escapa la ruta para seguridad y envuélvela en comodines '%'
-        //     $prepare_args[] = '%' . $wpdb->esc_like($path) . '%';
-        // }
+        $where_clauses = [];
+        $prepare_args = [];
+        foreach ($path_list as $path) {
+            // Añade una condición LIKE para cada ruta
+            $where_clauses[] = "post_content LIKE %s";
+            // Escapa la ruta para seguridad y envuélvela en comodines '%'
+            $prepare_args[] = '%' . $wpdb->esc_like($path) . '%';
+        }
 
-        // $where_clause = implode(' OR ', $where_clauses);
+        $where_clause = implode(' OR ', $where_clauses);
 
-        // $programas_sql = $wpdb->prepare(
-        //     "SELECT * FROM {$wpdb->prefix}learnpress_courses
-        //      WHERE ({$where_clause}) 
-        //      AND post_status IN ('publish', 'private', 'draft')",
-        //     ...$prepare_args
-        // );
+        $programas_sql = $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}learnpress_courses
+             WHERE ({$where_clause}) 
+             AND post_status IN ('publish', 'private', 'draft')",
+            ...$prepare_args
+        );
         
-        // // Obtén todos los resultados de una vez
-        // $programas = $wpdb->get_results($programas_sql);
+        // Obtén todos los resultados de una vez
+        $programas = $wpdb->get_results($programas_sql);
 
-        // $post_types = [
-        //     'post',
-        //     'page',
-        //     'custom_post_type', // Reemplaza con tus tipos de post personalizados si es necesario
-        //     'lp_course',
-        //     'service',
-        //     'portfolio',
-        //     'gva_event',
-        //     'gva_header',
-        //     'footer',
-        //     'team',
-        //     'elementskit_template',
-        //     'elementskit_content',
-        //     'elementor_library'
-        // ];
+        $post_types = [
+            'post',
+            'page',
+            'custom_post_type',
+            'lp_course',
+            'service',
+            'portfolio',
+            'gva_event',
+            'gva_header',
+            'footer',
+            'team',
+            'elementskit_template',
+            'elementskit_content',
+            'elementor_library'
+        ];
 
-        // $post_type_placeholders = implode(', ', array_fill(0, count($post_types), '%s'));
-        // $post_type_args = $post_types;
+        $post_type_placeholders = implode(', ', array_fill(0, count($post_types), '%s'));
+        $post_type_args = $post_types;
 
-        // $where_content_clauses = [];
-        // $prepare_content_args = [];
-
-
-        // foreach ($path_list as $path) {
-        //     // Añade una condición LIKE para cada ruta
-        //     $where_content_clauses[] = "post_content LIKE %s";
-        //     // Escapa la ruta para seguridad y envuélvela en comodines '%'
-        //     $prepare_content_args[] = '%' . $wpdb->esc_like($path) . '%';
-        // }
-
-        // $where_content_sql = implode(' OR ', $where_content_clauses);
-
-        // $final_prepare_args = array_merge($prepare_content_args, $post_type_args);
+        $where_content_clauses = [];
+        $prepare_content_args = [];
 
 
-        // $in_content_query_sql = $wpdb->prepare(
-        //     "SELECT ID, post_title, post_content, post_type 
-        //      FROM $wpdb->posts
-        //      WHERE ({$where_content_sql}) 
-        //      AND post_status IN ('publish', 'private', 'draft')
-        //      AND post_type IN ({$post_type_placeholders})",
-        //     ...$final_prepare_args // PHP 5.6+ para desempaquetar el array
-        // );
-        // $found_posts = $wpdb->get_results($in_content_query_sql);
+        foreach ($path_list as $path) {
+            // Añade una condición LIKE para cada ruta
+            $where_content_clauses[] = "post_content LIKE %s";
+            // Escapa la ruta para seguridad y envuélvela en comodines '%'
+            $prepare_content_args[] = '%' . $wpdb->esc_like($path) . '%';
+        }
 
-        // $in_elementor_query_sql = $wpdb->prepare(
-        //     "SELECT post_id, meta_value 
-        //     FROM {$wpdb->prefix}postmeta AS wpostmeta
-        //     LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-        //     WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
-        //     AND wpost.post_status IN('publish', 'private', 'draft') "
-        // );
-        // $elementor_posts = $wpdb->get_results($in_elementor_query_sql);
+        $where_content_sql = implode(' OR ', $where_content_clauses);
 
-        // $files_to_delete = array();
+        $final_prepare_args = array_merge($prepare_content_args, $post_type_args);
 
-        // foreach ($attachments_in_folder as &$attachment) {
-        //     $attachment['in_content'] = false;
-        //     $attachment['in_programs'] = false;
-        //     $attachment['in_elementor'] = false;
-        //     foreach ($found_posts as $post) {
-        //         if (strpos($post->post_content, $attachment['file_path_relative']) !== false) {
-        //             $attachment['in_content'] = true;
-        //         } 
-        //     }
-        //     foreach ($programas as $programa) {
-        //         if (strpos($programa->post_content, $attachment['file_path_relative']) !== false) {
-        //             $attachment['in_programs'] = true;
-        //         }
-        //     }
-        //     $filenamewithfolder = str_replace('/', '/', $attachment['file_path_relative']);
-        //     $attachment_id = $attachment['attachment_id'];
-        //     foreach ($elementor_posts as $elementor_post) {
 
-        //         if (strpos($elementor_post->meta_value, $filenamewithfolder) !== false || $elementor_post->meta_value == $attachment_id) {
-        //             $attachment['in_elementor'] = true;
-        //         } 
-        //     }
+        $in_content_query_sql = $wpdb->prepare(
+            "SELECT ID, post_title, post_content, post_type 
+             FROM $wpdb->posts
+             WHERE ({$where_content_sql}) 
+             AND post_status IN ('publish', 'private', 'draft')
+             AND post_type IN ({$post_type_placeholders})",
+            ...$final_prepare_args // PHP 5.6+ para desempaquetar el array
+        );
+        $found_posts = $wpdb->get_results($in_content_query_sql);
 
-        //     if($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) {
-        //         $attachment['stg_status'] = 'En Uso';
-        //     } else {
-        //         $attachment['stg_status'] = 'Sin Uso';
-        //         $files_to_delete[] = $attachment['attachment_id'];
-        //     }
-        // }
-        // unset($attachment);
+        $in_elementor_query_sql = $wpdb->prepare(
+            "SELECT post_id, meta_value 
+            FROM {$wpdb->prefix}postmeta AS wpostmeta
+            LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
+            WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
+            AND wpost.post_status IN('publish', 'private', 'draft') "
+        );
+        $elementor_posts = $wpdb->get_results($in_elementor_query_sql);
+
+        $files_to_delete = array();
+
+        foreach ($attachments_in_folder as &$attachment) {
+            $attachment['in_content'] = false;
+            $attachment['in_programs'] = false;
+            $attachment['in_elementor'] = false;
+            foreach ($found_posts as $post) {
+                if (strpos($post->post_content, $attachment['file_path_relative']) !== false) {
+                    $attachment['in_content'] = true;
+                }
+            }
+            foreach ($programas as $programa) {
+                if (strpos($programa->post_content, $attachment['file_path_relative']) !== false) {
+                    $attachment['in_programs'] = true;
+                }
+            }
+            $filenamewithfolder = str_replace('/', '/', $attachment['file_path_relative']);
+            $attachment_id = $attachment['attachment_id'];
+            foreach ($elementor_posts as $elementor_post) {
+
+                if (strpos($elementor_post->meta_value, $filenamewithfolder) !== false || $elementor_post->meta_value == $attachment_id) {
+                    $attachment['in_elementor'] = true;
+                } 
+            }
+
+            if($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) {
+                $attachment['stg_status'] = 'En Uso';
+                update_post_meta($attachment['attachment_id'], '_stg_status_in_use', 'En Uso');
+            } else {
+                $attachment['stg_status'] = 'Sin Uso';
+                $files_to_delete[] = $attachment['attachment_id'];
+                update_post_meta($attachment['attachment_id'], '_stg_status_in_use', 'Sin Uso');
+            }
+            if($attachment['image_alt_text'] == '') {
+                $attachment['stg_status_alt'] = 'Sin Alt';
+                update_post_meta($attachment['attachment_id'], '_stg_status_alt', 'Sin Alt');
+            } else {
+                $attachment['stg_status_alt'] = 'Con Alt';
+                update_post_meta($attachment['attachment_id'], '_stg_status_alt', 'Con Alt');
+            }
+        }
+        unset($attachment);
 
         
 
@@ -293,16 +306,15 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $current_page_count = count( $attachments_in_folder );
 
 
-        // wp_localize_script(
-        //     'delete-files',                    // El handle del script al que deseas adjuntar los datos
-        //     'filesToDelete',               // El nombre del objeto JavaScript global
-        //     array($files_to_delete, [])           // Tus datos PHP
-        // );
+        wp_localize_script(
+            'delete-files',                    // El handle del script al que deseas adjuntar los datos
+            'filesToDelete',               // El nombre del objeto JavaScript global
+            array($files_to_delete, [])           // Tus datos PHP
+        );
     
 
         $pagination_data = [
-            'files_to_delete'         => [],
-            // 'files_to_delete'         => $files_to_delete,
+            'files_to_delete'         => $files_to_delete,
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,
             'total_pages'             => $total_pages,

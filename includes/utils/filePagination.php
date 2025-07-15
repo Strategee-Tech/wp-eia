@@ -282,10 +282,10 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             }
 
             if($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) {
-                $attachment['stg_status'] = 'En Uso';
+                $attachment['stg_status_in_use'] = 'En Uso';
                 update_post_meta($attachment['attachment_id'], '_stg_status_in_use', 'En Uso');
             } else {
-                $attachment['stg_status'] = 'Sin Uso';
+                $attachment['stg_status_in_use'] = 'Sin Uso';
                 $files_to_delete[] = $attachment['attachment_id'];
                 update_post_meta($attachment['attachment_id'], '_stg_status_in_use', 'Sin Uso');
             }

@@ -325,12 +325,13 @@ function getIconAlt($alt){
                 </div>
             </div>
 
-            
-            <span id="save-status-message" style="margin-left: 10px;"></span>
             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
                 <input type="checkbox" id="modal-fast-edit" name="fast_edit" checked/>
                 <label for="modal-fast-edit">Edición rápida</label>
             </div>
+            <small style="text-align: right; font-size: 12px; margin-bottom: 10px; margin-top: 2px;">Si se selecciona la opción de edicion rápida, solo se actualizará el texto alternativo (alt), titulo y descripción. de la imagen</small>
+            
+            <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">
                 <button type="button" id="regenerate-alt-btn" class="button">
                     <svg id="gemini-icon" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.24 121.23">

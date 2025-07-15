@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let resize = false;
 
+    inputSlug.style.display = 'none';
+    modalSlugLabel.style.display = 'none';
+
     fastEdit.addEventListener('change', function() {
         resize = this.checked;
         if(resize){
@@ -35,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modalSlugLabel.style.display = 'none';
         } else {
             inputSlug.style.display = 'block';
-            modalSlugLabel.style.display = 'block';
+            modalSlugLabel.style.display = 'inline';
         }
     });
 

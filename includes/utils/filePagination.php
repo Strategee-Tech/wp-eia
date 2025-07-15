@@ -19,8 +19,8 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     global $wpdb;
 
     require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachments_in_elementor.php';
-    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachment_in_learnpress.php';
-    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachment_in_elementor.php';
+    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachments_in_learnpress.php';
+    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachments_in_content.php';
 
     // Sanitize and validate pagination parameters
     $page = max( 1, intval( $page ) );

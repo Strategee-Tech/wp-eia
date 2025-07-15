@@ -54,10 +54,12 @@ $per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( 
 $mime_type                  = isset( $_GET['mime_type'] ) ? sanitize_text_field( wp_unslash( $_GET['mime_type'] ) ) : null;
 $mime_type                  = $mime_type === 'all' ? null : $mime_type;
 
+$usage_status               = isset( $_GET['usage_status'] ) ? sanitize_text_field( wp_unslash( $_GET['usage_status'] ) ) : null;
+$usage_status               = $usage_status === 'all' ? null : $usage_status;
+
 
 $search                     = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : null;
 
-$status                     = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : null;
 $year                       = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : null;
 $month                      = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : null;
 
@@ -72,12 +74,9 @@ if($month !== 'all' && $year !== 'all'){
 } else if($month === 'all' && $year !== 'all'){
     $folder = $year . '/';
 }
-if($status === null){
-    $status = 'all';
-}
 
 //$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
-$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search, $status);
+$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search, $usage_status);
 
 
 function getIconAlt($alt){
@@ -109,7 +108,7 @@ function getIconAlt($alt){
                 <input type="search" name="search" id="search" placeholder="Buscar..." value="<?php echo esc_attr( $search ); ?>">
             </div>
             <div>
-                <label for="status">Tipo de archivo</label>
+                <label for="mime_type">Tipo de archivo</label>
                 <select name="mime_type" id="">
                     <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
                     <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>
@@ -117,16 +116,6 @@ function getIconAlt($alt){
                     <option <?php echo $mime_type === 'video' ? 'selected' : ''; ?> value="video">Videos</option>
                     <option <?php echo $mime_type === 'text' ? 'selected' : ''; ?> value="text">Textos</option>
                     <option <?php echo $mime_type === 'application' ? 'selected' : ''; ?> value="application">Documentos</option>
-                </select>
-            </div>
-            <div>
-                <label for="status">Estado de Optimización</label>
-                <select name="status" id="">
-                    <option <?php echo $status === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
-                    <option <?php echo $status === 'pendiente' ? 'selected' : ''; ?> value="pendiente">Pendientes</option>
-                    <option <?php echo $status === 'por optimizar' ? 'selected' : ''; ?> value="por optimizar">Por optimizar</option>
-                    <option <?php echo $status === 'optimizadas' ? 'selected' : ''; ?> value="optimizadas">Optimizadas</option>
-                    <option <?php echo $status === 'eliminar' ? 'selected' : ''; ?> value="eliminar">Eliminar</option>
                 </select>
             </div>
             <div>
@@ -157,6 +146,16 @@ function getIconAlt($alt){
                     <option <?php echo $month === '10' ? 'selected' : ''; ?> value="10">10</option>
                     <option <?php echo $month === '11' ? 'selected' : ''; ?> value="11">11</option>
                     <option <?php echo $month === '12' ? 'selected' : ''; ?> value="12">12</option>
+                </select>
+            </div>
+            <div>
+                <label for="month">Estado</label>
+                <select name="usage_status" id="">
+                    <option value="all">Todos</option>
+                    <option <?php echo $usage_status === 'En Uso' ? 'selected' : ''; ?> value="En Uso">En Uso</option>
+                    <option <?php echo $usage_status === 'Sin Uso' ? 'selected' : ''; ?> value="Sin Uso">Sin Uso</option>
+                    <option <?php echo $usage_status === 'Con Alt' ? 'selected' : ''; ?> value="Con Alt">Con Alt</option>
+                    <option <?php echo $usage_status === 'Sin Alt' ? 'selected' : ''; ?> value="Sin Alt">Sin Alt</option>
                 </select>
             </div>
         </div>

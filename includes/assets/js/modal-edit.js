@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
             // URL: /wp-json/wp/v2/media/{id}
             let endpoint ='';
+            console.log(updatedData);
             if(updatedData.width > 0){
                 endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/seo-optimization';
             } else {

@@ -18,6 +18,10 @@
 function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_type = null, $search_term = null, $usage_status = 'all' ) {
     global $wpdb;
 
+    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachments_in_elementor.php';
+    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachment_in_learnpress.php';
+    require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachment_in_elementor.php';
+
     // Sanitize and validate pagination parameters
     $page = max( 1, intval( $page ) );
     $per_page = max( 1, intval( $per_page ) );
@@ -182,134 +186,35 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             }
         }
 
-        // --- Logic to determine image usage and update metadata ---
-        // This part runs for the attachments *currently retrieved* to ensure their meta is up-to-date.
-        // It's essential for maintaining data consistency for subsequent queries.
-        $where_clauses_content = [];
-        $prepare_args_content = [];
-        foreach ($path_list as $path) {
-            $where_clauses_content[] = "post_content LIKE %s";
-            $prepare_args_content[] = '%' . $wpdb->esc_like($path) . '%';
-        }
-
-        $where_clause_content_sql = implode(' OR ', $where_clauses_content);
-
-        // Fetch LearnPress courses
-        $programas_sql = '';
-        $programas = [];
-        if ( ! empty( $prepare_args_content ) ) {
-            $programas_sql = $wpdb->prepare(
-                "SELECT ID, post_content FROM {$wpdb->prefix}learnpress_courses
-                 WHERE ({$where_clause_content_sql}) 
-                 AND post_status IN ('publish', 'private', 'draft')",
-                ...$prepare_args_content
-            );
-            $programas = $wpdb->get_results($programas_sql);
-        }
-
-        // Define post types for general content check
-        $post_types = [
-            'post', 'page', 'custom_post_type', 'lp_course', 'service',
-            'portfolio', 'gva_event', 'gva_header', 'footer', 'team',
-            'elementskit_template', 'elementskit_content', 'elementor_library'
-        ];
-        $post_type_placeholders = implode(', ', array_fill(0, count($post_types), '%s'));
-        $post_type_args = $post_types;
-
-        // Fetch general post content
-        $found_posts = [];
-        if ( ! empty( $prepare_args_content ) ) {
-            $in_content_query_sql = $wpdb->prepare(
-                "SELECT ID, post_title, post_content, post_type 
-                 FROM $wpdb->posts
-                 WHERE ({$where_clause_content_sql}) 
-                 AND post_status IN ('publish', 'private', 'draft')
-                 AND post_type IN ({$post_type_placeholders})",
-                ...array_merge($prepare_args_content, $post_type_args)
-            );
-            $found_posts = $wpdb->get_results($in_content_query_sql);
-        }
-
-
-
-
-        $meta_key_list = "('_elementor_data','enclosure', '_thumbnail_id', '_elementor_css')";
-
-
-
-
-    
-        // Fetch Elementor meta data
-        $elementor_posts = [];
-        if ( ! empty( $path_list ) ) { // Only query Elementor if there are attachments to check
-            
-        }
 
 
         $files_to_delete = array();
 
 
         if($usage_status == null || $usage_status == 'all' || $usage_status == ''){
+
+            $elementor_attachments = check_attachments_in_elementor( $attachments_in_folder );
+            $learnpress_attachments = check_attachment_in_learnpress( $path_list );
+            $content_attachments = check_attachments_in_content( $path_list);
+    
             foreach ($attachments_in_folder as &$attachment) {
                 $attachment['in_content'] = false;
                 $attachment['in_programs'] = false;
                 $attachment['in_elementor'] = false;
 
-
-
-
-                $attachment_id = intval($attachment['attachment_id']);
-                $basename = $wpdb->esc_like(basename($attachment['attachment_url']));
-        
-                $query = $wpdb->prepare("
-                    SELECT pm.post_id, pm.meta_value
-                    FROM {$wpdb->prefix}postmeta pm
-                    JOIN {$wpdb->prefix}posts p ON pm.post_id = p.ID
-                    WHERE pm.meta_key IN $meta_key_list
-                    AND (pm.meta_value LIKE %s OR pm.meta_value LIKE %s OR pm.meta_value = %s)
-                ", '%"id":' . $attachment_id . '%', '%' . $basename . '%', $attachment_id);
-        
-                $rows = $wpdb->get_results($query, ARRAY_A);
-
-                if(!empty($rows)){
+                if($elementor_attachments[$attachment['attachment_id'] ] == true){
                     $attachment['in_elementor'] = true;
                 }
-
-
-
-
-
-                
-                $file_path_relative_decoded = str_replace('/', '\/', $attachment['file_path_relative']);
-                $attachment_id = $attachment['attachment_id'];
-
-                // Check in general post content
-                foreach ($found_posts as $post) {
-                    if (strpos($post->post_content, $file_path_relative_decoded) !== false) {
-                        $attachment['in_content'] = true;
-                        break;
-                    }
+                if($learnpress_attachments[$attachment['attachment_id'] ] == true){
+                    $attachment['in_programs'] = true;
                 }
-
-                // Check in LearnPress programs content
-                foreach ($programas as $programa) {
-                    if (strpos($programa->post_content, $file_path_relative_decoded) !== false) {
-                        $attachment['in_programs'] = true;
-                        break;
-                    }
-                }
-                
-                // Check in Elementor data (meta_value can be large, so be mindful of performance here)
-                foreach ($elementor_posts as $elementor_post) {
-                    // Check if the file path is within Elementor's meta_value (which can be JSON)
-                    if (strpos($elementor_post->meta_value, $file_path_relative_decoded) !== false || $elementor_post->meta_value == $attachment_id) {
-                        $attachment['in_elementor'] = true;
-                        break;
-                    } 
+                if($content_attachments[$attachment['file_path_relative'] ] == true){
+                    $attachment['in_content'] = true;
                 }
 
                 // Determine and update 'in_use' status
                 $current_in_use_status = ($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) ? 'En Uso' : 'Sin Uso';
+
                 
                 if ($current_in_use_status === 'Sin Uso') {
                     $files_to_delete[] = $attachment_id; // Add to list for deletion
@@ -317,7 +222,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 
                 // Only update post meta if the status has actually changed
                 if ( $current_in_use_status !== $attachment['stg_status_in_use'] ) {
-                    $attachment['stg_status_in_use'] = $current_in_use_status; // Update in the array for the current response
+                    $attachment['stg_status_in_use'] = $current_in_use_status;
                     update_post_meta($attachment_id, '_stg_status_in_use', $current_in_use_status);
                 }
 

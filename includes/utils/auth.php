@@ -319,10 +319,14 @@ function regenerate_metadata($attachment_id, $fileType = 'image'){
     }
 }
 
-function actualizar_post_postmeta($params = array()){
-    global $wpdb;
+function actualizar_post_postmeta($params = array(), $wpdb, $update_slug = false){
     $where       = array('ID' => $params['post_id']);
     $update_data = array();
+
+    if($update_slug == false){
+        unset($params['post_name']);
+        unset($params['guid']);
+    }   
 
     // Preparar actualización de campos
     if (!empty($params['title']))      $update_data['post_title']   = sanitize_text_field($params['title']);
@@ -339,7 +343,6 @@ function actualizar_post_postmeta($params = array()){
         update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
         update_post_meta($params['post_id'], '_stg_status_alt', 'Con Alt');
     }
-
 }
 
 function call_compress_api($type, $file, $temp_path, $resize = false){

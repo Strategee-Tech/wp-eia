@@ -38,9 +38,9 @@ function optimization($request) {
 	}
 
 	try {
-
+		global $wpdb;
 		if($params['fast_edit'] == 1) {
-			actualizar_post_postmeta($params);
+			actualizar_post_postmeta($params, $wpdb);
 			return new WP_REST_Response([
 				'status'        => 'success',
 				'message'       => 'Se ha actualizado la información.',
@@ -48,163 +48,149 @@ function optimization($request) {
 
 		} else {
 
-		}
-		die();
-		global $wpdb;
-		$where          = array('ID' => $post->ID);
-		$slug           = sanitize_file_name($params['slug']);
-		$slug_unico     = slug_unico($slug, $params['post_id']);
-		$slug           = $slug_unico;
-		$params['slug'] = $slug;
-		$info           = pathinfo($original_path);
-		$ext            = strtolower($info['extension']);
-		$dir            = $info['dirname'];
-		$new_filename   = $slug . '.' . $ext;
-		$new_path       = $dir . '/' . $new_filename;
-		$old_url        = $post->guid;
-		$file_size_bytes_before = filesize($original_path);
+			$params['slug'] = slug_unico(
+			    sanitize_file_name($params['slug']),
+			    $params['post_id']
+			);
 
-		// Ruta completa a ffmpeg
-		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];
-		$ext_documentos = ['pdf'];
-		$temp_path 		= $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
+			$info         = pathinfo($original_path);
+			$ext          = strtolower($info['extension']);
+			$dir          = $info['dirname'];
+			$new_filename = $params['slug'] . '.' . $ext;
+			$new_path     = $dir . '/' . $new_filename;
+			$old_url      = $post->guid;
+			$file_size_bytes_before = filesize($original_path);
 
-		$extensiones_imagen  = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
-		$regenerate_metadata = false;
-
-		if (in_array($ext, $extensiones_imagen)) {
-		   return new WP_REST_Response([
-		        'status'  => 'error',
-		        'message' => 'El archivo a optimizar no es un archivo multimedia.',
-		    ], 500);
-		} 
-
-		// Si NO es PDF → Comprimir con FFmpeg
-		if (in_array($ext, $ext_multimedia)) {
-			try {
-			    $compress_file = call_compress_api('multimedia', $original_path, $temp_path);
-
-			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			    	return new WP_REST_Response([
-				        'status'  => 'error',
-				        'message' => 'El archivo comprimido no se recibió correctamente.',
-				    ], 500);
-			    } 
-			    @unlink($original_path);
-			    rename($compress_file, $new_path);
-			    $file_size_bytes_after = filesize($new_path);
-			    $regenerate_metadata = 'multimedia';
-
-			} catch (Exception $e) {
-			    return new WP_REST_Response([
+			$extensiones_imagen = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg', 'avif', 'heic'];
+			if (in_array($ext, $extensiones_imagen)) {
+			   return new WP_REST_Response([
 			        'status'  => 'error',
-			        'message' => 'Falló la compresión del archivo multimedia.',
-			        'detalle' => $e->getMessage()
+			        'message' => 'El archivo a optimizar no es un archivo multimedia.',
 			    ], 500);
-			}
+			} 
 
-		} elseif(in_array($ext, $ext_documentos)) {
+			// Ruta completa a ffmpeg
+			$ext_multimedia        = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];
+			$ext_documentos        = ['pdf'];
+			$temp_path 		       = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
-			try {
-			    $compress_file = call_compress_api('pdf', $original_path, $temp_path);
+			//compresion
+			$regenerate_metadata   = init_compress_file($ext, $ext_multimedia, $ext_documentos, $original_path, $temp_path, $new_path);
+			$file_size_bytes_after = filesize($new_path);
 
-			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			        return new WP_REST_Response([
-				        'status'  => 'error',
-				        'message' => 'El archivo comprimido no se recibió correctamente.',
-				    ], 500);
-			    } 
-			    @unlink($original_path);
-			    rename($compress_file, $new_path);
-			    $file_size_bytes_after = filesize($new_path);
-			    $regenerate_metadata = 'pdf';
+			// Obtener ruta relativa y URL pública
+			$upload_dir    = wp_upload_dir();
+			$relative_path = str_replace(trailingslashit($upload_dir['basedir']), '', $new_path);
+			$folder        = dirname($relative_path);                               // /2025/06
+			$new_url       = trailingslashit($upload_dir['baseurl']) . $relative_path;
+			$old_rel_path  = '/wp-content/uploads/'.$folder.'/'.$info['basename'];
 
-			} catch (Exception $e) {
-			    return new WP_REST_Response([
-			        'status'  => 'error',
-			        'message' => 'Falló la compresión del archivo pdf.',
-			        'detalle' => $e->getMessage()
-			    ], 500);
-			}
-		} else {
-			// Solo renombrar el archivo si no se puede comprimir
-		    if ($original_path != $new_path) {
-		        rename($original_path, $new_path);
-		    }
-		    $file_size_bytes_after = filesize($new_path);
+			$params['post_name'] = $params['slug'];
+			$params['guid']      = esc_url_raw($new_url);      
+			actualizar_post_postmeta($params, $wpdb, true);
+
+			// Actualizar derivados del metadata
+    		update_post_meta($post->ID, '_wp_attached_file', $relative_path);
+
+    		// Regenerar metadatos
+	    	if($regenerate_metadata != false){
+	    		regenerate_metadata($post->ID, $regenerate_metadata);
+	    	}
+
+	    	// Actualizar los _elementor_data
+			update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
+
+			// Actualizar post_content
+			update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);
+
+			wp_cache_flush();
+
+			$datos_drive = array(
+				'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
+				'sheet'    => 'Documentos!A1',
+				'values'   => [[
+					date('Y-m-d H:i:s'),
+					$new_url,
+					number_format($file_size_bytes_before),
+					number_format($file_size_bytes_after),
+					isset($params['alt_text']) ? $params['alt_text'] : '',
+					isset($params['slug']) ? $params['slug'] : '',
+					isset($params['title']) ? $params['title'] : '',
+					isset($params['description']) ? $params['description'] : '',
+					$ext,
+					'N/A',
+					(isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
+				]]
+			);
+			$respuesta = save_google_sheet($datos_drive); // Llamada directa
+
+			return new WP_REST_Response([
+				'status'        => 'success',
+				'message'       => 'Se han actualizado los datos y se ha optimizado el archivo.',
+				'new_name_file' => $new_filename,
+				'old_url'       => $old_url,
+				'new_url'       => $new_url,
+				'new_path'      => $new_path,
+				'relative_path' => $relative_path,
+				'size'          => number_format($file_size_bytes_after),
+			], 200);
 		} 
-
-		// Obtener ruta relativa y URL pública
-		$upload_dir    = wp_upload_dir();
-		$relative_path = str_replace(trailingslashit($upload_dir['basedir']), '', $new_path);
-		$folder        = dirname($relative_path);                               // /2025/06
-		$new_url       = trailingslashit($upload_dir['baseurl']) . $relative_path;
-		$old_rel_path  = '/wp-content/uploads/'.$folder.'/'.$info['basename'];
-
-		// Preparar actualización de campos
-		if (!empty($params['title']))      $update_data['post_title']   = sanitize_text_field($params['title']);
-		if (!empty($params['description']))$update_data['post_content'] = sanitize_textarea_field($params['description']);
-		if (!empty($params['legend']))     $update_data['post_excerpt'] = sanitize_text_field($params['legend']);
-		if (!empty($params['slug']))       $update_data['post_name']    = $params['slug'];
-		if (!empty($new_url))              $update_data['guid']         = esc_url_raw($new_url);
-
-		// Actualizar post
-		if (!empty($update_data)) {
-			$wpdb->update($wpdb->posts, $update_data, $where);
-		}
-
-		// Texto alternativo
-		if (!empty($params['alt_text'])) {
-			update_post_meta($params['post_id'], '_wp_attachment_image_alt', sanitize_text_field($params['alt_text']));
-		}
-
-		// Actualizar derivados del metadata
-    	update_post_meta($post->ID, '_wp_attached_file', $relative_path);
-
-    	// Regenerar metadatos
-    	if($regenerate_metadata != false){
-    		regenerate_metadata($post->ID, $regenerate_metadata);
-    	}
-
-		// Actualizar los _elementor_data
-		update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
-
-		// Actualizar post_content
-		update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);
-
-		wp_cache_flush();
-
-		$datos_drive = array(
-			'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
-			'sheet'    => 'Documentos!A1',
-			'values'   => [[
-				date('Y-m-d H:i:s'),
-				$new_url,
-				number_format($file_size_bytes_before),
-				number_format($file_size_bytes_after),
-				isset($params['alt_text']) ? $params['alt_text'] : '',
-				isset($params['slug']) ? $params['slug'] : '',
-				isset($params['title']) ? $params['title'] : '',
-				isset($params['description']) ? $params['description'] : '',
-				$ext,
-				'N/A',
-				(isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
-			]]
-		);
-		$respuesta = save_google_sheet($datos_drive); // Llamada directa
-
-		return new WP_REST_Response([
-			'status'        => 'success',
-			'message'       => 'Se han actualizado los datos y se ha optimizado el archivo.',
-			'new_name_file' => $new_filename,
-			'old_url'       => $old_url,
-			'new_url'       => $new_url,
-			'new_path'      => $new_path,
-			'relative_path' => $relative_path,
-			'size'          => number_format($file_size_bytes_after),
-		], 200);
-
 	} catch (\Throwable $th) {
 		return new WP_REST_Response(['status' => 'error', 'message' => $th->getMessage()], 500);
 	}
+}
+
+function init_compress_file($ext, $ext_multimedia, $ext_documentos, $original_path, $temp_path, $new_path){
+	$regenerate_metadata = false;
+	// Si NO es PDF → Comprimir con FFmpeg
+	if (in_array($ext, $ext_multimedia)) {
+		try {
+		    $compress_file = call_compress_api('multimedia', $original_path, $temp_path);
+
+		    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+		    	return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'El archivo comprimido no se recibió correctamente.',
+			    ], 500);
+		    } 
+		    @unlink($original_path);
+		    rename($compress_file, $new_path);
+		    $regenerate_metadata = 'multimedia';
+
+		} catch (Exception $e) {
+		    return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'Falló la compresión del archivo multimedia.',
+		        'detalle' => $e->getMessage()
+		    ], 500);
+		}
+
+	} elseif(in_array($ext, $ext_documentos)) {
+		try {
+		    $compress_file = call_compress_api('pdf', $original_path, $temp_path);
+
+		    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+		        return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'El archivo comprimido no se recibió correctamente.',
+			    ], 500);
+		    } 
+		    @unlink($original_path);
+		    rename($compress_file, $new_path);
+		    $regenerate_metadata = 'pdf';
+
+		} catch (Exception $e) {
+		    return new WP_REST_Response([
+		        'status'  => 'error',
+		        'message' => 'Falló la compresión del archivo pdf.',
+		        'detalle' => $e->getMessage()
+		    ], 500);
+		}
+	} else {
+		// Solo renombrar el archivo si no se puede comprimir
+	    if ($original_path != $new_path) {
+	        rename($original_path, $new_path);
+	    }
+	} 
+	return $regenerate_metadata;
 }

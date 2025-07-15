@@ -68,19 +68,19 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
     if ( 'all' !== $usage_status ) {
         switch ( $usage_status ) {
-            case 'in_use':
+            case 'En Uso':
                 $where_conditions[] = "pm_in_use.meta_value = %s";
                 $query_params[] = 'En Uso';
                 break;
-            case 'not_in_use':
+            case 'Sin Uso':
                 $where_conditions[] = "pm_in_use.meta_value = %s";
                 $query_params[] = 'Sin Uso';
                 break;
-            case 'has_alt':
+            case 'Con Alt':
                 $where_conditions[] = "pm_has_alt.meta_value = %s";
                 $query_params[] = 'Con Alt';
                 break;
-            case 'no_alt':
+            case 'Sin Alt':
                 $where_conditions[] = "pm_has_alt.meta_value = %s";
                 $query_params[] = 'Sin Alt';
                 break;

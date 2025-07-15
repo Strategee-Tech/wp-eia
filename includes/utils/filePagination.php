@@ -217,13 +217,13 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
                 
                 if ($current_in_use_status === 'Sin Uso') {
-                    $files_to_delete[] = $attachment_id; // Add to list for deletion
+                    $files_to_delete[] = $attachment['attachment_id']; // Add to list for deletion
                 }
                 
                 // Only update post meta if the status has actually changed
                 if ( $current_in_use_status != $attachment['stg_status_in_use'] ) {
                     $attachment['stg_status_in_use'] = $current_in_use_status;
-                    update_post_meta($attachment_id, '_stg_status_in_use', $current_in_use_status);
+                    update_post_meta($attachment['attachment_id'], '_stg_status_in_use', $current_in_use_status);
                 }
 
                 // Determine and update 'alt' status
@@ -232,7 +232,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 // Only update post meta if the status has actually changed
                 if ( $current_alt_status != $attachment['stg_status_alt'] ) {
                     $attachment['stg_status_alt'] = $current_alt_status; // Update in the array for the current response
-                    update_post_meta($attachment_id, '_stg_status_alt', $current_alt_status);
+                    update_post_meta($attachment['attachment_id'], '_stg_status_alt', $current_alt_status);
                 }
             }
         }

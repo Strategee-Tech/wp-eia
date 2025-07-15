@@ -38,6 +38,18 @@ function optimization_files($request) {
     }
     
     try {
+
+    	if($params['fast_edit'] == 1) {
+			actualizar_post_postmeta($params);
+			return new WP_REST_Response([
+				'status'        => 'success',
+				'message'       => 'Se ha actualizado la información.',
+			], 200);
+
+		} else {
+
+		}
+		die();
 		global $wpdb;
 
 		$update_data   = array();

@@ -319,6 +319,27 @@ function regenerate_metadata($attachment_id, $fileType = 'image'){
     }
 }
 
+function actualizar_post_postmeta($params = array()){
+    global $wpdb;
+    $where       = array('ID' => $params['post_id']);
+    $update_data = array();
+
+    // Preparar actualización de campos
+    if (!empty($params['title']))      $update_data['post_title']   = sanitize_text_field($params['title']);
+    if (!empty($params['description']))$update_data['post_content'] = sanitize_textarea_field($params['description']);
+    if (!empty($params['legend']))     $update_data['post_excerpt'] = sanitize_text_field($params['legend']);
+
+    // Solo hacer update si hay algo que actualizar
+    if (!empty($update_data)) {
+        $wpdb->update($wpdb->posts, $update_data, $where);
+    }
+
+    // Actualiza texto alternativo si fue enviado
+    if (!empty($params['alt_text'])) {
+        update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
+    }
+}
+
 function call_compress_api($type, $file, $temp_path, $resize = false){
     $endpoint    = 'https://apicompress.strategee.us/comprimir.php';
     $post_fields = [

@@ -230,23 +230,19 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
             $found_posts = $wpdb->get_results($in_content_query_sql);
         }
 
-        foreach ($path_list as &$path) {
-            $path = str_replace('/', '\/', $path);
-        }
+
+
+
+        $meta_key_list = "('_elementor_data','enclosure', '_thumbnail_id', '_elementor_css')";
+
+
+
+
+    
         // Fetch Elementor meta data
         $elementor_posts = [];
         if ( ! empty( $path_list ) ) { // Only query Elementor if there are attachments to check
-            $path_placeholders = implode(', ', array_fill(0, count($path_list), '%s'));
-            $in_elementor_query_sql = $wpdb->prepare(
-                "SELECT wpostmeta.post_id, wpostmeta.meta_value 
-                FROM {$wpdb->prefix}postmeta AS wpostmeta
-                LEFT JOIN {$wpdb->prefix}posts AS wpost ON wpostmeta.post_id = wpost.ID
-                WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
-                AND wpost.post_status IN('publish', 'private', 'draft') 
-                AND wpost.ID IN ({$path_placeholders})",
-                ...$path_list // Pass individual IDs for IN clause
-            );
-            $elementor_posts = $wpdb->get_results($in_elementor_query_sql);
+            
         }
 
 
@@ -258,6 +254,31 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $attachment['in_content'] = false;
                 $attachment['in_programs'] = false;
                 $attachment['in_elementor'] = false;
+
+
+
+
+                $attachment_id = intval($attachment['attachment_id']);
+                $basename = $wpdb->esc_like(basename($attachment['attachment_url']));
+        
+                $query = $wpdb->prepare("
+                    SELECT pm.post_id, pm.meta_value
+                    FROM {$wpdb->prefix}postmeta pm
+                    JOIN {$wpdb->prefix}posts p ON pm.post_id = p.ID
+                    WHERE pm.meta_key IN $meta_key_list
+                    AND (pm.meta_value LIKE %s OR pm.meta_value LIKE %s OR pm.meta_value = %s)
+                ", '%"id":' . $attachment_id . '%', '%' . $basename . '%', $attachment_id);
+        
+                $rows = $wpdb->get_results($query, ARRAY_A);
+
+                if(!empty($rows)){
+                    $attachment['in_elementor'] = true;
+                }
+
+
+
+
+
                 
                 $file_path_relative_decoded = str_replace('/', '\/', $attachment['file_path_relative']);
                 $attachment_id = $attachment['attachment_id'];

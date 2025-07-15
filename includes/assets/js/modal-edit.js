@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 modal.style.display = 'none';
                 statusMessage.textContent = '';
+                location.reload();
             }, 1500);
 
         } catch (error) {

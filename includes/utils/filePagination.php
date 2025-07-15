@@ -256,7 +256,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $attachment['in_programs'] = false;
                 $attachment['in_elementor'] = false;
                 
-                $file_path_relative_decoded = str_replace('/', '/', $attachment['file_path_relative']);
+                $file_path_relative_decoded = str_replace('/', '\/', $attachment['file_path_relative']);
                 $attachment_id = $attachment['attachment_id'];
 
                 // Check in general post content

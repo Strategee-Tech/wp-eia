@@ -194,8 +194,8 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         if($usage_status == null || $usage_status == 'all' || $usage_status == ''){
 
             $elementor_attachments = check_attachments_in_elementor( $attachments_in_folder );
-            //$learnpress_attachments = check_attachment_in_learnpress( $path_list );
-            //$content_attachments = check_attachments_in_content( $path_list);
+            $learnpress_attachments = check_attachment_in_learnpress( $path_list );
+            $content_attachments = check_attachments_in_content( $path_list);
     
             foreach ($attachments_in_folder as &$attachment) {
                 $attachment['in_content'] = false;
@@ -205,12 +205,12 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 if($elementor_attachments[$attachment['attachment_id'] ] == true){
                     $attachment['in_elementor'] = true;
                 }
-                // if($learnpress_attachments[$attachment['attachment_id'] ] == true){
-                //     $attachment['in_programs'] = true;
-                // }
-                // if($content_attachments[$attachment['file_path_relative'] ] == true){
-                //     $attachment['in_content'] = true;
-                // }
+                if($learnpress_attachments[$attachment['attachment_id'] ] == true){
+                    $attachment['in_programs'] = true;
+                }
+                if($content_attachments[$attachment['file_path_relative'] ] == true){
+                    $attachment['in_content'] = true;
+                }
 
                 // Determine and update 'in_use' status
                 $current_in_use_status = ($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) ? 'En Uso' : 'Sin Uso';

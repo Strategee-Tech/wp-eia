@@ -202,9 +202,9 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $attachment['in_programs'] = false;
                 $attachment['in_elementor'] = false;
 
-                if($elementor_attachments[$attachment['attachment_id'] ] == true){
-                    $attachment['in_elementor'] = true;
-                }
+                // if($elementor_attachments[$attachment['attachment_id'] ] == true){
+                //     $attachment['in_elementor'] = true;
+                // }
                 if($learnpress_attachments[$attachment['attachment_id'] ] == true){
                     $attachment['in_programs'] = true;
                 }

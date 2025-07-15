@@ -193,7 +193,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         if($usage_status == null || $usage_status == 'all' || $usage_status == ''){
 
-            //$elementor_attachments = check_attachments_in_elementor( $attachments_in_folder );
+            $elementor_attachments = check_attachments_in_elementor( $attachments_in_folder );
             //$learnpress_attachments = check_attachment_in_learnpress( $path_list );
             $content_attachments = check_attachments_in_content( $path_list);
 
@@ -203,9 +203,9 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $attachment['in_programs'] = false;
                 $attachment['in_elementor'] = false;
 
-                // if($elementor_attachments[$attachment['attachment_id'] ] == true){
-                //     $attachment['in_elementor'] = true;
-                // }
+                if($elementor_attachments[$attachment['attachment_id'] ] == true){
+                    $attachment['in_elementor'] = true;
+                }
                 // if($learnpress_attachments[$attachment['attachment_id'] ] == true){
                 //     $attachment['in_programs'] = true;
                 // }

@@ -232,7 +232,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         // Fetch Elementor meta data
         $elementor_posts = [];
-        if ( ! empty( $id_list ) ) { // Only query Elementor if there are attachments to check
+        if ( ! empty( $file_path_relative_decoded ) ) { // Only query Elementor if there are attachments to check
             $id_placeholders = implode(', ', array_fill(0, count($id_list), '%d'));
             $in_elementor_query_sql = $wpdb->prepare(
                 "SELECT wpostmeta.post_id, wpostmeta.meta_value 
@@ -241,7 +241,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 WHERE wpostmeta.meta_key IN('_elementor_data', '_elementor_css', '_thumbnail_id')
                 AND wpost.post_status IN('publish', 'private', 'draft') 
                 AND wpost.ID IN ({$id_placeholders})",
-                ...$id_list // Pass individual IDs for IN clause
+                ...$path_list // Pass individual IDs for IN clause
             );
             $elementor_posts = $wpdb->get_results($in_elementor_query_sql);
         }

@@ -250,7 +250,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $files_to_delete = array();
 
 
-        if($usage_status !== null){
+        if($usage_status == null || $usage_status == 'all' || $usage_status == ''){
             foreach ($attachments_in_folder as &$attachment) {
                 $attachment['in_content'] = false;
                 $attachment['in_programs'] = false;

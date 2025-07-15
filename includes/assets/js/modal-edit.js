@@ -154,14 +154,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (row) {
                 // Asumiendo el orden de las columnas: Alt y Title
                 row.children[2].textContent = updatedData.title; // Columna 'Alt'
-                row.children[6].textContent = updatedData.alt;   // Columna 'Title'
+                row.children[6].textContent = updatedData.slug;   // Columna 'Title'
+                row.children[7].children[0].classList.remove('dashicons-no-alt');   // Columna 'Title'
+                row.children[7].children[0].classList.add('dashicons-yes');   // Columna 'Title'
             }
 
             // Opcional: Cerrar el modal después de un breve retraso
             setTimeout(() => {
                 modal.style.display = 'none';
                 statusMessage.textContent = '';
-                location.reload();
             }, 1500);
 
         } catch (error) {

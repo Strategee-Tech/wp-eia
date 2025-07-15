@@ -325,6 +325,9 @@ function getIconAlt($alt){
                 </div>
             </div>
 
+            <input type="checkbox" id="modal-fast-resize" name="fast_resize" />
+            <label for="modal-fast-resize">Edición rápida</label>
+
             <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">
 

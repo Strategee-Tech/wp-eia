@@ -169,7 +169,7 @@ function update_yoast_info($new_url, $old_url, $post_id, $old_partial) {
     }
 }
 
-function update_post_meta_elementor_data($basename, $new_url, $old_url){
+function update_post_meta_elementor_data($basename, $new_url, $old_url, $attachment_id){
     global $wpdb;
     // Extraer año/mes desde la URL vieja
     preg_match('#/uploads/(\d{4})/(\d{2})/#', $old_url, $matches);
@@ -193,21 +193,60 @@ function update_post_meta_elementor_data($basename, $new_url, $old_url){
 
     if (!empty($rows)) {
         foreach ($rows as $row) {
-            $aux_url = false;
+            $updated   = false;
             $json_data = json_decode($row['meta_value'], true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
-                array_walk_recursive($json_data, function (&$value) use ($old_url, $new_url, $year_month_path, $basename, &$aux_url) {
-                    if(strpos($value, $year_month_path.$basename) !== false) {
-                        $value   = str_replace($year_month_path.$basename, $year_month_path.basename($new_url), $value);
-                        $aux_url = true;
-                    }
-                });
-                if($aux_url == true) {
+                $json_data = update_elementor_structure_recursive($json_data, $basename, $new_url, $year_month_path, $attachment_id, $updated);
+                if ($updated) {
                     update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
                 }
             }
         }
     }
+
+    // if (!empty($rows)) {
+    //     foreach ($rows as $row) {
+    //         $aux_url   = false;
+    //         $json_data = json_decode($row['meta_value'], true);
+    //         if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
+    //             array_walk_recursive($json_data, function (&$value, $key) use ($old_url, $new_url, $year_month_path, $basename, &$aux_url) {
+    //                 if(strpos($value, $year_month_path.$basename) !== false) {
+    //                     $value   = str_replace($year_month_path.$basename, $year_month_path.basename($new_url), $value);
+    //                     $aux_url = true;
+    //                 }
+    //                 if($key == 'id' && $value == $attachment_id) {
+    //                     $aux_url = true;
+    //                 }
+    //             });
+
+    //             if($aux_url == true) {
+    //                 update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
+    //             }
+    //         }
+    //     }
+    // }
+}
+
+function update_elementor_structure_recursive($data, $basename, $new_url, $year_month_path, $attachment_id, &$updated) {
+    foreach ($data as $key => &$value) {
+        if (is_array($value)) {
+            // Si tiene id y coincide con el attachment_id, actualiza la URL en este bloque
+            if (isset($value['id']) && $value['id'] == $attachment_id && isset($value['url'])) {
+                $value['url'] = $new_url;
+                $updated = true;
+            }
+
+            // Si encuentra coincidencia por basename (por si no hay id)
+            if (isset($value['url']) && strpos($value['url'], $year_month_path . $basename) !== false) {
+                $value['url'] = str_replace($year_month_path . $basename, $year_month_path . basename($new_url), $value['url']);
+                $updated = true;
+            }
+
+            // Recorremos niveles anidados
+            $value = update_elementor_structure_recursive($value, $basename, $new_url, $year_month_path, $attachment_id, $updated);
+        }
+    }
+    return $data;
 }
 
 function update_elementor_css_url($new_url, $old_url) {

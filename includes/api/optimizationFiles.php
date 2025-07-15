@@ -51,7 +51,7 @@ function optimization($request) {
 		$new_path       = $dir . '/' . $new_filename;
 		$old_url        = $post->guid;
 		$file_size_bytes_before = filesize($original_path);
-		
+
 		// Ruta completa a ffmpeg
 		$ext_multimedia = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];
 		$ext_documentos = ['pdf'];
@@ -154,7 +154,7 @@ function optimization($request) {
     	}
 
 		// Actualizar los _elementor_data
-		update_post_meta_elementor_data($info['basename'], $new_url, $old_url);
+		update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
 
 		// Actualizar post_content
 		update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);

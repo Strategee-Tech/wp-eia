@@ -161,7 +161,7 @@ function optimization_files($request) {
     	regenerate_metadata($post->ID);
 
     	// Actualizar los _elementor_data
-		update_post_meta_elementor_data($info['basename'], $new_url, $old_url);
+		update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
 
     	//Actualizar elementor_css_url
     	update_elementor_css_url($new_url, $old_url);

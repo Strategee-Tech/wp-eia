@@ -68,20 +68,24 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
     if ( 'all' !== $usage_status ) {
         switch ( $usage_status ) {
-            case 'En Uso':
+            case 'in_use':
+                // Busca 'En Uso'
                 $where_conditions[] = "pm_in_use.meta_value = %s";
                 $query_params[] = 'En Uso';
                 break;
-            case 'Sin Uso':
-                $where_conditions[] = "pm_in_use.meta_value = %s";
+            case 'not_in_use':
+                // Busca 'Sin Uso' O si el metadato no existe/está vacío
+                $where_conditions[] = "(pm_in_use.meta_value = %s OR pm_in_use.meta_value IS NULL OR pm_in_use.meta_value = '')";
                 $query_params[] = 'Sin Uso';
                 break;
-            case 'Con Alt':
+            case 'has_alt':
+                // Busca 'Con Alt'
                 $where_conditions[] = "pm_has_alt.meta_value = %s";
                 $query_params[] = 'Con Alt';
                 break;
-            case 'Sin Alt':
-                $where_conditions[] = "pm_has_alt.meta_value = %s";
+            case 'no_alt':
+                // Busca 'Sin Alt' O si el metadato no existe/está vacío
+                $where_conditions[] = "(pm_has_alt.meta_value = %s OR pm_has_alt.meta_value IS NULL OR pm_has_alt.meta_value = '')";
                 $query_params[] = 'Sin Alt';
                 break;
         }
@@ -175,6 +179,8 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         }
 
         // --- Lógica para determinar el uso de las imágenes y actualizar metadatos ---
+        // Esta parte se mantiene para que los metadatos se actualicen incluso si el filtro
+        // ya los ha seleccionado. Esto asegura la consistencia a largo plazo.
         $where_clauses = [];
         $prepare_args = [];
         foreach ($path_list as $path) {
@@ -257,6 +263,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $files_to_delete[] = $attachment_id;
             }
             
+            // Solo actualiza si el valor difiere para evitar escrituras innecesarias
             if ($current_in_use_status !== $attachment['stg_status_in_use'] ) {
                 $attachment['stg_status_in_use'] = $current_in_use_status;
                 update_post_meta($attachment_id, '_stg_status_in_use', $current_in_use_status);
@@ -264,6 +271,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
             $current_alt_status = empty($attachment['image_alt_text']) ? 'Sin Alt' : 'Con Alt';
             
+            // Solo actualiza si el valor difiere para evitar escrituras innecesarias
             if ($current_alt_status !== $attachment['stg_status_alt'] ) {
                 $attachment['stg_status_alt'] = $current_alt_status;
                 update_post_meta($attachment_id, '_stg_status_alt', $current_alt_status);

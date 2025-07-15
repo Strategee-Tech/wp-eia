@@ -170,20 +170,6 @@ function getIconAlt($alt){
             Eliminar (<?php echo count($image_data['files_to_delete']); ?>)
         </button>
         <?php endif; ?>
-        <!-- <button id="scan-btn" class="btn" type="button">
-            <span class="dashicons dashicons-search"></span>
-            Escanear
-        </button>
-        <button hidden id="optimize-btn" class="btn" type="button">
-            <span class="dashicons dashicons-dashboard"></span>
-            Optimizar
-        </button>
-        <?php if($delete > 0): ?>
-        <button id="delete-btn" class="btn delete-btn" type="button">
-            <span class="dashicons dashicons-trash"></span>
-            Eliminar
-        </button>
-        <?php endif; ?> -->
     </form>
 
     <table class="wp-list-table widefat fixed striped">
@@ -394,14 +380,6 @@ function getIconAlt($alt){
 
 <?php
     echo '$folder: ' . $folder; 
-    echo '<br>';
-    echo '$status: ' . $status;
-    echo '<br>';
-    echo '$scan: ' . $scan;
-    echo '<br>';
-    echo '$delete: ' . $delete;
-    echo '<br>';
-    echo '$optimize: ' . $optimize;
     echo '<br>';
     echo '<pre>' . htmlspecialchars(print_r($image_data, true)) . '</pre>';
 ?>  

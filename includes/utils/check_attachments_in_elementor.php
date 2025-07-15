@@ -68,7 +68,7 @@ function check_attachments_in_elementor( $attachments_data ) {
         JOIN {$wpdb->prefix}posts p ON pm.post_id = p.ID
         WHERE pm.meta_key IN {$meta_key_list}
         AND {$value_conditions_sql}
-        AND p.post_status IN ('publish', 'private', 'draft', 'revision')
+        AND p.post_status IN ('publish', 'private', 'draft')
     ";
 
     // 3. Preparar los parámetros para wpdb->prepare

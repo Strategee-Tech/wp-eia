@@ -37,7 +37,7 @@ function check_attachments_in_content( $relative_paths ) {
         SELECT ID, post_content
         FROM {$wpdb->posts}
         WHERE ({$where_content_clause})
-        AND post_status IN ('publish', 'private', 'draft', 'revision)
+        AND post_status IN ('publish', 'private', 'draft')
         AND post_type IN ({$post_type_placeholders})
     ";
 

@@ -31,7 +31,7 @@ function check_attachment_in_learnpress( $relative_paths ) {
         SELECT ID, post_content
         FROM {$wpdb->prefix}learnpress_courses
         WHERE ({$where_content_clause})
-        AND post_status IN ('publish', 'private', 'draft', 'revision)
+        AND post_status IN ('publish', 'private', 'draft')
     ";
 
     // Preparar y ejecutar la consulta

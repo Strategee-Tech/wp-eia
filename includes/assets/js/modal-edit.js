@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputWidth = document.getElementById('input-width');
     const fileLink = document.getElementById('file-link');
     const fileLinkText = document.getElementById('file-link-text');
+    const fastEdit = document.getElementById('modal-fast-edit');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
@@ -119,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
                     resize: width > 1920,
+                    fast_edit: fastEdit.checked ? 1 : 0,
                 })
             });
 

@@ -328,8 +328,8 @@ function getIconAlt($alt){
             
             <span id="save-status-message" style="margin-left: 10px;"></span>
             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-                <input type="checkbox" id="modal-fast-resize" name="fast_resize" />
-                <label for="modal-fast-resize">Edición rápida</label>
+                <input type="checkbox" id="modal-fast-edit" name="fast_edit" checked/>
+                <label for="modal-fast-edit">Edición rápida</label>
             </div>
             <div class="modal-footer">
                 <button type="button" id="regenerate-alt-btn" class="button">

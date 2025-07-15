@@ -191,8 +191,34 @@ function update_post_meta_elementor_data($basename, $new_url, $old_url, $attachm
         ARRAY_A
     );
 
+    $query = $wpdb->prepare(
+        "SELECT post_id, meta_value
+         FROM {$wpdb->postmeta}
+         WHERE meta_key = %s
+         AND meta_value LIKE %s
+         AND meta_value LIKE %s",
+        $meta_key,
+        '%"id":%',           // Primer LIKE fijo
+        '%' . $attachment_id . '%' // Segundo LIKE dinámico
+    );
+    $rows_attachments = $wpdb->get_results($query, ARRAY_A);
+
+
     if (!empty($rows)) {
         foreach ($rows as $row) {
+            $updated   = false;
+            $json_data = json_decode($row['meta_value'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
+                $json_data = update_elementor_structure_recursive($json_data, $basename, $new_url, $year_month_path, $attachment_id, $updated);
+                if ($updated) {
+                    update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
+                }
+            }
+        }
+    }
+
+    if (!empty($rows_attachments)) {
+        foreach ($rows_attachments as $row) {
             $updated   = false;
             $json_data = json_decode($row['meta_value'], true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {

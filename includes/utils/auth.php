@@ -285,7 +285,7 @@ function regenerate_metadata($attachment_id, $fileType = 'image'){
     try {
         $attachment = get_post( $attachment_id );
         if ( $attachment->post_type == 'attachment' ) {
-            if($fileType == 'image'){
+            if($fileType == 'image' || $fileType == 'pdf'){
                 $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
             } elseif($fileType == 'multimedia') {
                 $file     = get_attached_file( $attachment_id );

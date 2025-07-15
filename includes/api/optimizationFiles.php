@@ -81,7 +81,7 @@ function optimization($request) {
 			    @unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
-			    $regenerate_metadata = true;
+			    $regenerate_metadata = 'multimedia';
 
 			} catch (Exception $e) {
 			    return new WP_REST_Response([
@@ -105,6 +105,7 @@ function optimization($request) {
 			    @unlink($original_path);
 			    rename($compress_file, $new_path);
 			    $file_size_bytes_after = filesize($new_path);
+			    $regenerate_metadata = 'pdf';
 
 			} catch (Exception $e) {
 			    return new WP_REST_Response([
@@ -149,8 +150,8 @@ function optimization($request) {
     	update_post_meta($post->ID, '_wp_attached_file', $relative_path);
 
     	// Regenerar metadatos
-    	if($regenerate_metadata == true){
-    		regenerate_metadata($post->ID, 'multimedia');
+    	if($regenerate_metadata != false){
+    		regenerate_metadata($post->ID, $regenerate_metadata);
     	}
 
 		// Actualizar los _elementor_data

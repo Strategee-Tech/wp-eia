@@ -249,61 +249,65 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         $files_to_delete = array();
 
-        foreach ($attachments_in_folder as &$attachment) {
-            $attachment['in_content'] = false;
-            $attachment['in_programs'] = false;
-            $attachment['in_elementor'] = false;
-            
-            $file_path_relative_decoded = str_replace('/', '/', $attachment['file_path_relative']);
-            $attachment_id = $attachment['attachment_id'];
 
-            // Check in general post content
-            foreach ($found_posts as $post) {
-                if (strpos($post->post_content, $file_path_relative_decoded) !== false) {
-                    $attachment['in_content'] = true;
-                    break;
+        if($usage_status !== null){
+            foreach ($attachments_in_folder as &$attachment) {
+                $attachment['in_content'] = false;
+                $attachment['in_programs'] = false;
+                $attachment['in_elementor'] = false;
+                
+                $file_path_relative_decoded = str_replace('/', '/', $attachment['file_path_relative']);
+                $attachment_id = $attachment['attachment_id'];
+
+                // Check in general post content
+                foreach ($found_posts as $post) {
+                    if (strpos($post->post_content, $file_path_relative_decoded) !== false) {
+                        $attachment['in_content'] = true;
+                        break;
+                    }
                 }
-            }
 
-            // Check in LearnPress programs content
-            foreach ($programas as $programa) {
-                if (strpos($programa->post_content, $file_path_relative_decoded) !== false) {
-                    $attachment['in_programs'] = true;
-                    break;
+                // Check in LearnPress programs content
+                foreach ($programas as $programa) {
+                    if (strpos($programa->post_content, $file_path_relative_decoded) !== false) {
+                        $attachment['in_programs'] = true;
+                        break;
+                    }
                 }
-            }
-            
-            // Check in Elementor data (meta_value can be large, so be mindful of performance here)
-            foreach ($elementor_posts as $elementor_post) {
-                // Check if the file path is within Elementor's meta_value (which can be JSON)
-                if (strpos($elementor_post->meta_value, $file_path_relative_decoded) !== false || $elementor_post->meta_value == $attachment_id) {
-                    $attachment['in_elementor'] = true;
-                    break;
-                } 
-            }
+                
+                // Check in Elementor data (meta_value can be large, so be mindful of performance here)
+                foreach ($elementor_posts as $elementor_post) {
+                    // Check if the file path is within Elementor's meta_value (which can be JSON)
+                    if (strpos($elementor_post->meta_value, $file_path_relative_decoded) !== false || $elementor_post->meta_value == $attachment_id) {
+                        $attachment['in_elementor'] = true;
+                        break;
+                    } 
+                }
 
-            // Determine and update 'in_use' status
-            $current_in_use_status = ($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) ? 'En Uso' : 'Sin Uso';
-            
-            if ($current_in_use_status === 'Sin Uso') {
-                $files_to_delete[] = $attachment_id; // Add to list for deletion
-            }
-            
-            // Only update post meta if the status has actually changed
-            if ( $current_in_use_status !== $attachment['stg_status_in_use'] ) {
-                $attachment['stg_status_in_use'] = $current_in_use_status; // Update in the array for the current response
-                update_post_meta($attachment_id, '_stg_status_in_use', $current_in_use_status);
-            }
+                // Determine and update 'in_use' status
+                $current_in_use_status = ($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) ? 'En Uso' : 'Sin Uso';
+                
+                if ($current_in_use_status === 'Sin Uso') {
+                    $files_to_delete[] = $attachment_id; // Add to list for deletion
+                }
+                
+                // Only update post meta if the status has actually changed
+                if ( $current_in_use_status !== $attachment['stg_status_in_use'] ) {
+                    $attachment['stg_status_in_use'] = $current_in_use_status; // Update in the array for the current response
+                    update_post_meta($attachment_id, '_stg_status_in_use', $current_in_use_status);
+                }
 
-            // Determine and update 'alt' status
-            $current_alt_status = empty($attachment['image_alt_text']) ? 'Sin Alt' : 'Con Alt';
-            
-            // Only update post meta if the status has actually changed
-            if ( $current_alt_status !== $attachment['stg_status_alt'] ) {
-                $attachment['stg_status_alt'] = $current_alt_status; // Update in the array for the current response
-                update_post_meta($attachment_id, '_stg_status_alt', $current_alt_status);
+                // Determine and update 'alt' status
+                $current_alt_status = empty($attachment['image_alt_text']) ? 'Sin Alt' : 'Con Alt';
+                
+                // Only update post meta if the status has actually changed
+                if ( $current_alt_status !== $attachment['stg_status_alt'] ) {
+                    $attachment['stg_status_alt'] = $current_alt_status; // Update in the array for the current response
+                    update_post_meta($attachment_id, '_stg_status_alt', $current_alt_status);
+                }
             }
         }
+
         unset($attachment); // Break the reference of the last element
 
         // --- 3. Calculate pagination data for return ---

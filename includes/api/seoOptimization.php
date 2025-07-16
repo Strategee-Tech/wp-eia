@@ -72,22 +72,22 @@ function optimization_files($request) {
 	    		$params['resize'] = false;
 	    	}
 
-	    	try {
-		    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			    	return new WP_REST_Response([
-				        'status'  => 'error',
-				        'message' => 'El archivo comprimido no se recibió correctamente.',
-				    ], 500);
-			    } 
+	  //   	try {
+		 //    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+			//     if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+			//     	return new WP_REST_Response([
+			// 	        'status'  => 'error',
+			// 	        'message' => 'El archivo comprimido no se recibió correctamente.',
+			// 	    ], 500);
+			//     } 
 
-		  	} catch (Exception $e) {
-			    return new WP_REST_Response([
-			        'status'  => 'error',
-			        'message' => 'Falló la compresión de la imagen.',
-			        'detalle' => $e->getMessage()
-			    ], 500);
-			}
+		 //  	} catch (Exception $e) {
+			//     return new WP_REST_Response([
+			//         'status'  => 'error',
+			//         'message' => 'Falló la compresión de la imagen.',
+			//         'detalle' => $e->getMessage()
+			//     ], 500);
+			// }
 
 			$params['slug'] = slug_unico(
 			    sanitize_file_name($params['slug']),
@@ -101,9 +101,9 @@ function optimization_files($request) {
 
 		 	// Eliminar el archivo original
 		 	if(file_exists($original_path)){
-	    		unlink($original_path); // elimina el original
+	    		//unlink($original_path); // elimina el original
 		 	}	
-	    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
+	    	//rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
 	    	$dimensions = 'N/A';
 	        $image_info = @getimagesize( $new_path );
@@ -124,6 +124,10 @@ function optimization_files($request) {
 			// Construir la nueva URL en la misma carpeta del archivo original
 			$new_url = trailingslashit($wp_uploads_baseurl . $folder) . $new_filename;
 			$new_url = esc_url_raw($new_url);
+
+			update_elementor_css_url($new_url, "datos_drive", $relative_path);
+
+			die();
 
 			// Eliminar miniaturas
 			if(!empty($miniaturas)) {

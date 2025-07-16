@@ -252,20 +252,33 @@ function update_elementor_structure_recursive($data, $basename, $new_url, $year_
     return $data;
 }
 
-function update_elementor_css_url($new_url, $old_url) {
+function update_elementor_css_url($new_url, $old_url, $file_path_relative) {
     global $wpdb;
+
+    // 1. Escapar el patrón para REGEXP
+    $pattern_escaped = preg_quote($file_path_relative, '/'); // "2025/03/descarga\.png"
+
+    // 2. Para _elementor_css y otros (slash normal)
+    $elementor_css_pattern = $pattern_escaped; // "2025/03/descarga\.png"
+
+
     $meta_key = '_elementor_css';
     $rows     = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT post_id, meta_value 
-             FROM {$wpdb->prefix}postmeta
-             WHERE meta_key = %s 
-             AND meta_value LIKE %s",
+            FROM {$wpdb->prefix}postmeta
+            WHERE meta_key = %s 
+            AND meta_value REGEXP %s",
             $meta_key,
-            '%' . $wpdb->esc_like($old_url) . '%'
+            $elementor_css_pattern
         ),
         ARRAY_A
     );
+
+
+    echo "<pre>";
+    print_r($rows);
+    die(); 
 
     if(!empty($rows)) {   
         foreach ($rows as $row) {

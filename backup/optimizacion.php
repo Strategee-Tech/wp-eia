@@ -303,3 +303,97 @@ function limpiar_uploads_callback() {
 		echo "<p>Proceso terminado.</p></div>";
     } 
 }
+
+
+
+ 
+SELECT pm.meta_id, pm.post_id, pm.meta_value
+FROM wp_postmeta pm
+INNER JOIN wp_posts p ON p.ID = pm.post_id
+WHERE pm.meta_key IN('_elementor_data','enclosure')
+AND p.post_type IN('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')
+AND meta_value REGEXP 'wp-content\\\\/uploads\\\\/2023\\\\/10\\\\/130_DAZ8858-scaled\\.jpg'
+
+SELECT pm.meta_id, pm.post_id, pm.meta_value
+FROM wp_postmeta pm
+INNER JOIN wp_posts p ON p.ID = pm.post_id
+WHERE pm.meta_key IN('_elementor_css')
+AND p.post_type IN('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')
+AND pm.meta_value REGEXP 'uploads\\/2023\\/07\\/eventos-integracion-eia\\.webp';
+
+SELECT pm.meta_id, pm.post_id, pm.meta_value
+FROM wp_postmeta pm
+INNER JOIN wp_posts p ON p.ID = pm.post_id
+WHERE pm.meta_key IN('_thumbnail_id')
+AND p.post_type IN('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')
+AND pm.meta_value = '129385';
+
+
+SELECT pm.meta_id, pm.post_id, pm.meta_key, pm.meta_value
+FROM wp_postmeta pm
+INNER JOIN wp_posts p ON p.ID = pm.post_id
+WHERE p.post_type IN (
+    'post','page','custom_post_type','lp_course','service','portfolio',
+    'gva_event','gva_header','footer','team','elementskit_template',
+    'elementskit_content','elementor_library'
+)
+AND p.post_status IN('publish','private','draft')
+AND (
+    (pm.meta_key IN('_elementor_data','enclosure') AND pm.meta_value REGEXP 'wp-content\\\\/uploads\\\\/2023\\\\/10\\\\/130_DAZ8858-scaled\\.jpg')
+    OR
+    (pm.meta_key = '_elementor_css' AND pm.meta_value REGEXP 'uploads\\/2023\\/07\\/eventos-integracion-eia\\.webp')
+    OR
+    (pm.meta_key = '_thumbnail_id' AND pm.meta_value = '129385')
+);
+
+
+// EN PHP
+
+// // 1. Escapar los caracteres especiales para REGEXP
+// $pattern_escaped = preg_quote($file_path_relative, '/'); // "2023/10/130_DAZ8858-scaled\.jpg"
+
+// // 2. Para _elementor_data (agrega wp-content/uploads y dobles backslashes)
+// $elementor_data_pattern = 'wp-content\\\\/uploads\\\\/' . $pattern_escaped;
+
+// // 3. Para _elementor_css (con solo un slash escapado)
+// $elementor_css_pattern = 'uploads\\/' . $pattern_escaped;
+
+// $thumbnail_id           = 129385;
+
+// // Post types a incluir
+// $post_types = [
+//     'post','page','custom_post_type','lp_course','service','portfolio',
+//     'gva_event','gva_header','footer','team','elementskit_template',
+//     'elementskit_content','elementor_library'
+// ];
+// $post_types_placeholders = implode(',', array_fill(0, count($post_types), '%s'));
+
+// // Construcción de la query
+// $sql = "
+//     SELECT pm.meta_id, pm.post_id, pm.meta_key, pm.meta_value
+//     FROM {$wpdb->postmeta} pm
+//     INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+//     WHERE p.post_type IN ($post_types_placeholders)
+//     AND p.post_status IN('publish','private','draft')
+//     AND (
+//         (pm.meta_key IN('_elementor_data','enclosure') AND pm.meta_value REGEXP %s)
+//         OR
+//         (pm.meta_key = '_elementor_css' AND pm.meta_value REGEXP %s)
+//         OR
+//         (pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d)
+//     )
+// ";
+
+// // Preparar la query con parámetros dinámicos
+// $query = $wpdb->prepare(
+//     $sql,
+//     array_merge($post_types, [$elementor_data_pattern, $elementor_css_pattern, $thumbnail_id])
+// );
+
+// // Ejecutar y obtener resultados
+// $results = $wpdb->get_results($query, ARRAY_A);
+    
+// echo "<pre>";
+// print_r($results);
+
+// die;

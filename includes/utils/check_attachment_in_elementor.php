@@ -172,5 +172,5 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         
     }
     
-    return $processed_results;
+    return $res;
 }

@@ -252,15 +252,11 @@ function update_elementor_structure_recursive($data, $basename, $new_url, $year_
     return $data;
 }
 
-function update_elementor_css_url($new_url, $old_url, $file_path_relative) {
+function update_elementor_css_url($new_url, $file_path_relative) {
     global $wpdb;
 
-    // 1. Escapar el patrón para REGEXP
-    $pattern_escaped = preg_quote($file_path_relative, '/'); // "2025/03/descarga\.png"
-
-    // 2. Para _elementor_css y otros (slash normal)
-    $elementor_css_pattern = $pattern_escaped; // "2025/03/descarga\.png"
-
+    // Para _elementor_css y otros (slash normal)
+    $elementor_css_pattern = preg_quote($file_path_relative, '/'); // "2025/03/descarga\.png"
 
     $meta_key = '_elementor_css';
     $rows     = $wpdb->get_results(
@@ -275,23 +271,20 @@ function update_elementor_css_url($new_url, $old_url, $file_path_relative) {
         ARRAY_A
     );
 
-
-    echo "<pre>";
-    print_r($rows);
-    die(); 
-
     if(!empty($rows)) {   
         foreach ($rows as $row) {
             $meta_value = maybe_unserialize($row['meta_value']);
             if (!empty($meta_value['css']) && is_string($meta_value['css'])) {
                 // Reemplazar la URL antigua por la nueva
-                $meta_value['css'] = str_replace($old_url, $new_url, $meta_value['css']);
-
-                // Actualizar el campo
-                update_post_meta($row['post_id'], $meta_key, $meta_value);
+                $regex   = '/[^"\']*' . $elementor_css_pattern . '/';
+                $new_css = preg_replace($regex, $new_url, $meta_value['css']);
+                if ($new_css != $meta_value['css']) {
+                    $meta_value['css'] = $new_css;
+                    update_post_meta($row['post_id'], $meta_key, $meta_value);
+                }
             }
         }
-    }
+    } 
 }
 
 function regenerate_metadata($attachment_id, $fileType = 'image'){

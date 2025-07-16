@@ -72,22 +72,22 @@ function optimization_files($request) {
 	    		$params['resize'] = false;
 	    	}
 
-	  //   	try {
-		 //    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-			//     if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			//     	return new WP_REST_Response([
-			// 	        'status'  => 'error',
-			// 	        'message' => 'El archivo comprimido no se recibió correctamente.',
-			// 	    ], 500);
-			//     } 
+	    	try {
+		    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+			    	return new WP_REST_Response([
+				        'status'  => 'error',
+				        'message' => 'El archivo comprimido no se recibió correctamente.',
+				    ], 500);
+			    } 
 
-		 //  	} catch (Exception $e) {
-			//     return new WP_REST_Response([
-			//         'status'  => 'error',
-			//         'message' => 'Falló la compresión de la imagen.',
-			//         'detalle' => $e->getMessage()
-			//     ], 500);
-			// }
+		  	} catch (Exception $e) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Falló la compresión de la imagen.',
+			        'detalle' => $e->getMessage()
+			    ], 500);
+			}
 
 			$params['slug'] = slug_unico(
 			    sanitize_file_name($params['slug']),
@@ -125,8 +125,6 @@ function optimization_files($request) {
 			$new_url = trailingslashit($wp_uploads_baseurl . $folder) . $new_filename;
 			$new_url = esc_url_raw($new_url);
 
-			update_elementor_css_url($new_url, "datos_drive", $relative_path);
-
 			die();
 
 			// Eliminar miniaturas
@@ -153,7 +151,7 @@ function optimization_files($request) {
 			update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
 
 	    	//Actualizar elementor_css_url
-	    	update_elementor_css_url($new_url, $old_url);
+	    	update_elementor_css_url($new_url, $relative_path);
 
 	    	// Actualizar post_content y Yoast
 			update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);

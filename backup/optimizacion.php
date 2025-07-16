@@ -382,9 +382,9 @@ AND (
 // )
 // AND p.post_status IN('publish','private','draft')
 // AND (
-//     (pm.meta_key IN('_elementor_data','enclosure') AND pm.meta_value REGEXP 'wp-content\\\\/uploads\\\\/2023\\\\/10\\\\/130_DAZ8858-scaled\\.jpg')
+//     (pm.meta_key IN('_elementor_data') AND pm.meta_value REGEXP 'wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/201007-invitacion-dia-de-la-familia\\.wav')
 //     OR
-//     (pm.meta_key = '_elementor_css' AND pm.meta_value REGEXP 'uploads\\/2023\\/07\\/eventos-integracion-eia\\.webp')
+//     (pm.meta_key IN('_elementor_css','enclosure')  AND pm.meta_value REGEXP 'uploads\\/2020\\/10\\/201007-invitacion-dia-de-la-familia\\.wav')
 //     OR
 //     (pm.meta_key = '_thumbnail_id' AND pm.meta_value = '129385')
 // );
@@ -417,9 +417,9 @@ AND (
 //     WHERE p.post_type IN ($post_types_placeholders)
 //     AND p.post_status IN('publish','private','draft')
 //     AND (
-//         (pm.meta_key IN('_elementor_data','enclosure') AND pm.meta_value REGEXP %s)
+//         (pm.meta_key IN('_elementor_data') AND pm.meta_value REGEXP %s)
 //         OR
-//         (pm.meta_key = '_elementor_css' AND pm.meta_value REGEXP %s)
+//         (pm.meta_key IN('_elementor_css','enclosure') AND pm.meta_value REGEXP %s)
 //         OR
 //         (pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d)
 //     )

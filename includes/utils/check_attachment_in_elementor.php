@@ -24,21 +24,19 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         // Escapamos los nombres de archivo para REGEXP
         $escaped_files = array_map(function($path) {
             $path_parts = pathinfo($path);
-            $newPath = $path_parts['dirname'] . '/' . $path_parts['basename'];
-            return preg_quote($newPath, '/'); // Ej: 2025/03/descarga\.png
-        }, $file_paths);
-
-        // Para _elementor_data (dobles backslashes)
-        $elementor_data_regex = implode('|', array_map(function($path) {
-            $path_parts = pathinfo($path);
-            $newPath = $path_parts['dirname'] . '/' . $path_parts['basename'];
+            $newPath = $path_parts['dirname'] . '/' . $path_parts['filename'];
             echo "<br>";
             print_r($path_parts);
             echo "<br>";
             print_r($newPath);
             echo "<br>";
             die();
-            return str_replace('/', '\\\\/',$newPath); // \/2025\/03\/descarga\.png
+            return preg_quote($newPath, '/'); // Ej: 2025/03/descarga\.png
+        }, $file_paths);
+
+        // Para _elementor_data (dobles backslashes)
+        $elementor_data_regex = implode('|', array_map(function($path) {
+            return str_replace('/', '\\\\/',$path); // \/2025\/03\/descarga\.png
         }, $escaped_files));
 
         // Para _elementor_css y enclosure

@@ -100,7 +100,7 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         $attachment_id = null; // Inicializar en null
 
         switch ($row['meta_key']) {
-            case '_thumbnail_id':
+            case '_thumbnail_id' :
                 // Para _thumbnail_id, el meta_value es el ID directamente
                 $attachment_id = (int) $row['meta_value'];
                 break;
@@ -116,7 +116,10 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                             break; // Encontramos uno, no necesitamos buscar más en este meta_value
                         }
                     }
+                
                 }
+            case '_elementor_css' || '_elementor_data':
+
                 // Si también se buscaron por file_paths en elementor_data
                 if (!empty($file_paths)) {
                     
@@ -135,15 +138,8 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                             break;
                         }
                     }
-                    // Aquí el desafío es mapear una ruta de archivo a un attachment_id.
-                    // Esto no es trivial y requeriría una subconsulta o una búsqueda en la tabla wp_posts
-                    // donde post_type = 'attachment' y post_title o guid coincida con el nombre del archivo.
-                    // No se puede hacer de forma eficiente solo con el meta_value REGEXP.
-                    // Por simplicidad, esta parte NO EXTRAERÁ EL ATTACHMENT ID DIRECTAMENTE AQUÍ.
-                    // Si se necesita, habría que hacer una búsqueda adicional por las rutas de archivo.
                 }
                 break;
-            case '_elementor_css':
             case 'enclosure':
                 // Para CSS o enclosure, si se busca por file_paths, es complicado obtener el ID
                 // directo sin una consulta adicional a wp_posts.

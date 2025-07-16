@@ -97,17 +97,21 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     // --- PROCESAR RESULTADOS PARA EXTRAER EL ATTACHMENT ID ---
     $processed_results = [];
     foreach ($results as $row) {
+
         $attachment_id = null; // Inicializar en null
 
         switch ($row['meta_key']) {
+
             case '_thumbnail_id' :
                 // Para _thumbnail_id, el meta_value es el ID directamente
                 $attachment_id = (int) $row['meta_value'];
                 break;
+                
             case '_elementor_data':
                 // Para _elementor_data, buscar el ID en el JSON
                 // Esto requiere un análisis más profundo del JSON.
                 // Aquí se muestra una forma simplificada de buscar IDs pasados.
+
                 if (!empty($attachment_ids)) {
                     foreach ($attachment_ids as $id_to_find) {
                         // Buscar el patrón "id":<ID> en el JSON
@@ -118,7 +122,8 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                     }
                 
                 }
-            case '_elementor_css' || '_elementor_data':
+
+            case '_elementor_css' || '_elementor_data' || 'enclosure':
 
                 // Si también se buscaron por file_paths en elementor_data
                 if (!empty($file_paths)) {
@@ -130,7 +135,7 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                                 AND meta_value = %s",
                                 $path
                         );
-                    
+
                         $attachment_id = $wpdb->get_var($sql);
 
                         if ($attachment_id) {
@@ -139,12 +144,6 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                         }
                     }
                 }
-                break;
-            case 'enclosure':
-                // Para CSS o enclosure, si se busca por file_paths, es complicado obtener el ID
-                // directo sin una consulta adicional a wp_posts.
-                // Si el original $file_paths contenía rutas como 'uploads/2025/03/image.png'
-                // se necesitaría buscar el attachment cuyo guid o post_name coincida.
                 break;
         }
 

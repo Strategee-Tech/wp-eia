@@ -42,8 +42,6 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     } else {
         $elementor_data_regex = '';
         $elementor_css_regex = '';
-
-
     }
 
     print_r($elementor_data_regex);

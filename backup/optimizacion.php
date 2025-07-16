@@ -411,6 +411,10 @@ AND (
 
 // // Construcción de la query
 // $sql = "
+//     SELECT pm.meta_key,
+        // MIN(pm.meta_id) AS meta_id,
+        // MIN(pm.post_id) AS post_id,
+        // MIN(pm.meta_value) AS meta_value
 //     SELECT pm.meta_id, pm.post_id, pm.meta_key, pm.meta_value
 //     FROM {$wpdb->postmeta} pm
 //     INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
@@ -423,6 +427,7 @@ AND (
 //         OR
 //         (pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d)
 //     )
+//	   GROUP BY pm.meta_key
 // ";
 
 // // Preparar la query con parámetros dinámicos

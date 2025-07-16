@@ -122,21 +122,24 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                     }
                 
                 }
+                if(!empty($file_paths)){
+                    foreach ($file_paths as $path) {
+                        $attachment_id = get_attachment_id_by_path($path);
 
-            case '_elementor_css' || '_elementor_data' || 'enclosure':
+                        if ($attachment_id) {
+                            $attachment_id = (int) $attachment_id;
+                            break;
+                        }
+                    }
+                }
+                break;
+            default:
 
                 // Si también se buscaron por file_paths en elementor_data
                 if (!empty($file_paths)) {
                     
                     foreach ($file_paths as $path) {
-                        $sql = $wpdb->prepare(
-                            "SELECT post_id FROM {$wpdb->postmeta} 
-                                WHERE meta_key = '_wp_attached_file' 
-                                AND meta_value = %s",
-                                $path
-                        );
-
-                        $attachment_id = $wpdb->get_var($sql);
+                        $attachment_id = get_attachment_id_by_path($path);
 
                         if ($attachment_id) {
                             $attachment_id = (int) $attachment_id;
@@ -153,4 +156,16 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     }
 
     return $processed_results;
+}
+
+
+function get_attachment_id_by_path($path) {
+    global $wpdb;
+    $sql = $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->postmeta} 
+            WHERE meta_key = '_wp_attached_file' 
+            AND meta_value = %s",
+            $path
+    );
+    return $wpdb->get_var($sql);
 }

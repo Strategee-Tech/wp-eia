@@ -251,7 +251,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $current_page_count = count( $attachments_in_folder );
     
         $pagination_data = [
-            'content_attachments'     => $content_attachments,
             'elementor_attachments'   => $elementor_attachments,
             'files_to_delete'         => $files_to_delete, // List of unused file IDs (for debugging/future use)
             'records'                 => $attachments_in_folder,

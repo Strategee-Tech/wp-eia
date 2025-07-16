@@ -130,5 +130,5 @@ function check_attachment_in_content( $relative_paths = [], $post_ids = [] ) {
         }
     }
     
-    return $res;
+    return $processed_results;
 }

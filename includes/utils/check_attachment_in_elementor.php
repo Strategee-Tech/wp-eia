@@ -35,12 +35,20 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
             return str_replace('/', '\\\\/',$newPath); // \/2025\/03\/descarga\.png
         }, $escaped_files));
 
+
+
         // Para _elementor_css y enclosure
         $elementor_css_regex = implode('|', $escaped_files);
     } else {
         $elementor_data_regex = '';
         $elementor_css_regex = '';
+
+
     }
+
+    print_r($elementor_data_regex);
+    print_r($elementor_css_regex);
+    die();
 
     // Construir patrón para IDs en JSON ("id":12345)
     $regex_attachment_ids_json = ''; // Renombrado para evitar confusión
@@ -177,6 +185,6 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         }
     }
 
-    
+
     return $res;
 }

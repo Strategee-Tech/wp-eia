@@ -10,7 +10,7 @@
  * the corresponding attachment IDs found (or 0 if not found).
  * Returns an empty array if no file paths are provided.
  */
-function checkAttachmentInContent($file_paths = [],) {
+function check_attachment_in_content($file_paths = [],) {
     global $wpdb;
 
     if (empty($file_paths)) {

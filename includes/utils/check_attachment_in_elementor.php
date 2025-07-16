@@ -151,21 +151,23 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         }
 
         // Añadir el ID del attachment encontrado a la fila
-        // $row['attachment_id'] = $attachment_id;
-        // $processed_results[] = $row;
+        $row['attachment_id'] = $attachment_id;
+        $processed_results[] = $row;
 
-        foreach($attachment_ids as $id){
-            $processed_results[$id] = $attachment_id;
-            // if($id == $attachment_id){
-            //     $processed_results[$id] = 1;
-            // } else {
-            //     $processed_results[$id] = 0;
-            // }
-        }
-
+        
     }
 
-    return $processed_results;
+    $res = [];
+    foreach($attachment_ids as $id){
+        foreach($processed_results as $row){
+            if($row['attachment_id'] == $id){
+                $res[$id] = 1;
+                break;
+            } else {
+                $res[$id] = 0;
+            }
+        }
+    }
+    
+    return $res;
 }
-
-

@@ -101,9 +101,9 @@ function optimization_files($request) {
 
 		 	// Eliminar el archivo original
 		 	if(file_exists($original_path)){
-	    		//unlink($original_path); // elimina el original
+	    		unlink($original_path); // elimina el original
 		 	}	
-	    	//rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
+	    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
 	    	$dimensions = 'N/A';
 	        $image_info = @getimagesize( $new_path );
@@ -124,8 +124,6 @@ function optimization_files($request) {
 			// Construir la nueva URL en la misma carpeta del archivo original
 			$new_url = trailingslashit($wp_uploads_baseurl . $folder) . $new_filename;
 			$new_url = esc_url_raw($new_url);
-
-			die();
 
 			// Eliminar miniaturas
 			if(!empty($miniaturas)) {

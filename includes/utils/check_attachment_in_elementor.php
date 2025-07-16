@@ -120,7 +120,7 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                             break; // Encontramos uno, no necesitamos buscar más en este meta_value
                         }
                     }
-                
+                    break;
                 }
                 if(!empty($file_paths)){
                     foreach ($file_paths as $path) {

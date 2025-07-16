@@ -7,6 +7,9 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
+//Helpers
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentIdByPath.php';
+
 wp_enqueue_script(
     'delete-files', // Handle o identificador único
     plugins_url( '../assets/js/delete-files.js', __FILE__ ), // URL del script dentro de tu plugin

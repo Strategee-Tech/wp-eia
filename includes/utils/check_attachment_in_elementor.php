@@ -151,21 +151,20 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         }
 
         // Añadir el ID del attachment encontrado a la fila
-        $row['attachment_id'] = $attachment_id;
-        $processed_results[] = $row;
+        // $row['attachment_id'] = $attachment_id;
+        // $processed_results[] = $row;
+
+        foreach($attachment_ids as $id){
+            if($id == $attachment_id){
+                $processed_results[$id] = 1;
+            } else {
+                $processed_results[$id] = 0;
+            }
+        }
+
     }
 
     return $processed_results;
 }
 
 
-function get_attachment_id_by_path($path) {
-    global $wpdb;
-    $sql = $wpdb->prepare(
-        "SELECT post_id FROM {$wpdb->postmeta} 
-            WHERE meta_key = '_wp_attached_file' 
-            AND meta_value = %s",
-            $path
-    );
-    return $wpdb->get_var($sql);
-}

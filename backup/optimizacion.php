@@ -349,6 +349,47 @@ AND (
 
 // EN PHP
 
+ 
+// SELECT pm.meta_id, pm.post_id, pm.meta_value
+// FROM wp_postmeta pm
+// INNER JOIN wp_posts p ON p.ID = pm.post_id
+// WHERE pm.meta_key IN('_elementor_data','enclosure')
+// AND p.post_type IN('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')
+// AND meta_value REGEXP 'wp-content\\\\/uploads\\\\/2023\\\\/10\\\\/130_DAZ8858-scaled\\.jpg'
+
+// SELECT pm.meta_id, pm.post_id, pm.meta_value
+// FROM wp_postmeta pm
+// INNER JOIN wp_posts p ON p.ID = pm.post_id
+// WHERE pm.meta_key IN('_elementor_css')
+// AND p.post_type IN('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')
+// AND pm.meta_value REGEXP 'uploads\\/2023\\/07\\/eventos-integracion-eia\\.webp';
+
+// SELECT pm.meta_id, pm.post_id, pm.meta_value
+// FROM wp_postmeta pm
+// INNER JOIN wp_posts p ON p.ID = pm.post_id
+// WHERE pm.meta_key IN('_thumbnail_id')
+// AND p.post_type IN('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')
+// AND pm.meta_value = '129385';
+
+
+// SELECT pm.meta_id, pm.post_id, pm.meta_key, pm.meta_value
+// FROM wp_postmeta pm
+// INNER JOIN wp_posts p ON p.ID = pm.post_id
+// WHERE p.post_type IN (
+//     'post','page','custom_post_type','lp_course','service','portfolio',
+//     'gva_event','gva_header','footer','team','elementskit_template',
+//     'elementskit_content','elementor_library'
+// )
+// AND p.post_status IN('publish','private','draft')
+// AND (
+//     (pm.meta_key IN('_elementor_data','enclosure') AND pm.meta_value REGEXP 'wp-content\\\\/uploads\\\\/2023\\\\/10\\\\/130_DAZ8858-scaled\\.jpg')
+//     OR
+//     (pm.meta_key = '_elementor_css' AND pm.meta_value REGEXP 'uploads\\/2023\\/07\\/eventos-integracion-eia\\.webp')
+//     OR
+//     (pm.meta_key = '_thumbnail_id' AND pm.meta_value = '129385')
+// );
+
+
 // // 1. Escapar los caracteres especiales para REGEXP
 // $pattern_escaped = preg_quote($file_path_relative, '/'); // "2023/10/130_DAZ8858-scaled\.jpg"
 

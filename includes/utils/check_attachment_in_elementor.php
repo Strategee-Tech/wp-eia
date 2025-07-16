@@ -119,6 +119,23 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                 }
                 // Si también se buscaron por file_paths en elementor_data
                 if (!empty($file_paths)) {
+                    
+                    foreach ($file_paths as $path) {
+                        $sql = $wpdb->prepare(
+                            "SELECT post_id FROM {$wpdb->postmeta} 
+                                WHERE meta_key = '_wp_attached_file' 
+                                AND meta_value = %s,
+                                LIMIT 1",
+                            $path
+                        );
+                    
+                        $attachment_id = $wpdb->get_var($sql);
+
+                        if ($attachment_id) {
+                            $attachment_id = (int) $attachment_id;
+                            break;
+                        }
+                    }
                     // Aquí el desafío es mapear una ruta de archivo a un attachment_id.
                     // Esto no es trivial y requeriría una subconsulta o una búsqueda en la tabla wp_posts
                     // donde post_type = 'attachment' y post_title o guid coincida con el nombre del archivo.

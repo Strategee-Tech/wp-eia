@@ -124,9 +124,8 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
                         $sql = $wpdb->prepare(
                             "SELECT post_id FROM {$wpdb->postmeta} 
                                 WHERE meta_key = '_wp_attached_file' 
-                                AND meta_value = %s,
-                                LIMIT 1",
-                            $path
+                                AND meta_value = %s",
+                                $path
                         );
                     
                         $attachment_id = $wpdb->get_var($sql);

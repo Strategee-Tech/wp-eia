@@ -210,9 +210,9 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 //     $attachment['in_elementor'] = true;
                 // }
 
-                if($elementor_attachments[$attachment['attachment_id'] ] == true){
-                    $attachment['in_elementor'] = true;
-                }
+                // if($elementor_attachments[$attachment['attachment_id'] ] == true){
+                //     $attachment['in_elementor'] = true;
+                // }
                 // if($learnpress_attachments[$attachment['attachment_id'] ] == true){
                 //     $attachment['in_programs'] = true;
                 // }
@@ -251,6 +251,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $current_page_count = count( $attachments_in_folder );
     
         $pagination_data = [
+            'elementor_attachments'   => $elementor_attachments,
             'files_to_delete'         => $files_to_delete, // List of unused file IDs (for debugging/future use)
             'records'                 => $attachments_in_folder,
             'current_page'            => $page,
@@ -267,6 +268,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
     } catch ( \Throwable $th ) {
         error_log( 'WPIL Error fetching paginated files: ' . $th->getMessage() );
         return [
+            'elementor_attachments'   => [],
             'files_to_delete'         => [],
             'records'                 => [],
             'current_page'            => $page,

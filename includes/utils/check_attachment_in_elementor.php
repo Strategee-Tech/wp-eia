@@ -32,7 +32,11 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         $elementor_data_regex = implode('|', array_map(function($path) {
             $path_parts = pathinfo($path);
             $newPath = $path_parts['dirname'] . '/' . $path_parts['basename'];
+            echo "<br>";
+            print_r($path_parts);
+            echo "<br>";
             print_r($newPath);
+            echo "<br>";
             die();
             return str_replace('/', '\\\\/',$newPath); // \/2025\/03\/descarga\.png
         }, $escaped_files));

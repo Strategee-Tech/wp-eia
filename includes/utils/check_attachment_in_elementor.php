@@ -36,11 +36,7 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         }, $escaped_files));
 
         // Para _elementor_css y enclosure
-        $elementor_css_regex = implode('|', array_map(function($path){
-            $path_parts = pathinfo($path);
-            $newPath = $path_parts['dirname'] . '/' . $path_parts['filename'];
-            return preg_quote($newPath, '/'); // Ej: 2025/03/descarga\.png
-        }, $file_paths));
+        $elementor_css_regex = implode('|', $escaped_files);
     } else {
         $elementor_data_regex = '';
         $elementor_css_regex = '';
@@ -169,17 +165,18 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     }
 
     $res = [];
-    foreach($attachment_ids as $id){
-        foreach($processed_results as $row){
-            if($row['attachment_id'] == $id){
-                $res[$id] = 1;
-                break;
-            } else {
-                $res[$id] = 0;
-            }
-        }
-        
+    // 1. Inicializar todos los IDs buscados como no encontrados
+    foreach ($attachment_ids as $id) {
+        $res[$id] = 0;
     }
+    
+    // 2. Marcar como encontrados los IDs que realmente aparecieron en los resultados de la consulta
+    foreach ($processed_results as $row) {
+        if (isset($row['attachment_id']) && in_array($row['attachment_id'], $attachment_ids)) {
+            $res[$row['attachment_id']] = 1;
+        }
+    }
+
     
     return $res;
 }

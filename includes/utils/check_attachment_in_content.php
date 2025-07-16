@@ -8,7 +8,7 @@
  * @param string $filepath The file path (relative to uploads dir) or URL of the attachment.
  * @return int|false The attachment ID on success, false on failure.
  */
-function get_attachment_id_by_path($filepath) {
+function get_attachment_id_by_path2($filepath) {
     global $wpdb;
 
     if (empty($filepath)) {
@@ -159,13 +159,13 @@ function check_attachment_in_content($file_paths = [], $post_types = []) {
 
         foreach ($file_paths as $input_path) {
             // Check if the content contains the full path, basename, or relative path
-            // We use strpos for a quick check before calling get_attachment_id_by_path,
+            // We use strpos for a quick check before calling get_attachment_id_by_path2,
             // as REGEXP already confirmed a match.
             if (strpos($content, $input_path) !== false ||
                 strpos($content, basename($input_path)) !== false ||
                 (isset($relative_path_from_url) && strpos($content, $relative_path_from_url) !== false)) {
 
-                $attachment_id = get_attachment_id_by_path($input_path);
+                $attachment_id = get_attachment_id_by_path2($input_path);
                 if ($attachment_id) {
                     // Store the found ID, mapping it to the original input file path
                     $found_attachments_map[$input_path] = (int) $attachment_id;

@@ -38,9 +38,9 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     }
 
     // Construir patrón para IDs en JSON ("id":12345)
-    $regex_attachment_ids = '';
+    $regex_attachment_ids_json = ''; // Renombrado para evitar confusión
     if (!empty($attachment_ids)) {
-        $regex_attachment_ids = implode('|', array_map('intval', $attachment_ids));
+        $regex_attachment_ids_json = implode('|', array_map('intval', $attachment_ids));
     }
 
     // Construir IN() para _thumbnail_id
@@ -61,10 +61,10 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         AND p.post_status IN('publish','private','draft')
         AND (
             (
-                pm.meta_key IN('_elementor_data') 
+                pm.meta_key IN('_elementor_data')
                 AND (
                     " . (!empty($elementor_data_regex) ? "pm.meta_value REGEXP %s" : "1=0") . "
-                    " . (!empty($regex_attachment_ids) ? "OR pm.meta_value REGEXP %s" : "") . "
+                    " . (!empty($regex_attachment_ids_json) ? "OR pm.meta_value REGEXP %s" : "") . "
                 )
             )
             OR
@@ -81,8 +81,8 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     if (!empty($elementor_data_regex)) {
         $params[] = $elementor_data_regex;
     }
-    if (!empty($regex_attachment_ids)) {
-        $params[] = '"id":(' . $regex_attachment_ids . ')';
+    if (!empty($regex_attachment_ids_json)) { // Usar el nuevo nombre de variable
+        $params[] = '"id":(' . $regex_attachment_ids_json . ')';
     }
     if (!empty($elementor_css_regex)) {
         $params[] = $elementor_css_regex;
@@ -91,6 +91,55 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     // Preparar query
     $query = $wpdb->prepare($sql, $params);
 
-    // Ejecutar y devolver resultados
-    return $wpdb->get_results($query, ARRAY_A);
+    // Ejecutar y obtener resultados
+    $results = $wpdb->get_results($query, ARRAY_A);
+
+    // --- PROCESAR RESULTADOS PARA EXTRAER EL ATTACHMENT ID ---
+    $processed_results = [];
+    foreach ($results as $row) {
+        $attachment_id = null; // Inicializar en null
+
+        switch ($row['meta_key']) {
+            case '_thumbnail_id':
+                // Para _thumbnail_id, el meta_value es el ID directamente
+                $attachment_id = (int) $row['meta_value'];
+                break;
+            case '_elementor_data':
+                // Para _elementor_data, buscar el ID en el JSON
+                // Esto requiere un análisis más profundo del JSON.
+                // Aquí se muestra una forma simplificada de buscar IDs pasados.
+                if (!empty($attachment_ids)) {
+                    foreach ($attachment_ids as $id_to_find) {
+                        // Buscar el patrón "id":<ID> en el JSON
+                        if (strpos($row['meta_value'], '"id":' . intval($id_to_find)) !== false) {
+                            $attachment_id = intval($id_to_find);
+                            break; // Encontramos uno, no necesitamos buscar más en este meta_value
+                        }
+                    }
+                }
+                // Si también se buscaron por file_paths en elementor_data
+                if (!empty($file_paths)) {
+                    // Aquí el desafío es mapear una ruta de archivo a un attachment_id.
+                    // Esto no es trivial y requeriría una subconsulta o una búsqueda en la tabla wp_posts
+                    // donde post_type = 'attachment' y post_title o guid coincida con el nombre del archivo.
+                    // No se puede hacer de forma eficiente solo con el meta_value REGEXP.
+                    // Por simplicidad, esta parte NO EXTRAERÁ EL ATTACHMENT ID DIRECTAMENTE AQUÍ.
+                    // Si se necesita, habría que hacer una búsqueda adicional por las rutas de archivo.
+                }
+                break;
+            case '_elementor_css':
+            case 'enclosure':
+                // Para CSS o enclosure, si se busca por file_paths, es complicado obtener el ID
+                // directo sin una consulta adicional a wp_posts.
+                // Si el original $file_paths contenía rutas como 'uploads/2025/03/image.png'
+                // se necesitaría buscar el attachment cuyo guid o post_name coincida.
+                break;
+        }
+
+        // Añadir el ID del attachment encontrado a la fila
+        $row['attachment_id'] = $attachment_id;
+        $processed_results[] = $row;
+    }
+
+    return $processed_results;
 }

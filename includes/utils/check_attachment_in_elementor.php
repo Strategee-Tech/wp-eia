@@ -155,11 +155,12 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         // $processed_results[] = $row;
 
         foreach($attachment_ids as $id){
-            if($id == $attachment_id){
-                $processed_results[$id] = 1;
-            } else {
-                $processed_results[$id] = 0;
-            }
+            $processed_results[$id] = $attachment_id;
+            // if($id == $attachment_id){
+            //     $processed_results[$id] = 1;
+            // } else {
+            //     $processed_results[$id] = 0;
+            // }
         }
 
     }

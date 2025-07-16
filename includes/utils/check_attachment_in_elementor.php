@@ -52,9 +52,9 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     // Armar query dinámica
     $sql = "
         SELECT pm.meta_key,
-               MIN(pm.meta_id) AS meta_id,
-               MIN(pm.post_id) AS post_id,
-               MIN(pm.meta_value) AS meta_value
+               pm.meta_id AS meta_id,
+               pm.post_id AS post_id,
+               pm.meta_value AS meta_value
         FROM {$wpdb->postmeta} pm
         INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
         WHERE p.post_type IN ($post_types_placeholders)
@@ -74,7 +74,6 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
             )
             " . (!empty($thumbnail_in) ? "OR (pm.meta_key = '_thumbnail_id' AND pm.meta_value IN ($thumbnail_in))" : "") . "
         )
-        GROUP BY pm.meta_key
     ";
 
     // Preparar parámetros

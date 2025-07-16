@@ -7,6 +7,7 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         return [];
     }
 
+
     // Post types permitidos
     $post_types = [
         'post','page','custom_post_type','lp_course','service','portfolio',
@@ -22,12 +23,16 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
     if (!empty($file_paths)) {
         // Escapamos los nombres de archivo para REGEXP
         $escaped_files = array_map(function($path) {
-            return preg_quote($path, '/'); // Ej: 2025/03/descarga\.png
+            $path_parts = pathinfo($path);
+            $newPath = $path_parts['dirname'] . '/' . $path_parts['basename'];
+            return preg_quote($newPath, '/'); // Ej: 2025/03/descarga\.png
         }, $file_paths);
 
         // Para _elementor_data (dobles backslashes)
         $elementor_data_regex = implode('|', array_map(function($path) {
-            return str_replace('/', '\\\\/',$path); // \/2025\/03\/descarga\.png
+            $path_parts = pathinfo($path);
+            $newPath = $path_parts['dirname'] . '/' . $path_parts['basename'];
+            return str_replace('/', '\\\\/',$newPath); // \/2025\/03\/descarga\.png
         }, $escaped_files));
 
         // Para _elementor_css y enclosure

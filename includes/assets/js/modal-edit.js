@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 modal.style.display = 'none';
                 statusMessage.textContent = '';
-            }, 1500);
+            }, 1000);
 
         } catch (error) {
             console.error('Error al guardar metadatos:', error);

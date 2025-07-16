@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.children[6].textContent = updatedData.slug;   // Columna 'Title'
                 row.children[7].children[0].classList.remove('dashicons-no-alt');   // Columna 'Title'
                 row.children[7].children[0].classList.add('dashicons-yes');   // Columna 'Title'
-                row.children[7].children[1].classList.add('color-green');
+                row.children[7].children[0].classList.add('color-green');
             }
 
             // Opcional: Cerrar el modal después de un breve retraso

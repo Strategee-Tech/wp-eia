@@ -370,56 +370,98 @@ AND (
 GROUP BY pm.meta_key;
 
 
+SELECT pm.meta_key,
+    MIN(pm.meta_id) AS meta_id,
+    MIN(pm.post_id) AS post_id,
+    MIN(pm.meta_value) AS meta_value
+FROM wp_postmeta pm
+INNER JOIN wp_posts p ON p.ID = pm.post_id
+WHERE p.post_type IN (
+    'post','page','custom_post_type','lp_course','service','portfolio',
+    'gva_event','gva_header','footer','team','elementskit_template',
+    'elementskit_content','elementor_library'
+)
+AND p.post_status IN('publish','private','draft')
+AND (
+    (
+        pm.meta_key IN('_elementor_data') AND 
+        (pm.meta_value REGEXP '\\\\/2025\\\\/03\\\\/descarga\\.jpeg' OR pm.meta_value REGEXP '\"id\":171352')
+    )
+    OR
+    (pm.meta_key IN('_elementor_css','enclosure') AND pm.meta_value REGEXP '2020\\/10\\/201007-invitacion-dia-de-la-familia\\.wav')
+    OR
+    (pm.meta_key = '_thumbnail_id' AND pm.meta_value = '129385')
+)
+GROUP BY pm.meta_key;
+
+
 // EN PHP
 
-// // 1. Escapar los caracteres especiales para REGEXP
-// $pattern_escaped = preg_quote($file_path_relative, '/'); // "2023/10/130_DAZ8858-scaled\.jpg"
+global $wpdb;
 
-// // 2. Para _elementor_data (agrega wp-content/uploads y dobles backslashes)
-// $elementor_data_pattern = 'wp-content\\\\/uploads\\\\/' . $pattern_escaped;
+// Variables dinámicas
+$file_path_relative = '2025/03/descarga.png'; // Ejemplo
+$thumbnail_id       = 129385;
+$attachment_id      = 243243; // ID opcional del attachment (Elementor)
 
-// // 3. Para _elementor_css (con solo un slash escapado)
-// $elementor_css_pattern = 'uploads\\/' . $pattern_escaped;
+// 1. Escapar el patrón para REGEXP
+$pattern_escaped = preg_quote($file_path_relative, '/'); // "2025/03/descarga\.png"
 
-// $thumbnail_id           = 129385;
+// 2. Para _elementor_data (dobles backslashes para JSON)
+$elementor_data_pattern = '\\\\/' . str_replace('/', '\\\\/', $file_path_relative); // "\/2025\/03\/descarga\.png"
 
-// // Post types a incluir
-// $post_types = [
-//     'post','page','custom_post_type','lp_course','service','portfolio',
-//     'gva_event','gva_header','footer','team','elementskit_template',
-//     'elementskit_content','elementor_library'
-// ];
-// $post_types_placeholders = implode(',', array_fill(0, count($post_types), '%s'));
+// 3. Para _elementor_css y otros (slash normal)
+$elementor_css_pattern = $pattern_escaped; // "2025/03/descarga\.png"
 
-// // Construcción de la query
-// $sql = "
-//     SELECT pm.meta_key,
-        // MIN(pm.meta_id) AS meta_id,
-        // MIN(pm.post_id) AS post_id,
-        // MIN(pm.meta_value) AS meta_value
-//     SELECT pm.meta_id, pm.post_id, pm.meta_key, pm.meta_value
-//     FROM {$wpdb->postmeta} pm
-//     INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-//     WHERE p.post_type IN ($post_types_placeholders)
-//     AND p.post_status IN('publish','private','draft')
-//     AND (
-//         (pm.meta_key IN('_elementor_data') AND pm.meta_value REGEXP %s)
-//         OR
-//         (pm.meta_key IN('_elementor_css','enclosure') AND pm.meta_value REGEXP %s)
-//         OR
-//         (pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d)
-//     )
-//	   GROUP BY pm.meta_key
-// ";
+// 4. Para buscar por ID en JSON (opcional)
+$elementor_id_pattern = '"id":' . intval($attachment_id);
 
-// // Preparar la query con parámetros dinámicos
-// $query = $wpdb->prepare(
-//     $sql,
-//     array_merge($post_types, [$elementor_data_pattern, $elementor_css_pattern, $thumbnail_id])
-// );
+// Post types
+$post_types = [
+    'post','page','custom_post_type','lp_course','service','portfolio',
+    'gva_event','gva_header','footer','team','elementskit_template',
+    'elementskit_content','elementor_library'
+];
+$post_types_placeholders = implode(',', array_fill(0, count($post_types), '%s'));
 
-// // Ejecutar y obtener resultados
-// $results = $wpdb->get_results($query, ARRAY_A);
+// Construcción de la query
+$sql = "
+    SELECT pm.meta_key,
+        MIN(pm.meta_id) AS meta_id,
+        MIN(pm.post_id) AS post_id,
+        MIN(pm.meta_value) AS meta_value
+    FROM {$wpdb->postmeta} pm
+    INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+    WHERE p.post_type IN ($post_types_placeholders)
+    AND p.post_status IN('publish','private','draft')
+    AND (
+        (
+            pm.meta_key IN('_elementor_data') 
+            AND (
+                pm.meta_value REGEXP %s 
+                OR pm.meta_value REGEXP %s
+            )
+        )
+        OR
+        (pm.meta_key IN('_elementor_css','enclosure') AND pm.meta_value REGEXP %s)
+        OR
+        (pm.meta_key = '_thumbnail_id' AND pm.meta_value = %d)
+    )
+    GROUP BY pm.meta_key
+";
+
+// Preparar la query con parámetros dinámicos
+$query = $wpdb->prepare(
+    $sql,
+    array_merge($post_types, [$elementor_data_pattern, $elementor_id_pattern, $elementor_css_pattern, $thumbnail_id])
+);
+
+// Ejecutar y obtener resultados
+$results = $wpdb->get_results($query, ARRAY_A);
+
+// Ver resultados
+echo '<pre>'; print_r($results); echo '</pre>';
+
     
 // echo "<pre>";
 // print_r($results);

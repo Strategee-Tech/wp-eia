@@ -36,7 +36,11 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = [] ) 
         }, $escaped_files));
 
         // Para _elementor_css y enclosure
-        $elementor_css_regex = implode('|', $escaped_files);
+        $elementor_css_regex = implode('|', array_map(function($path){
+            $path_parts = pathinfo($path);
+            $newPath = $path_parts['dirname'] . '/' . $path_parts['filename'];
+            return preg_quote($newPath, '/'); // Ej: 2025/03/descarga\.png
+        }, $file_paths));
     } else {
         $elementor_data_regex = '';
         $elementor_css_regex = '';

@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     const credentials = btoa(`${user}:${password}`);
 
     // Es crucial verificar si el objeto existe antes de intentar usarlo
-    console.log(filesToDelete);
     sendBtn.addEventListener('click', async function() {
         
         if (typeof filesToDelete !== 'undefined' && filesToDelete !== null) {

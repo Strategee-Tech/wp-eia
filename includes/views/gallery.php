@@ -47,7 +47,7 @@ wp_enqueue_style(
 
 
 
-<h1>Galeria de Imágenes</h1>
+<h1>Galeria de Archivos</h1>
 
 
 <?php
@@ -195,7 +195,7 @@ function getIconAlt($alt){
             if ( empty( $image_data['records'] ) ) :
             ?>
                 <tr>
-                    <td colspan="10">No se encontraron imágenes en el directorio especificado.</td> </tr>
+                    <td colspan="10">No se encontraron archivos en el directorio especificado.</td> </tr>
             <?php
             else :
                 foreach ( $image_data['records'] as $image ) :

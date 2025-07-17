@@ -20,7 +20,7 @@ async function geminiPost(imageUrl) {
     console.log(data);
 
     const result = JSON.parse(JSON.stringify(data[0]));
-    console.log(result);
+    console.log(JSON.stringify(result));
     return result;
 
     // const prompt = `Como experto en SEO y marketing digital especializado en contenido educativo para sitios web universitarios, analiza detalladamente la siguiente imagen. Genera un objeto JSON válido, sin texto adicional, que incluya las siguientes propiedades, optimizadas para el contexto de la Universidad EIA:

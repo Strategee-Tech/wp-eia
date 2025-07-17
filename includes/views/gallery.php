@@ -303,7 +303,7 @@ function getIconAlt($alt){
             <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 10px;">
 
                 <a id="file-link" href="#" target="_blank">
-                    <img id="modal-image" src="" alt="" style="width: 100%; max-width: 300px; max-height: 300px; object-fit: contain;">
+                    <img id="modal-image" src="" alt="" style="background:gray; width: 100%; max-width: 300px; max-height: 300px; object-fit: contain;">
                     <span id="file-link-text">Ver archivo</span>
                 </a>
 

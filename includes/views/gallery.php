@@ -398,8 +398,8 @@ wp_localize_script(
 );
 wp_localize_script(
     'init-scan', // El "handle" del script al que adjuntarás los datos
-    'totalPages', // El nombre del objeto JavaScript que se creará
-    $image_data['total_pages'] // El array PHP con los datos
+    'totalRecords', // El nombre del objeto JavaScript que se creará
+    $image_data['total_records'] // El array PHP con los datos
 );
 
     echo '$folder: ' . $folder; 

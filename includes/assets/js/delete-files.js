@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // const data = await res.json();
                 // console.log(JSON.stringify(data));
 
+                console.log(filesToDelete);
                 
                 const response = await fetch(url, {
                     method: 'POST',

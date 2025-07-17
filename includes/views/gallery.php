@@ -194,10 +194,14 @@ function getIconAlt($alt){
         <button id="scan-all-btn" class="btn" type="button">
             <span id="icon-scan" class="dashicons dashicons-filter"></span>
             <div id="spinner-loader" class="spinner-loader"></div>
-            Escanear Todosss
+            Escanear Todos
         </button>
 
     </form>
+
+    <span id="scan-progress">
+        
+    </span>
 
     <table class="wp-list-table widefat fixed striped">
         <thead>

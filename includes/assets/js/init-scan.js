@@ -2,10 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const spinnerLoader = document.getElementById('spinner-loader');
     const iconScan = document.getElementById('icon-scan');
     const scanBtn = document.getElementById('scan-all-btn');
+    const scanProgress = document.getElementById('scan-progress');
     spinnerLoader.style.display = 'none';    
     iconScan.style.display = 'block';
 
     let currentPage = 0;
+    const totalPages = Math.ceil(totalRecords / 70);
 
     const url         = `${window.location.origin}/wp-json/api/v1/scan-files`;
     const user        = 'it@strategee.us';
@@ -18,7 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
         iconScan.style.display = 'none';
 
         do{
+
             currentPage++;
+            scanProgress.textContent = currentPage + ' de ' + totalPages;
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -33,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             console.log(JSON.stringify(data.attachments));
 
-            scanBtn.textContent = currentPage + ' de ' + totalPages;
         } while (currentPage <= totalPages);
     });
 });

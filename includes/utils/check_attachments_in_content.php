@@ -14,15 +14,25 @@ function check_attachments_in_content( $relative_paths ) {
         return preg_quote($path_parts['dirname'] . '/' . $path_parts['filename'], '/');
     }, $relative_paths));
 
+    $post_types_to_check = ['post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content', 'elementor_library'];
+    $placeholders = implode(', ', array_fill(0, count($post_types_to_check), '%s'));
+
     $query_sql = "
         SELECT ID, post_content
         FROM {$wpdb->posts}
         WHERE post_status IN ('publish', 'private', 'draft')
+        AND post_type IN ($placeholders)
         AND post_content REGEXP %s
     ";
- 
-    $prepared_query = $wpdb->prepare($query_sql, $pattern);
-    $found_posts    = $wpdb->get_results($prepared_query, ARRAY_A);
+
+    // Crear array de parámetros en orden
+    $params = array_merge($post_types_to_check, [$pattern]);
+
+    // Preparar query con todos los parámetros
+    $prepared_query  = $wpdb->prepare($query_sql, ...$params);
+
+    // Ejecutar query
+    $found_posts     = $wpdb->get_results($prepared_query, ARRAY_A); 
 
     $combinedPattern = '/' . implode('|', array_map(function($path) {
     $path_parts  = pathinfo($path);

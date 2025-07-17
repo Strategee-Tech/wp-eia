@@ -52,7 +52,7 @@
  * @param array $relative_paths Array de rutas relativas (ej. '2025/06/archivo.pdf', '2024/07/imagen.jpg').
  * @return array Array asociativo: [ 'archivo' => true|false ] indicando si está en uso.
  */
-function check_attachments_in_learnpress( $relative_paths ) {
+function check_attachment_in_learnpress( $relative_paths ) {
     global $wpdb;
 
     // ✅ Normaliza rutas (decodifica %xx)

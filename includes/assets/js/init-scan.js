@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     iconScan.style.display = 'block';
 
     let currentPage = 0;
-    const totalPages = Math.ceil(totalRecords / 70);
+    const totalPages = Math.ceil(totalRecords / 40);
 
     const url         = `${window.location.origin}/wp-json/api/v1/scan-files`;
     const user        = 'it@strategee.us';
@@ -15,16 +15,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const credentials = btoa(`${user}:${password}`);
  
     scanBtn.addEventListener('click', async function() {
-        console.log(JSON.stringify(totalRecords));
         spinnerLoader.style.display = 'block';
         iconScan.style.display = 'none';
 
         do{
 
             currentPage++;
-            scanProgress.textContent = currentPage + ' de ' + totalPages;
+            scanProgress.textContent = currentPage + ' de ' + (totalPages + 1);
 
-            const response = await fetch(url, {
+            await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,13 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentPage: currentPage
                 })
             });
-            const data = await response.json();
-            console.log(JSON.stringify(data.attachments));
 
         } while (currentPage <= totalPages);
+        spinnerLoader.style.display = 'none';    
+        iconScan.style.display = 'block';
     });
 });
-
 
 function esperarSegundos(segundos) {
     return new Promise(resolve => setTimeout(resolve, segundos * 1000));

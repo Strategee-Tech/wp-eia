@@ -24,18 +24,16 @@ function wp_scan_files() {
     )); 
 }
 
-
 function scan_files($request) {
     $params  = $request->get_json_params();
     $logPath = dirname(__FILE__, 6).'/log_registros_eliminados.txt';
 
     $currentPage = $params['currentPage'];
-    $totalRecords = $params['totalRecords'];
 
 
     
     try{
-        $attachments = getPaginatedFiles($currentPage, 70, null, null, null, 'all');
+        $attachments = getPaginatedFiles($currentPage, 40, null, null, null, 'all');
 
     } catch (Exception $e) {
         return new WP_REST_Response([

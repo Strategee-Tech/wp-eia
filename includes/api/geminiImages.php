@@ -41,9 +41,7 @@ function gemini($request) {
     }
 
     return new WP_REST_Response([
-        'status'   => 'success', 
-        'message'  => 'Archivos Escaneados.',
-        'metadata' => $metadata
+        $metadata
     ], 200);
 
 }

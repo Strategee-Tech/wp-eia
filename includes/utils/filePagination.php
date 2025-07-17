@@ -166,7 +166,11 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
-        $id_list = array();
+        if(empty($attachments_in_folder)) {
+            return array();
+        }
+
+        $id_list   = array();
         $path_list = array();
         
         // Loop through fetched attachments to gather basic data and prepare for usage check

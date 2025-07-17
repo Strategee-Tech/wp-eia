@@ -205,6 +205,10 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
 
         $files_to_delete = array();
 
+        $elementor_attachments = array();
+        $learnpress_attachments = array();
+        $content_attachments = array();
+
 
         if($usage_status == null || $usage_status == 'all' || $usage_status == ''){
 

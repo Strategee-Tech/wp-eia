@@ -9,11 +9,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentPage = 1;
 
+
+
     
-    scanBtn.addEventListener('click', function() {
+    scanBtn.addEventListener('click', async function() {
         console.log(JSON.stringify(totalPages));
         spinnerLoader.style.display = 'block';
         iconScan.style.display = 'none';
-        scanBtn.textContent = 'Scaneando...';
+
+        do{
+            currentPage++;
+            scanBtn.textContent = currentPage + ' de ' + totalPages;
+            await esperarSegundos(3);
+        } while (currentPage <= totalPages);
     });
 });
+
+
+function esperarSegundos(segundos) {
+    return new Promise(resolve => setTimeout(resolve, segundos * 1000));
+}

@@ -7,56 +7,39 @@
  * @return array Un array asociativo donde la clave es la ruta relativa del archivo y el valor es un booleano (true si está en uso).
  */
 function check_attachment_in_learnpress( $relative_paths ) {
-    global $wpdb;
- 
-    if ( empty( $relative_paths )) {
-        return [];
-    }
-
-    $content_like_conditions = [];
-    $query_params = [];
-    $usage_map = array_fill_keys( $relative_paths, false );
-
-    // Construir condiciones LIKE (usa el path base sin extensión)
-    foreach ( $relative_paths as $path ) {
+    global $wpdb; 
+    $usage_map      = array_fill_keys( $relative_paths, false );
+    $pattern        = implode('|', array_map(function($path) {
         $path_parts = pathinfo($path);
-        $base_path = $path_parts['dirname'] . '/' . $path_parts['filename'];
-        $content_like_conditions[] = "post_content LIKE %s";
-        $query_params[] = '%' . $wpdb->esc_like( $base_path ) . '%'; 
-    }
+        return preg_quote($path_parts['dirname'] . '/' . $path_parts['filename'], '/');
+    }, $relative_paths));
 
-    // Unir las condiciones LIKE con OR
-    $where_content_clause = implode( ' OR ', $content_like_conditions ); 
-
-    // Construir la consulta SQL principal
     $query_sql = "
         SELECT ID, post_content
         FROM {$wpdb->prefix}learnpress_courses
-        WHERE ({$where_content_clause})
-        AND post_status IN ('publish', 'private', 'draft')
+        WHERE post_status IN ('publish', 'private', 'draft')
+        AND post_content REGEXP %s
     ";
 
-    $final_params   = array_merge( $query_params );
-    $prepared_query = $wpdb->prepare($query_sql, ...$final_params);
+    $prepared_query = $wpdb->prepare($query_sql, $pattern);
+    $found_posts    = $wpdb->get_results($prepared_query, ARRAY_A);
 
-    $found_posts = $wpdb->get_results($prepared_query, ARRAY_A);
+    $combinedPattern = '/' . implode('|', array_map(function($path) {
+    $path_parts  = pathinfo($path);
+    return preg_quote($path_parts['dirname'] . '/' . $path_parts['filename'], '/')
+            . '(?:-(?:[0-9]+x[0-9]+|[0-9\.]+))?\.[a-zA-Z]{2,5}';
+    }, $relative_paths)) . '/';
 
-    foreach ( $found_posts as $post ) {
-        foreach ( $relative_paths as $path ) {
-            $path_parts = pathinfo($path);
-            $base_path = preg_quote($path_parts['dirname'] . '/' . $path_parts['filename'], '/');
-
-            // REGEX para capturar variantes:
-            // - Nombre base
-            // - Opcional sufijo "-150x150" o "-2"
-            // - Cualquier extensión
-            $pattern = "/{$base_path}(?:-(?:[0-9]+x[0-9]+|[0-9\.]+))?\.[a-zA-Z]{2,5}/";
-
-            if ( preg_match($pattern, $post['post_content']) ) {
-                $usage_map[$path] = true;
+    foreach ($found_posts as $post) {
+        if (preg_match_all($combinedPattern, $post['post_content'], $matches)) {
+            foreach ($matches[0] as $match) {
+                foreach ($relative_paths as $path) {
+                    if (strpos($match, pathinfo($path, PATHINFO_FILENAME)) !== false) {
+                        $usage_map[$path] = true;
+                    }
+                }
             }
         }
     }
-
     return $usage_map;
 }

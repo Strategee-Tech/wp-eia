@@ -56,14 +56,11 @@ wp_enqueue_style(
     array(),
     '1.0.0'
 );
-
-
 ?>
 
 
 
 <h1>Galeria de Medios</h1>
-
 
 <?php
 
@@ -199,9 +196,23 @@ function getIconAlt($alt){
 
     </form>
 
-    <span id="scan-progress">
+    <div id="options-container" style="display: flex; align-items: center; justify-content: space-between;">
+        <span id="scan-progress">
+            
+        </span>
         
-    </span>
+        <div>
+            <button id="scan-all-btn" class="btn" type="button"> 
+                <span id="icon-scan">Escanear Todos</span>
+                <div id="spinner-loader" class="spinner-loader"></div>
+            </button>
+            <button id="delete-all-btn" class="btn" type="button"> 
+                <span id='icon-delete'>Eliminar Todos</span>
+                <div id="spinner-loader" class="spinner-loader"></div>
+            </button>
+        </div>
+    </div>
+
 
     <table class="wp-list-table widefat fixed striped">
         <thead>

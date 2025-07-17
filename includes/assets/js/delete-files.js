@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const password    = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
     const credentials = btoa(`${user}:${password}`);
 
-    
     sendBtn.addEventListener('click', async function() {
-
 
         if (typeof filesToDelete !== 'undefined' && filesToDelete !== null) {
 

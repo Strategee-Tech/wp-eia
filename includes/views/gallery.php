@@ -42,6 +42,14 @@ wp_enqueue_style(
     '1.0.0'
 );
 
+wp_enqueue_script(
+    'init-scan',
+    plugins_url( '../assets/js/init-scan.js', __FILE__ ),
+    array(),
+    '1.0.0',
+    true
+);
+
 wp_enqueue_style(
     'loader',
     plugins_url( '../assets/css/loader.css', __FILE__ ),
@@ -183,10 +191,12 @@ function getIconAlt($alt){
         <?php endif; ?>
 
 
-        <button id="scan-btn" class="btn" type="button">
-            <span class="dashicons dashicons-filter"></span>
-            Escanear Todo
+        <button id="scan-all-btn" class="btn" type="button">
+            <span id="icon-scan" class="dashicons dashicons-filter"></span>
+            <div id="spinner-loader" class="spinner-loader"></div>
+            Escanear Todosss
         </button>
+
     </form>
 
     <table class="wp-list-table widefat fixed striped">

@@ -26,3 +26,5 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/api/googleSheet.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/optimizationFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/deleteFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/scanFiles.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/api/gemini.php';
+

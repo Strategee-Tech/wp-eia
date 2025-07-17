@@ -202,13 +202,13 @@ function getIconAlt($alt){
         </span>
         
         <div style="display: flex; align-items: center; gap: 10px;">
-            <button id="scan-all-btn" class="btn primary-btn" type="button" style="display: flex; gap: 5px;"> 
+            <button id="scan-all-btn" class="btn primary-btn" type="button" style="display: flex; flex-direction: row; gap: 5px;"> 
+                <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
                 <span id="icon-scan">Escanear Todos</span>
-                <div id="spinner-loader" class="spinner-loader"></div>
             </button>
-            <button id="delete-all-btn" class="btn delete-btn" type="button" style="display: flex; gap: 5px; "> 
+            <button id="delete-all-btn" class="btn delete-btn" type="button" style="display: flex; flex-direction: row; gap: 5px; "> 
+                <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
                 <span id='icon-delete'>Eliminar Todos</span>
-                <div id="spinner-loader" class="spinner-loader"></div>
             </button>
         </div>
     </div>

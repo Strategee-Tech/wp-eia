@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
     scanBtn.addEventListener('click', function() {
-        console.log(parseInt(totalPages));
+        console.log(JSON.stringify(totalPages));
         spinnerLoader.style.display = 'block';
         iconScan.style.display = 'none';
         scanBtn.textContent = 'Scaneando...';

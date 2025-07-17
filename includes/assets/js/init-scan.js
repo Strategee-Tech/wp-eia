@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPage = 0;
 
 
+    const url         = `${window.location.origin}/wp-json/api/v1/scan-files`;
+    const user        = 'it@strategee.us';
+    const password    = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
+    const credentials = btoa(`${user}:${password}`);
+
+
 
     
     scanBtn.addEventListener('click', async function() {
@@ -19,10 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         do{
             currentPage++;
-            const response = await fetch(`https://eia2025.strategee.us/wp-json/api/v1/scan-files`, {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Basic ${credentials}`
                 },
                 body: JSON.stringify({
                     currentPage: currentPage,

@@ -260,7 +260,7 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         // --- 3. Calculate pagination data for return ---
         $current_page_count = count( $attachments_in_folder );
 
-        if($usage_status == 'Sin Uso'){
+        if($usage_status === 'Sin Uso'){
             foreach ($attachments_in_folder as $attachment) {
                 $files_to_delete[] = $attachment['attachment_id'];
             }

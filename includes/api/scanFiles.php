@@ -31,7 +31,7 @@ function scan_files($request) {
     $currentPage = $params['currentPage'];
     
     try{
-        $attachments = getPaginatedFiles($currentPage, 20, null, null, null, 'all');
+        $attachments = getPaginatedFiles($currentPage, 50, null, null, null, 'all');
 
     } catch (Exception $e) {
         return new WP_REST_Response([

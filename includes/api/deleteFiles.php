@@ -84,17 +84,22 @@ function borrar_archivos($request) {
         }
     }
 
-    // Llamar una sola vez a Google Sheets al final
-    if (!empty($datos_drive['values'])) {
-        save_google_sheet($datos_drive);
-    }
-
     file_put_contents($logPath, "Ejecución Finalizada: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
     file_put_contents($logPath, "\n", FILE_APPEND); 
 
-    return new WP_REST_Response([
-        'status'   => 'success', 
-        'message'  => 'Archivos Eliminados.',
-        'report'   => get_site_url().'/log_registros_eliminados.txt?v=' . time()
-    ], 200);
+    // Llamar una sola vez a Google Sheets al final
+    if (!empty($datos_drive['values'])) {
+        save_google_sheet($datos_drive);
+        return new WP_REST_Response([
+            'status'   => 'success', 
+            'message'  => 'Archivos Eliminados.',
+            'report'   => get_site_url().'/log_registros_eliminados.txt?v=' . time()
+        ], 200);
+    } else {
+        return new WP_REST_Response([
+            'status'   => 'error', 
+            'message'  => 'No se eliminó ningun archivo.',
+            'report'   => get_site_url().'/log_registros_eliminados.txt?v=' . time()
+        ], 400);
+    } 
 }

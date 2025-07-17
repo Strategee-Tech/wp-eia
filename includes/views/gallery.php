@@ -42,6 +42,13 @@ wp_enqueue_style(
     '1.0.0'
 );
 
+wp_enqueue_style(
+    'loader',
+    plugins_url( '../assets/css/loader.css', __FILE__ ),
+    array(),
+    '1.0.0'
+);
+
 
 ?>
 
@@ -174,6 +181,12 @@ function getIconAlt($alt){
             Eliminar (<?php echo count($image_data['files_to_delete']); ?>)
         </button>
         <?php endif; ?>
+
+
+        <button id="scan-btn" class="btn" type="button">
+            <span class="dashicons dashicons-filter"></span>
+            Escanear Todo
+        </button>
     </form>
 
     <table class="wp-list-table widefat fixed striped">

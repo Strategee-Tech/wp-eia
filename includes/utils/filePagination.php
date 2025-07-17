@@ -14,8 +14,11 @@
  * @param string|null $search_term  Término de búsqueda para texto simple en post_title. Null o vacío para no aplicar.
  * @param string      $usage_status Filtra por estado de uso/alt ('all', 'En Uso', 'Sin Uso', 'Con Alt', 'Sin Alt').
  * @return array Un array asociativo con los registros de archivos y los datos de paginación.
+ * 
+ * 
  */
 function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_type = null, $search_term = null, $usage_status = 'all' ) {
+
     global $wpdb;
 
     require_once WP_EIA_PLUGIN_DIR . 'includes/utils/check_attachments_in_elementor.php';
@@ -200,8 +203,6 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $path_list[] = $attachment['file_path_relative'];
             }
         }
-
-
 
         $files_to_delete = array();
 

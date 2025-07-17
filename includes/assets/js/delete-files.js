@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         'Content-Type': 'application/json',
                         'Authorization': `Basic ${credentials}`
                     },
-                    body: filesToDelete
+                    body: JSON.stringify(filesToDelete)
                 })
 
                 if (!response.ok) {

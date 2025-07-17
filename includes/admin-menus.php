@@ -17,23 +17,13 @@ function eia_register_admin_menus() {
         'render_main', // Función callback para la página principal
         'dashicons-admin-plugins',
         1
-    );
-
-    // Submenú para Listar Elementos
-    add_submenu_page(
-        'wp-eia',
-        'Gestion De Imágenes',
-        'Gestion De Imágenes',
-        'manage_options',
-        'images',
-        'render_images' // Función callback para listar
-    );
+    ); 
 
     // Submenú para Añadir Nuevo Elemento
     add_submenu_page(
         'wp-eia',
-        'Galeria de Archivos',
-        'Galeria de Archivos',
+        'Galeria de Medios',
+        'Galeria de Medios',
         'manage_options',
         'gallery',
         'render_gallery' // Función callback para añadir

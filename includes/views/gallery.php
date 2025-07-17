@@ -47,7 +47,7 @@ wp_enqueue_style(
 
 
 
-<h1>Galeria de Archivos</h1>
+<h1>Galeria de Medios</h1>
 
 
 <?php

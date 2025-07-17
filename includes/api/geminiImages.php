@@ -43,7 +43,7 @@ function gemini($request) {
     return new WP_REST_Response([
         $metadata
     ], 200);
-    
+
 
 }
 
@@ -140,6 +140,7 @@ function generateImageMetadata(string $imageUrl): array {
 
     return $result;
 }
+
 
 // Ejemplo de uso:
 // $imageUrl = 'https://ejemplo.com/tu-imagen.jpg'; // Reemplaza con la URL de tu imagen

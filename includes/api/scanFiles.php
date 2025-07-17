@@ -5,6 +5,9 @@ if ( ! function_exists( 'wp_crop_image' ) ) {
 }
 require_once dirname(__DIR__) . '/utils/auth.php';
 
+require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
+
+
 add_action( 'rest_api_init', 'wp_scan_files' );
 
 date_default_timezone_set('America/Bogota');
@@ -25,6 +28,20 @@ function scan_files($request) {
     $params  = $request->get_json_params();
     $logPath = dirname(__FILE__, 6).'/log_registros_eliminados.txt';
 
+    $currentPage = $params['currentPage'];
+
+    
+    try{
+        $attachments = getPaginatedFiles($currentPage, 20, null, null, null, 'all');
+
+    } catch (Exception $e) {
+        return new WP_REST_Response([
+            'status'  => 'error',
+            'message' => 'Error al escanear archivos.'
+        ], 500);
+    }
+    
+
     if (empty($params) || !is_array($params)) {
         return new WP_REST_Response([
             'status'  => 'error',
@@ -32,10 +49,10 @@ function scan_files($request) {
         ], 400);
     }
     
-    
+
     return new WP_REST_Response([
         'status'   => 'success', 
-        'message'  => 'Archivos Eliminados.',
-        'report'   => get_site_url().'/log_registros_eliminados.txt?v=' . time()
+        'message'  => 'Archivos Escaneados.',
+        'attachments'   => $attachments,
     ], 200);
 }

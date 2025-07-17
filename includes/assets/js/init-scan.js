@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     iconScan.style.display = 'block';
     scanBtn.textContent = 'Scanear ' + totalPages + ' Páginas';
 
-    let currentPage = 1;
+    let currentPage = 0;
 
 
 
@@ -19,6 +19,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         do{
             currentPage++;
+            const response = await fetch(`https://eia2025.strategee.us/wp-json/api/v1/scan-files`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentPage: currentPage,
+                    totalPages: totalPages
+                })
+            });
+            const data = await response.json();
+            console.log(JSON.stringify(data.attachments));
+
             scanBtn.textContent = currentPage + ' de ' + totalPages;
             await esperarSegundos(3);
         } while (currentPage <= totalPages);

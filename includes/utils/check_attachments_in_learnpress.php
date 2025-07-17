@@ -8,23 +8,25 @@
  */
 function check_attachment_in_learnpress( $relative_paths ) {
     global $wpdb;
-
-    if ( empty( $relative_paths ) ) {
+ 
+    if ( empty( $relative_paths )) {
         return [];
     }
 
     $content_like_conditions = [];
     $query_params = [];
-    $usage_map = array_fill_keys( $relative_paths, false ); // Inicializa todos como no usados
+    $usage_map = array_fill_keys( $relative_paths, false );
 
-    // Construir las condiciones LIKE para cada ruta relativa
+    // Construir condiciones LIKE (usa el path base sin extensión)
     foreach ( $relative_paths as $path ) {
+        $path_parts = pathinfo($path);
+        $base_path = $path_parts['dirname'] . '/' . $path_parts['filename'];
         $content_like_conditions[] = "post_content LIKE %s";
-        $query_params[] = '%' . $wpdb->esc_like( $path ) . '%';
+        $query_params[] = '%' . $wpdb->esc_like( $base_path ) . '%'; 
     }
 
     // Unir las condiciones LIKE con OR
-    $where_content_clause = implode( ' OR ', $content_like_conditions );
+    $where_content_clause = implode( ' OR ', $content_like_conditions ); 
 
     // Construir la consulta SQL principal
     $query_sql = "
@@ -34,63 +36,27 @@ function check_attachment_in_learnpress( $relative_paths ) {
         AND post_status IN ('publish', 'private', 'draft')
     ";
 
-    // Preparar y ejecutar la consulta
-    $prepared_query = $wpdb->prepare(
-        $query_sql,
-        ...$query_params
-    );
+    $final_params   = array_merge( $query_params );
+    $prepared_query = $wpdb->prepare($query_sql, ...$final_params);
 
-    $found_courses = $wpdb->get_results( $prepared_query, ARRAY_A );
+    $found_posts = $wpdb->get_results($prepared_query, ARRAY_A);
 
-    // Recorrer los resultados para determinar el uso de cada archivo
-    foreach ( $found_courses as $course ) {
+    foreach ( $found_posts as $post ) {
         foreach ( $relative_paths as $path ) {
-            if ( str_contains( $course['post_content'], $path ) ) {
-                $usage_map[ $path ] = true;
-                // Una vez que encontramos que una ruta está en uso, no necesitamos seguir buscando para esa ruta
-                // dentro de los resultados de esta consulta.
+            $path_parts = pathinfo($path);
+            $base_path = preg_quote($path_parts['dirname'] . '/' . $path_parts['filename'], '/');
+
+            // REGEX para capturar variantes:
+            // - Nombre base
+            // - Opcional sufijo "-150x150" o "-2"
+            // - Cualquier extensión
+            $pattern = "/{$base_path}(?:-(?:[0-9]+x[0-9]+|[0-9\.]+))?\.[a-zA-Z]{2,5}/";
+
+            if ( preg_match($pattern, $post['post_content']) ) {
+                $usage_map[$path] = true;
             }
         }
     }
 
     return $usage_map;
 }
-
-// --- Ejemplo de uso y cómo integrarlo en tu `getPaginatedFiles` ---
-
-// Asegúrate de que `wp_upload_dir()['baseurl']` esté disponible en tu contexto.
-// Por ejemplo, al inicio de `getPaginatedFiles`:
-// $current_base_upload_url = wp_upload_dir()['baseurl'];
-
-/*
-// 1. Recolectar las rutas relativas de los archivos que se quieren verificar en LearnPress
-$paths_to_check_in_learnpress = [];
-foreach ($attachments_in_folder as $att_item) {
-    if (!empty($att_item['file_path_relative'])) {
-        $paths_to_check_in_learnpress[] = $att_item['file_path_relative'];
-    }
-}
-
-// 2. Llamar a la función optimizada para LearnPress
-$learnpress_usage_map = check_learnpress_usage_optimized(
-    $paths_to_check_in_learnpress,
-    $current_base_upload_url
-);
-
-// ... (El resto de tu código getPaginatedFiles) ...
-
-// Luego, en tu bucle `foreach ($attachments_in_folder as &$attachment)`:
-foreach ($attachments_in_folder as &$attachment) {
-    // ... tu lógica existente ...
-
-    $file_path_relative_decoded = str_replace('/', '/', $attachment['file_path_relative']);
-
-    // Reemplaza la lógica anterior para 'in_programs'
-    $attachment['in_programs'] = isset($learnpress_usage_map[$file_path_relative_decoded]) ? $learnpress_usage_map[$file_path_relative_decoded] : false;
-
-    // ... el resto de tu lógica para 'in_content', 'in_elementor', 'stg_status_in_use', etc.
-    
-    // Y la condición final para current_in_use_status:
-    // $current_in_use_status = ($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) ? 'En Uso' : 'Sin Uso';
-}
-*/

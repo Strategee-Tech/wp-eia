@@ -31,52 +31,8 @@ function scan_files($request) {
             'message' => 'No se recibió un JSON válido.'
         ], 400);
     }
-
     
-
-
-
-    if(!empty($params['0'])) {
-        foreach ($params['0'] as $attachment_id) {
-            $url         = wp_get_attachment_url($attachment_id);
-            $path        = get_attached_file($attachment_id);
-            $peso_bytes  = file_exists($path) ? filesize($path) : 0;
-            $peso_mb     = round($peso_bytes / 1048576, 2);
-            $carpeta     = file_exists($path) ? dirname(str_replace(wp_upload_dir()['basedir'], '', $path)) : 'N/A';
-            $fecha       = date('Y-m-d H:i:s');
-            // Eliminar el attachment
-            if (wp_delete_attachment($attachment_id, true)) {
-                file_put_contents($logPath, "Eliminado attachment ID: $attachment_id\n", FILE_APPEND);
-            } else {
-                file_put_contents($logPath, "Error al eliminar attachment ID: $attachment_id\n", FILE_APPEND);
-            }
-        }
-    }
-    if(!empty($params['1'])) {
-        foreach ($params['1'] as $full_path) {
-            if (file_exists($full_path)) {
-                $url_base    = wp_upload_dir()['baseurl'];
-                $base_dir    = wp_upload_dir()['basedir'];
-                $rel_path    = str_replace($base_dir, '', $full_path);
-                $url         = $url_base . $rel_path;
-                $peso_bytes  = file_exists($full_path) ? filesize($full_path) : 0;
-                $peso_mb     = round($peso_bytes / 1048576, 2);
-                $carpeta     = file_exists($full_path) ? dirname($rel_path) : 'N/A';
-                $fecha       = date('Y-m-d H:i:s');
-                if (unlink($full_path)) {
-                    file_put_contents($logPath, "Eliminado archivo en ruta: $full_path\n", FILE_APPEND);
-                } else {
-                    file_put_contents($logPath, "Error al eliminar archivo en ruta: $full_path\n", FILE_APPEND);
-                }
-            } else {
-                file_put_contents($logPath, "Archivo no encontrado en ruta: $full_path\n", FILE_APPEND);
-            }
-        }
-    }
-
-    file_put_contents($logPath, "Ejecución Finalizada: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-    file_put_contents($logPath, "\n", FILE_APPEND); 
-
+    
     return new WP_REST_Response([
         'status'   => 'success', 
         'message'  => 'Archivos Eliminados.',

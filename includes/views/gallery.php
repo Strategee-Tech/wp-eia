@@ -374,4 +374,7 @@ wp_localize_script(
     array($image_data['files_to_delete'],[]) // El array PHP con los datos
 );
 
+    echo '$folder: ' . $folder; 
+    echo '<br>';
+    echo '<pre>' . htmlspecialchars(print_r($image_data, true)) . '</pre>';
 ?>  

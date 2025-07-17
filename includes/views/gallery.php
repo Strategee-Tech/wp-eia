@@ -370,7 +370,7 @@ function getIconAlt($alt){
 
 wp_localize_script(
     'delete-files', // El "handle" del script al que adjuntarás los datos
-    'deleteFiles', // El nombre del objeto JavaScript que se creará
+    'filesToDelete', // El nombre del objeto JavaScript que se creará
     $image_data['files_to_delete'] // El array PHP con los datos
 );
 

@@ -43,7 +43,7 @@ function check_attachments_in_content( $relative_paths ) {
         $ext = preg_quote($info['extension'], '/');
 
         // Para imágenes (jpg|jpeg|png|gif|webp|avif) -> permitir variaciones tipo -150x150 o -scaled
-        if (preg_match('/^(jpg|jpeg|png|gif|webp|avif)$/i', $info['extension'])) {
+        if (preg_match('/^(jpg|jpeg|png|gif|webp|avif|svg|heic|tiff|bmp)$/i', $info['extension'])) {
             return $escaped . '(?:-(?:[0-9]+x[0-9]+|scaled))?\.' . $ext;
         }
 

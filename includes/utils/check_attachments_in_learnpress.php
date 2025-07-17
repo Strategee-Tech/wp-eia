@@ -42,7 +42,7 @@ function check_attachment_in_learnpress( $relative_paths ) {
         $ext = preg_quote($info['extension'], '/');
 
         // Para imágenes: permitir variaciones (-150x150, -scaled)
-        if (preg_match('/^(jpg|jpeg|png|gif|webp|avif|svg)$/i', $info['extension'])) {
+        if (preg_match('/^(jpg|jpeg|png|gif|webp|avif|svg|heic|tiff|bmp)$/i', $info['extension'])) {
             return $escaped . '(?:-(?:[0-9]+x[0-9]+|scaled))?\.' . $ext;
         }
 

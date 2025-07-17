@@ -361,10 +361,17 @@ function getIconAlt($alt){
         </form>
     </div>
 </div>
+
+
+
  
 
 <?php
-    echo '$folder: ' . $folder; 
-    echo '<br>';
-    echo '<pre>' . htmlspecialchars(print_r($image_data, true)) . '</pre>';
+
+wp_localize_script(
+    'delete-files', // El "handle" del script al que adjuntarás los datos
+    'deleteFiles', // El nombre del objeto JavaScript que se creará
+    $image_data['files_to_delete'] // El array PHP con los datos
+);
+
 ?>  

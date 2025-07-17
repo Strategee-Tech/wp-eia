@@ -121,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function() {
             let endpoint ='';
             console.log(updatedData);
             if(width > 0){
-                endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/seo-optimization';
+                endpoint = `${window.location.origin}/wp-json/api/v1/seo-optimization`;
             } else {
-                endpoint = 'https://eia2025.strategee.us/wp-json/api/v1/optimization-file';
+                endpoint = `${window.location.origin}/wp-json/api/v1/optimization-file`;
             }
             const response = await fetch(endpoint, {
                 method: 'POST', // Las actualizaciones en la API REST de WP suelen ser POST o PUT

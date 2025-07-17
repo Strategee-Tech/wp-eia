@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     iconScan.style.display = 'block';
 
     let currentPage = 0;
-    const totalPages = Math.ceil(totalRecords / 40);
+    const totalPages = Math.ceil(totalRecords / 30);
 
     const url         = `${window.location.origin}/wp-json/api/v1/scan-files`;
     const user        = 'it@strategee.us';

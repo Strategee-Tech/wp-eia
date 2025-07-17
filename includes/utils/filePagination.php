@@ -194,9 +194,9 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         if($usage_status == null || $usage_status == 'all' || $usage_status == ''){
 
             //$elementor_attachments = check_attachments_in_elementor( $attachments_in_folder );
-            $elementor_attachments = check_attachment_in_elementor($id_list, $path_list);
+            $elementor_attachments  = check_attachment_in_elementor($id_list, $path_list);
             $learnpress_attachments = check_attachment_in_learnpress( $path_list );
-            $content_attachments = check_attachments_in_content( $path_list);
+            $content_attachments    = check_attachments_in_content( $path_list);
 
     
             foreach ($attachments_in_folder as &$attachment) {
@@ -204,22 +204,21 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
                 $attachment['in_content']   = false;
                 $attachment['in_programs']  = false;
                 $attachment['in_elementor'] = false;
-
-                if (isset($elementor_attachments[$attachment['attachment_id']]) && $elementor_attachments[$attachment['attachment_id']] == true) {
+ 
+                if($elementor_attachments[$attachment['attachment_id'] ] == true){
                     $attachment['in_elementor'] = true;
                 }
-
-                if (isset($learnpress_attachments[$attachment['attachment_id']]) && $learnpress_attachments[$attachment['attachment_id']] == true) {
+                if($learnpress_attachments[$attachment['attachment_id'] ] == true){
                     $attachment['in_programs'] = true;
-                } 
-
-                if (isset($content_attachments[$attachment['attachment_id']]) && $content_attachments[$attachment['attachment_id']] == true) {
-                    $attachment['in_content'] = true;
-                } 
+                }
+                if($content_attachments[$attachment['file_path_relative'] ] == true){
+                   $attachment['in_content'] = true;
+                }
 
                 // Determine and update 'in_use' status
                 $current_in_use_status = ($attachment['in_content'] || $attachment['in_programs'] || $attachment['in_elementor']) ? 'En Uso' : 'Sin Uso';
 
+                
                 if ($current_in_use_status === 'Sin Uso') {
                     $files_to_delete[] = $attachment['attachment_id']; // Add to list for deletion
                 }

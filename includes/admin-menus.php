@@ -28,17 +28,7 @@ function eia_register_admin_menus() {
         'images',
         'render_images' // Función callback para listar
     );
-
-    // Submenú para Añadir Nuevo Elemento
-    add_submenu_page(
-        'wp-eia',
-        'Gestion de Documentos',
-        'Gestion de Documentos',
-        'manage_options',
-        'documents',
-        'render_documents' // Función callback para añadir
-    );
-
+    
     // Submenú para Añadir Nuevo Elemento
     add_submenu_page(
         'wp-eia',

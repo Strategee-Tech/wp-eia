@@ -167,7 +167,18 @@ function getPaginatedFiles( $page = 1, $per_page = 10, $folder = null, $mime_typ
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
         if(empty($attachments_in_folder)) {
-            return array();
+            return [
+                'elementor_attachments'   => [],
+                'files_to_delete'         => [],
+                'records'                 => [],
+                'current_page'            => $page,
+                'total_pages'             => 0,
+                'total_records'           => 0,
+                'records_per_page'        => $per_page,
+                'records_on_current_page' => 0,
+                'prev_page'               => null,
+                'next_page'               => null,
+            ];
         }
 
         $id_list   = array();

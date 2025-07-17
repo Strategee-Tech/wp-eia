@@ -43,6 +43,7 @@ function gemini($request) {
     return new WP_REST_Response([
         $metadata
     ], 200);
+    
 
 }
 

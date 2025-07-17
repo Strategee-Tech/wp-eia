@@ -396,6 +396,11 @@ wp_localize_script(
     'filesToDelete', // El nombre del objeto JavaScript que se creará
     array($image_data['files_to_delete'],[]) // El array PHP con los datos
 );
+wp_localize_script(
+    'init-scan', // El "handle" del script al que adjuntarás los datos
+    'totalPages', // El nombre del objeto JavaScript que se creará
+    $image_data['total_pages'] // El array PHP con los datos
+);
 
     echo '$folder: ' . $folder; 
     echo '<br>';

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentPage = 1;
 
-    console.log(totalPages);
+    console.log(parseInt(totalPages));
 
     scanBtn.addEventListener('click', function() {
         spinnerLoader.style.display = 'block';

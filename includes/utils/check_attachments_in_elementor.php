@@ -85,6 +85,7 @@ function check_attachment_in_elementor($attachment_ids = [], $file_paths = []) {
 
     $query   = $wpdb->prepare($sql, $params);
     $results = $wpdb->get_results($query, ARRAY_A);
+    $processed_results = [];
 
     // --- Procesar resultados ---
     foreach ($results as $row) {

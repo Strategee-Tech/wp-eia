@@ -361,32 +361,7 @@ function getIconAlt($alt){
         </form>
     </div>
 </div>
-
-<script>
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const scanBtn = document.getElementById('scan-btn');
-    //     const deleteBtn = document.getElementById('delete-btn');
-    //     const optimizeBtn = document.getElementById('optimize-btn');
-    //     const filterForm = document.getElementById('filter-form');
-
-    //     scanBtn.addEventListener('click', function() {
-    //         document.getElementById('scan-input').value = '1';
-    //         filterForm.submit();
-    //     });
-    //     deleteBtn.addEventListener('click', function() {
-    //         document.getElementById('delete-input').value = '1';
-    //         filterForm.submit();
-    //     });
-    //     optimizeBtn.addEventListener('click', function() {
-    //         document.getElementById('optimize-input').value = '1';
-    //         filterForm.submit();
-    //     });
-    // });
-</script>
-
-<style>
-    
-</style>
+ 
 
 <?php
     echo '$folder: ' . $folder; 

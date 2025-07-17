@@ -6,6 +6,7 @@ if ( ! function_exists( 'wp_crop_image' ) ) {
 require_once dirname(__DIR__) . '/utils/auth.php';
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentIdByPath.php';
 
 
 add_action( 'rest_api_init', 'wp_scan_files' );
@@ -40,7 +41,6 @@ function scan_files($request) {
             'message' => 'Error al escanear archivos.'
         ], 500);
     }
-    
 
     if (empty($params) || !is_array($params)) {
         return new WP_REST_Response([
@@ -48,11 +48,11 @@ function scan_files($request) {
             'message' => 'No se recibió un JSON válido.'
         ], 400);
     }
-    
 
     return new WP_REST_Response([
         'status'   => 'success', 
         'message'  => 'Archivos Escaneados.',
         'attachments'   => $attachments,
     ], 200);
+
 }

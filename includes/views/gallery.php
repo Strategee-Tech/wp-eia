@@ -251,6 +251,7 @@ function getIconAlt($alt){
                         class="image-row edit-attachment-trigger" 
                         data-attachment-id="<?php echo esc_attr( $image['attachment_id'] ); ?>"
                         data-attachment-url="<?php echo esc_attr( $image['attachment_url'] ); ?>"
+                        data-attachment-path="<?php echo esc_attr( $image['file_path_relative'] ); ?>"
                         data-attachment-name="<?php echo esc_attr( $image['post_name'] ); ?>"
                         data-attachment-title="<?php echo esc_attr( $image['post_title'] ); ?>"
                         data-attachment-alt="<?php echo esc_attr( $image['image_alt_text'] ); ?>"

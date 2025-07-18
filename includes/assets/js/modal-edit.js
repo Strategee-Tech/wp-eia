@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const scanLoader = document.getElementById('scan-loader');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
+    let currentPath = null;
 
     let isLoading = false;
 
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             currentAttachmentId = this.dataset.attachmentId || '';
             const currentTitle = this.dataset.attachmentTitle || '';
+            currentPath = this.dataset.attachmentPath || '';
             const currentAlt = this.dataset.attachmentAlt || '';
             const currentDescription = this.dataset.attachmentDescription || '';
             const currentSlug = this.dataset.attachmentName || '';
@@ -218,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cancelBtn.disabled = true;
         saveBtn.disabled = true;
 
-        const res = await scanFile(currentAttachmentId, modalUrl.value);
+        const res = await scanFile(currentAttachmentId, currentPath);
         console.log(res);
 
         scanLoader.style.display = 'none';

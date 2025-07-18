@@ -1,10 +1,15 @@
 <?php
 function get_post_content_cursos($path) {
     global $wpdb;
+    
+    // Extraer directorio y nombre sin extensión
+    $info     = pathinfo($path);
+    $dirname  = isset($info['dirname'])  ? $info['dirname']  : '';
+    $filename = isset($info['filename']) ? $info['filename'] : '';
 
-    // Crear patrón seguro para REGEXP
-    $info    = pathinfo($path);
-    $pattern = preg_quote($info['dirname'] . '/' . $info['filename'], '/');
+    // Normalizar el patrón para REGEXP (ejemplo: 2025/05/mi-imagen)
+    $relative_path = $dirname . '/' . $filename;
+    $pattern  = preg_quote($relative_path, '/'); // Escapar caracteres especiales
 
     // Query
     $sql = $wpdb->prepare(

@@ -81,6 +81,7 @@ function scan_files($request) {
             'status'           => 'success', 
             'message'          => 'Archivo Escaneado.',
             'total_escaneados' => contar_escaneados($wpdb),
+            'en_uso'           => $found
         ], 200);
          
     } else {

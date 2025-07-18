@@ -7,7 +7,7 @@
  * y por el estado de uso/alt utilizando las meta keys personalizadas.
  *
  * @param int         $page         El número de página actual (por defecto 1).
- * @param int         $per_page     El número de elementos por página (por defecto 10).
+ * @param int         $per_page     El número de elementos por página (por defecto 20).
  * @param string|null $folder       Filtra por subcarpeta de uploads (ej. '2024/07'). Null para no filtrar.
  * @param string|null $mime_type    Filtra por tipo MIME principal (image, audio, video, text, application).
  * Null para no filtrar por tipo MIME (traerá todos los tipos).
@@ -21,9 +21,9 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
     
     // Define tus meta_keys personalizadas aquí (asegúrate de que coincidan con tus definiciones de plugin)
     $my_plugin_meta_keys = [
-        'is_scanned'             => '_stg_is_scanned',
-        'is_in_use'              => '_stg_is_in_use',
-        'has_alt_text'           => '_stg_has_alt_text',
+        'is_scanned'               => '_stg_is_scanned',
+        'is_in_use'                => '_stg_is_in_use',
+        'has_alt_text'             => '_stg_has_alt_text',
         'is_blocked_from_deletion' => '_stg_is_blocked_from_deletion',
     ];
 
@@ -37,23 +37,23 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         "p.post_type = 'attachment'",
     ];
     $query_params = [];
-    $files_to_delete = []; // Initialize this variable
+    $files_to_delete = []; 
 
     // Filter by MIME type
-    if ( ! is_null( $mime_type ) && ! empty( $mime_type ) ) {
+    if ( ! empty( $mime_type ) ) { // Simplificado de is_null a empty
         $where_conditions[] = "p.post_mime_type LIKE %s";
         $query_params[] = $wpdb->esc_like( $mime_type ) . '/%';
     }
 
     // Filter by folder (relative path)
-    if ( ! is_null( $folder ) && ! empty( $folder ) ) {
+    if ( ! empty( $folder ) ) { // Simplificado de is_null a empty
         $clean_folder = trailingslashit( sanitize_text_field( $folder ) );
         $where_conditions[] = "pm_file.meta_value LIKE %s";
         $query_params[] = '%' . $wpdb->esc_like( $clean_folder ) . '%';
     }
 
     // Filter by search term in post_title
-    if ( ! is_null( $search_term ) && ! empty( $search_term ) ) {
+    if ( ! empty( $search_term ) ) { // Simplificado de is_null a empty
         $clean_search_term = sanitize_text_field( $search_term );
         $words = explode( ' ', $clean_search_term );
         $like_conditions = [];
@@ -79,24 +79,28 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
             $where_conditions[] = "pm_scanned.meta_value = '1'";
             break;
         case 'unscanned':
+            // Adjunto no escaneado: meta_value es '0' O la meta_key no existe para este adjunto
             $where_conditions[] = "(pm_scanned.meta_value = '0' OR pm_scanned.post_id IS NULL)";
             break;
         case 'in_use':
             $where_conditions[] = "pm_in_use.meta_value = '1'";
             break;
         case 'not_in_use':
+            // Adjunto sin uso: meta_value es '0' O la meta_key no existe para este adjunto
             $where_conditions[] = "(pm_in_use.meta_value = '0' OR pm_in_use.post_id IS NULL)";
             break;
         case 'has_alt':
             $where_conditions[] = "pm_has_alt.meta_value = '1'";
             break;
         case 'no_alt':
+            // Adjunto sin alt text (de plugin): meta_value es '0' O la meta_key no existe para este adjunto
             $where_conditions[] = "(pm_has_alt.meta_value = '0' OR pm_has_alt.post_id IS NULL)";
             break;
         case 'blocked':
             $where_conditions[] = "pm_blocked.meta_value = '1'";
             break;
         case 'not_blocked':
+            // Adjunto no bloqueado: meta_value es '0' O la meta_key no existe para este adjunto
             $where_conditions[] = "(pm_blocked.meta_value = '0' OR pm_blocked.post_id IS NULL)";
             break;
         case 'all':
@@ -111,7 +115,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
     }
 
     // --- LEFT JOINs for all custom meta keys and standard ones ---
-    // Make sure all meta keys that might be filtered or selected are joined.
+    // Esc_sql() es importante para asegurar los nombres de las meta_keys
     $join_clauses = "
         LEFT JOIN " . $wpdb->postmeta . " AS pm_file ON p.ID = pm_file.post_id AND pm_file.meta_key = '_wp_attached_file'
         LEFT JOIN " . $wpdb->postmeta . " AS pm_alt ON p.ID = pm_alt.post_id AND pm_alt.meta_key = '_wp_attachment_image_alt'
@@ -123,7 +127,6 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
 
 
     // --- 1. Query for TOTAL records (without pagination) ---
-    // No necesita cambios, ya usa DISTINCT.
     $total_query_sql_template = "
         SELECT COUNT(DISTINCT p.ID)
         FROM " . $wpdb->posts . " AS p
@@ -135,6 +138,10 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         ...$query_params
     );
     
+    // --- DEPURACIÓN: Ver la consulta total ---
+    error_log( 'DEBUG (Total Query): ' . $total_query );
+    error_log( 'DEBUG (Total Query Params): ' . print_r($query_params, true) );
+
     $total_records = $wpdb->get_var( $total_query );
 
     // Calculate total pages
@@ -145,19 +152,20 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         $page = $total_pages;
         $offset = ( $page - 1 ) * $per_page;
     } elseif ( $total_records === 0 ) {
-        $page = 0;
+        $page = 0; // Si no hay registros, la página es 0
         $offset = 0;
     }
 
     // --- 2. Query for records on the CURRENT PAGE ---
     try {
-        // Merge WHERE parameters with LIMIT and OFFSET parameters
-        $attachments_query_params = array_merge([], $query_params); // Use original query_params
-        $attachments_query_params[] = $per_page; // Add limit
-        $attachments_query_params[] = $offset; // Add offset
+        // Los parámetros de la consulta principal incluyen los de la cláusula WHERE
+        // más los del LIMIT y OFFSET.
+        $attachments_query_params = array_merge([], $query_params); 
+        $attachments_query_params[] = $per_page; 
+        $attachments_query_params[] = $offset; 
 
         $attachments_query_sql_template = "
-            SELECT DISTINCT  <--- AÑADE ESTO AQUÍ
+            SELECT DISTINCT
                 p.ID AS attachment_id,
                 p.post_title,
                 p.post_name,
@@ -183,6 +191,10 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
             ...$attachments_query_params
         );
 
+        // --- DEPURACIÓN: Ver la consulta de los registros ---
+        error_log( 'DEBUG (Attachments Query): ' . $attachments_query );
+        error_log( 'DEBUG (Attachments Query Params): ' . print_r($attachments_query_params, true) );
+
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
         if(empty($attachments_in_folder)) {
@@ -203,14 +215,23 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         foreach ( $attachments_in_folder as &$attachment ) {
             $metadata = wp_get_attachment_metadata( $attachment['attachment_id'] );
 
-            if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
-                $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
-                $attachment['image_height']   = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
+            // Ensure metadata exists and is an array before trying to access keys
+            if ( is_array( $metadata ) ) {
+                if ( str_starts_with( $attachment['post_mime_type'], 'image/' ) ) {
+                    $attachment['image_width']    = isset( $metadata['width'] ) ? (int) $metadata['width'] : null;
+                    $attachment['image_height']   = isset( $metadata['height'] ) ? (int) $metadata['height'] : null;
+                }
+                $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
+            } else {
+                // Si no hay metadatos, asigna nulos para evitar errores
+                $attachment['image_width']   = null;
+                $attachment['image_height']  = null;
+                $attachment['file_filesize'] = null;
             }
-            $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
+
 
             // Convert '1'/'0' string values to boolean for easier consumption
-            // Importante: Si pm_alt.meta_value (image_alt_text) es el alt text nativo de WP,
+            // Importante: pm_alt.meta_value (image_alt_text) es el alt text nativo de WP,
             // no lo conviertas a booleano aquí, ya que es una cadena de texto.
             // Solo convierte tus metas booleanas personalizadas.
             $attachment['is_scanned']             = ( '1' === $attachment['is_scanned_status'] );
@@ -226,9 +247,10 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         }
 
         // Populate files_to_delete if usage_status is 'not_in_use' (assuming this is the "unused" filter)
+        // Solo incluye en files_to_delete si la condición del filtro es 'not_in_use'
+        // y el adjunto cumple con que 'is_in_use' sea false después de la conversión.
         if($usage_status === 'not_in_use'){
             foreach ($attachments_in_folder as $attachment) {
-                // Solo añade si el adjunto realmente cumple la condición de "no en uso" después de la conversión booleana
                 if (isset($attachment['is_in_use']) && $attachment['is_in_use'] === false) {
                     $files_to_delete[] = $attachment['attachment_id'];
                 }
@@ -253,7 +275,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         return $pagination_data;
 
     } catch ( \Throwable $th ) {
-        error_log( 'WPIL Error fetching paginated files: ' . $th->getMessage() );
+        error_log( 'STG Optimizer Error fetching paginated files: ' . $th->getMessage() );
         return [
             'files_to_delete'         => [],
             'records'                 => [],

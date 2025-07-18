@@ -19,6 +19,6 @@ async function scanFile(attachment_id = null, path = null) {
 
     const data = await response.json();
 
-    const result = JSON.parse(JSON.stringify(data[0]));
+    const result = JSON.parse(JSON.stringify(data));
     return result;
 }

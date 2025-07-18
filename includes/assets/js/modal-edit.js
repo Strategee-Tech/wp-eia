@@ -223,8 +223,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const res = await scanFile(currentAttachmentId, currentPath);
         console.log(res);
 
+
+        const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
+        if (row) {
+            row.children[8].textContent = 'Scanned';
+            row.children[8].children[0].classList.add('dashicons-yes');
+            row.children[8].children[0].classList.add('color-green');
+        }
+
         scanLoader.style.display = 'none';
         scanResourceBtn.disabled = false;
+        iaGenerateBtn.disabled = false;
+        cancelBtn.disabled = false;
+        saveBtn.disabled = false;
+
+        setTimeout(() => {
+            modal.style.display = 'none';
+            statusMessage.textContent = '';
+        }, 1000);
+
+
         //inputAlt.value = result.alt;
         //inputTitle.value = result.title;
         //inputDescription.value = result.description;

@@ -7,6 +7,8 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentPage.php';
+
 //Helpers
 require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentIdByPath.php';
 
@@ -92,7 +94,7 @@ if($month !== 'all' && $year !== 'all'){
 }
 
 //$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
-$image_data = getPaginatedFiles($page, $per_page, $folder, $mime_type, $search, $usage_status);
+$image_data = getAttachmentPage($page, $per_page, $folder, $mime_type, $search, $usage_status);
 
 
 function getIconAlt($alt){

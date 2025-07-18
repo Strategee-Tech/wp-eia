@@ -2,16 +2,15 @@
 function get_post_content_posts($path) {
     global $wpdb;
 
-    // Extraer directorio y nombre sin extensión
     $info     = pathinfo($path);
     $dirname  = isset($info['dirname'])  ? $info['dirname']  : '';
     $filename = isset($info['filename']) ? $info['filename'] : '';
 
-    // Normalizar el patrón para REGEXP (ejemplo: 2025/05/mi-imagen)
+    // Crear patrón para buscar con o sin extensión
     $relative_path = $dirname . '/' . $filename;
-    $pattern  = preg_quote($relative_path, '/'); // Escapar caracteres especiales
+    $pattern       = preg_quote($relative_path, '/') . '(\\.[a-zA-Z0-9]+)?';
 
-    // Query optimizada
+    // Query
     $sql = $wpdb->prepare(
         "SELECT ID
          FROM {$wpdb->posts}

@@ -21,7 +21,6 @@ function get_post_content_cursos($path) {
     );
 
     $result = $wpdb->get_var($sql);
-
     return $result ? true : false;
 }
 

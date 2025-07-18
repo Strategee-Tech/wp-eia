@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
         if (row) {
             row.children[8].textContent = res.en_uso ? 'En Uso' : 'Sin Uso';
-            row.children[8].style.color = res.en_uso ? 'rgba(0,150,64,0.3)' : 'rgba(255,54,0,0.3)';
+            row.children[8].style.backgroundColor = res.en_uso ? 'rgba(0,150,64,0.3)' : 'rgba(255,54,0,0.3)';
         }
 
         scanLoader.style.display = 'none';

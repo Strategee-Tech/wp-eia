@@ -78,7 +78,19 @@ function generateImageMetadata(string $imageUrl): array {
         $imageMimeType = 'image/webp';
     } elseif ($imageExtension === 'gif') {
         $imageMimeType = 'image/gif';
-    }
+    } elseif ($imageExtension === 'svg') {
+        $imageMimeType = 'image/svg+xml';
+    } elseif ($imageExtension === 'avif') {
+        $imageMimeType = 'image/avif';
+    } elseif ($imageExtension === 'heic') {
+        $imageMimeType = 'image/heic';
+    } elseif ($imageExtension === 'bmp') {
+        $imageMimeType = 'image/bmp';
+    } elseif ($imageExtension === 'tiff') {
+        $imageMimeType = 'image/tiff';
+    } elseif ($imageExtension === 'heif') {
+        $imageMimeType = 'image/heif';
+    } 
 
     $requestBody = [
         'contents' => [

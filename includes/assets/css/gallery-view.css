@@ -17,6 +17,17 @@
     margin-bottom: 1rem;
 }
 
+.stg-table thead {
+    border-top-right-radius: 5px !important;
+    border-top-left-radius: 5px !important;
+    background-color: #2171b1 !important;
+}
+
+.stg-table thead tr th {
+    color: white !important;
+    font-weight: bold !important;
+}
+
 .filter-container {
     display: flex;
     margin-bottom: 1rem;

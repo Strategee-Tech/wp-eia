@@ -6,7 +6,6 @@ const credentials = btoa(`${user}:${password}`);
 document.addEventListener('DOMContentLoaded', function() {
     const editTriggers = document.querySelectorAll('.edit-attachment-trigger')
     const modal = document.getElementById('edit-metadata-modal');
-    const modalAttachmentIdSpan = document.getElementById('modal-attachment-id');
     const form = document.getElementById('edit-metadata-form');
     const modalSlugLabel = document.getElementById('modal-slug-label');
     const inputSlug = document.getElementById('modal-slug');
@@ -22,14 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputWidth = document.getElementById('input-width');
     const fileLink = document.getElementById('file-link');
     const fileLinkText = document.getElementById('file-link-text');
-    const fastEdit = document.getElementById('modal-fast-edit');
     const scanResourceBtn = document.getElementById('scan-resource-btn');
     const scanLoader = document.getElementById('scan-loader');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
     let currentPath = null;
 
-    let isLoading = false;
 
     let resize = false;
 
@@ -146,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
                     resize: updatedData.resize,
-                    //fast_edit: updatedData.fast_edit,
+                    fast_edit: true,
                 })
             });
 

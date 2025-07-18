@@ -20,7 +20,6 @@ function wp_borrar_archivos() {
     )); 
 }
 
-
 function borrar_archivos($request) {
     $params  = $request->get_json_params();
     $logPath = dirname(__FILE__, 6).'/log_registros_eliminados.txt';

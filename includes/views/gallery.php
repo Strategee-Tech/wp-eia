@@ -182,28 +182,16 @@ function getIconAlt($alt){
                     </select>
                 </div>
             </div>
-            <div style='flex-grow: 1;'></div>
-            <button id="filter-btn" class="btn" type="submit">
+
+
+            <button id="filter-btn" style='width: 250px; flex-direction: row; gap: 5px;' class="btn" type="submit">
                 <span class="dashicons dashicons-filter"></span>
                 Filtrar
-            </button>
-            <?php if(count($image_data['files_to_delete']) > 0): ?>
-            <button id="delete-all-btn" class="btn delete-btn" type="button">
-                <span class="dashicons dashicons-trash"></span>
-                Eliminar (<?php echo count($image_data['files_to_delete']); ?>)
-            </button>
-            <?php endif; ?>
-
-
-            <button id="scan-all-btn" class="btn" type="button">
-                <span id="icon-scan" class="dashicons dashicons-filter"></span>
-                <div id="spinner-loader" class="spinner-loader"></div>
-                Escanear Todos
             </button>
 
         </form>
 
-        <div id="options-container" style="display: flex; align-items: center; justify-content: space-between;">
+        <div id="options-container" style="width: 250px; display: flex; align-items: center; justify-content: space-between;">
             <span id="scan-progress">
                 
             </span>

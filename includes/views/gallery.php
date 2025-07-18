@@ -284,8 +284,8 @@ function getIconAlt($alt){
                             ></span>
                         </td>
 
-                        <td style="text-align: center; <?php if($image['is_in_use'] === '1'): ?>background-color: rgba(0,150,64,0.3);<?php else: ?>background-color: rgba(255,54,0,0.3);<?php endif; ?>">
-                            <?php echo esc_html( $image['is_in_use'] === '1' ? 'En Uso' : 'Sin Uso' ); ?>
+                        <td style="text-align: center; <?php if($image['is_in_use'] == 1): ?>background-color: rgba(0,150,64,0.3);<?php else: ?>background-color: rgba(255,54,0,0.3);<?php endif; ?>">
+                            <?php echo esc_html( $image['is_in_use'] == 1 ? 'En Uso' : 'Sin Uso' ); ?>
                         </td>
                     </tr>
                     <?php

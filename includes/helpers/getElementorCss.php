@@ -2,9 +2,17 @@
 function get_elemetor_css($path) {
     global $wpdb;
 
-    // Escapar la cadena para REGEXP
-    $pattern = preg_quote($path, '/'); // ejemplo: 2025\/03\/mi\-imagen\.jpg
+    // Extraer directorio y nombre sin extensión
+    $info     = pathinfo($path);
+    $dirname  = isset($info['dirname'])  ? $info['dirname']  : '';
+    $filename = isset($info['filename']) ? $info['filename'] : '';
 
+    // Normalizar el patrón para REGEXP (ejemplo: 2025/05/mi-imagen)
+    $relative_path = $dirname . '/' . $filename;
+    $pattern  = preg_quote($relative_path, '/'); // Escapar caracteres especiales
+
+    // Generar REGEXP para buscar esa cadena exacta sin importar la extensión
+    // Ejemplo final: 2025/05/mi\-imagen
     $sql = $wpdb->prepare(
         "SELECT pm.post_id 
          FROM {$wpdb->postmeta} pm
@@ -20,6 +28,7 @@ function get_elemetor_css($path) {
          LIMIT 1",
         $pattern
     );
+
     $result = $wpdb->get_var($sql); 
     return $result ? true : false;
 }

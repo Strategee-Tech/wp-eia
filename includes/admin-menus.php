@@ -5,6 +5,10 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
     define( 'WP_EIA_PLUGIN_DIR', plugin_dir_path( dirname( __FILE__ ) ) . '/' );
 }
 
+if ( ! defined( 'WP_EIA_PLUGIN_URL' ) ) {
+    define( 'WP_EIA_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) );
+}
+
 add_action( 'admin_menu', 'eia_register_admin_menus' );
 
 function eia_register_admin_menus() {

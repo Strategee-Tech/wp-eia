@@ -70,7 +70,7 @@ wp_enqueue_style(
 
 
 
-<img src="<?php echo plugins_url( '../assets/img/logo.png', __FILE__ ); ?>" alt="" style="width: 150px;">
+<img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/img/logo.png'); ?>" alt="" style="width: 150px;">
 <?php
 
 $page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;

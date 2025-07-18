@@ -170,10 +170,14 @@ function getIconAlt($alt){
                 <label for="month">Estado</label>
                 <select name="usage_status" id="">
                     <option value="all">Todos</option>
-                    <option <?php echo $usage_status === 'En Uso' ? 'selected' : ''; ?> value="En Uso">En Uso</option>
-                    <option <?php echo $usage_status === 'Sin Uso' ? 'selected' : ''; ?> value="Sin Uso">Sin Uso</option>
-                    <option <?php echo $usage_status === 'Con Alt' ? 'selected' : ''; ?> value="Con Alt">Con Alt</option>
-                    <option <?php echo $usage_status === 'Sin Alt' ? 'selected' : ''; ?> value="Sin Alt">Sin Alt</option>
+                    <option <?php echo $usage_status === 'in_use' ? 'selected' : ''; ?> value="in_use">En Uso</option>
+                    <option <?php echo $usage_status === 'not_in_use' ? 'selected' : ''; ?> value="not_in_use">Sin Uso</option>
+                    <option <?php echo $usage_status === 'has_alt' ? 'selected' : ''; ?> value="has_alt">Con Alt</option>
+                    <option <?php echo $usage_status === 'no_alt' ? 'selected' : ''; ?> value="no_alt">Sin Alt</option>
+                    <option <?php echo $usage_status === 'scanned' ? 'selected' : ''; ?> value="scanned">Escaneado</option>
+                    <option <?php echo $usage_status === 'unscanned' ? 'selected' : ''; ?> value="unscanned">Sin Escanear</option>
+                    <option <?php echo $usage_status === 'blocked' ? 'selected' : ''; ?> value="blocked">Excluidos</option>
+                    <option <?php echo $usage_status === 'not_blocked' ? 'selected' : ''; ?> value="not_blocked">Sin Excluir</option>
                 </select>
             </div>
         </div>

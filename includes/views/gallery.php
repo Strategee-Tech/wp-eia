@@ -69,8 +69,12 @@ wp_enqueue_style(
 ?>
 
 
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/img/stg_optimizer.png'); ?>" alt="" style="width: 150px;">
+    <img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/img/by-stg.png'); ?>" alt="" style="width: 150px;">
+</div>
 
-<img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/img/logo.png'); ?>" alt="" style="width: 150px;">
+
 <?php
 
 $page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;

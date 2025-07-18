@@ -183,6 +183,7 @@ function getIconAlt($alt){
                 </div>
             </div>
 
+            <div style="flex-grow: 1;"></div>
 
             <button id="filter-btn" style='width: 250px; flex-direction: row; gap: 5px;' class="btn" type="submit">
                 <span class="dashicons dashicons-filter"></span>
@@ -191,12 +192,12 @@ function getIconAlt($alt){
 
         </form>
 
-        <div id="options-container" style="width: 250px; display: flex; align-items: center; justify-content: space-between;">
+        <div id="options-container" style="display: flex; align-items: center; justify-content: space-between;">
             <span id="scan-progress">
                 
             </span>
             
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 250px; display: flex; align-items: center; gap: 10px;">
                 <button id="scan-all-btn" class="btn primary-btn" type="button" style="display: flex; flex-direction: row; gap: 5px;"> 
                     <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
                     <span id="icon-scan">Escanear Todos</span>

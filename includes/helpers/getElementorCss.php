@@ -7,13 +7,15 @@ function get_elementor_css($path) {
     $dirname  = isset($info['dirname'])  ? $info['dirname']  : '';
     $filename = isset($info['filename']) ? $info['filename'] : '';
 
-    // Construir patrón: directorio/nombre + (opcional extensión)
-    // Ejemplo final: 2025\/06\/image(\.[a-zA-Z0-9]+)?
-    $relative_path = $dirname . '/' . $filename;
-    $pattern = preg_quote($relative_path, '/'); // Escapar caracteres especiales
-    $pattern .= '(\.[a-zA-Z0-9]+)?'; // Permitir extensión opcional
+    // Construir el patrón para REGEXP
+    // - Escapamos directorios
+    // - Permitimos extensión válida opcional
+    $relative_path = preg_quote($dirname . '/' . $filename, '/');
 
-    // Consulta
+    // Regex para extensiones válidas (jpg, jpeg, png, webp, gif, svg)
+    $pattern = $relative_path . '(\\.(jpg|jpeg|png|webp|gif|svg|heic|bmp|tiff|avif))?';
+
+    // Query segura
     $sql = $wpdb->prepare(
         "SELECT pm.post_id 
          FROM {$wpdb->postmeta} pm
@@ -31,5 +33,6 @@ function get_elementor_css($path) {
     );
 
     $result = $wpdb->get_var($sql);
+
     return $result ? true : false;
 }

@@ -208,4 +208,24 @@ document.addEventListener('DOMContentLoaded', function() {
         statusMessage.style.color = 'green';
 
     });
+
+
+
+    scanResourceBtn.addEventListener('click', async function() {
+        scanLoader.style.display = 'block';
+        scanResourceBtn.disabled = true;
+        //const result = await scanResource(modalUrl.value);
+        scanLoader.style.display = 'none';
+        scanResourceBtn.disabled = false;
+        //inputAlt.value = result.alt;
+        //inputTitle.value = result.title;
+        //inputDescription.value = result.description;
+        //inputSlug.value = result.slug;
+        statusMessage.textContent = 'Generado exitoso!';
+        statusMessage.style.color = 'green';
+    });
+
+
+
+
 });

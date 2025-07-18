@@ -21,11 +21,10 @@ function wp_scan_files() {
 }
 
 function scan_files($request) {
-    $params  = $request->get_json_params();
-
     global $wpdb;
 
-    $result = [];
+    $params  = $request->get_json_params();
+    $result  = [];
 
     if(empty($params)) {
         $sql = "
@@ -81,6 +80,7 @@ function scan_files($request) {
             'status'           => 'success', 
             'message'          => 'Archivo Escaneado.',
             'total_escaneados' => contar_escaneados($wpdb),
+            'en_uso'           => $found
         ], 200);
          
     } else {

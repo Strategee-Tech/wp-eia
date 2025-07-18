@@ -8,42 +8,21 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
 add_action( 'admin_menu', 'eia_register_admin_menus' );
 
 function eia_register_admin_menus() {
+    $icon_url = WP_EIA_PLUGIN_DIR . 'includes/assets/images/logo-small.png'; 
     // Menú Principal
     add_menu_page(
-        'WP EIA',
-        'EIA DEV',
+        'STG Optimizer',
+        'STG Optimizer',
         'manage_options',
-        'wp-eia',
+        'stg-optimizer',
         'render_main', // Función callback para la página principal
-        'dashicons-admin-plugins',
+        $icon_url,
         1
-    ); 
-
-    // Submenú para Añadir Nuevo Elemento
-    add_submenu_page(
-        'wp-eia',
-        'Galeria de Medios',
-        'Galeria de Medios',
-        'manage_options',
-        'gallery',
-        'render_gallery' // Función callback para añadir
     );
 }
 
 // --- Funciones de renderizado (simplemente incluyen el archivo de la vista) ---
 
 function render_main() {
-    require_once WP_EIA_PLUGIN_DIR . 'includes/views/gallery.php';
-}
-
-function render_images() {
-    require_once WP_EIA_PLUGIN_DIR . 'includes/views/images.php';
-}
-
-function render_documents() {
-    require_once WP_EIA_PLUGIN_DIR . 'includes/views/documents.php';
-}
-
-function render_gallery() {
     require_once WP_EIA_PLUGIN_DIR . 'includes/views/gallery.php';
 }

@@ -11,11 +11,9 @@ function wp_gemini() {
         'methods'             => 'POST', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'gemini',
         'permission_callback' => function () {
-            // Permitir si la llamada se hace internamente mediante rest_do_request
-            if (defined('REST_REQUEST') && REST_REQUEST) {
-                return true; // Permite llamadas internas
+            if (!empty($GLOBALS['is_internal_request'])) {
+                return true; // Permitir internas
             }
-            // Si es externa, aplicar Basic Auth
         	require_once dirname(__DIR__) . '/utils/auth.php';
         	return basic_auth_permission_check();
     	}, 
@@ -145,15 +143,5 @@ function generateImageMetadata(string $imageUrl): array {
 
     return $result;
 }
-
-
-// Ejemplo de uso:
-// $imageUrl = 'https://ejemplo.com/tu-imagen.jpg'; // Reemplaza con la URL de tu imagen
-// try {
-//     $metadata = generateImageMetadata($imageUrl);
-//     echo json_encode($metadata, JSON_PRETTY_PRINT);
-// } catch (Exception $e) {
-//     echo "Error: " . $e->getMessage();
-// }
 
 ?>

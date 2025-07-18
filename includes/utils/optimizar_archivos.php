@@ -74,11 +74,14 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 }
 
 function getInfoGemini($url){
+    $GLOBALS['is_internal_request'] = true;
     $request = new WP_REST_Request('POST', '/api/v1/gemini');
     $request->set_body_params(['imageUrl' => $url]); // Si el endpoint necesita parámetros
 
     $response = rest_do_request($request);
 
+    unset($GLOBALS['is_internal_request']);
+    
     if ($response->is_error()) {
         return new WP_REST_Response([
             'status'  => 'error',

@@ -113,33 +113,24 @@ function optimizar_archivos($original_path, $params = []) {
 }
 
 /**
- * NUEVO: Después de subir el archivo, obtener datos de Gemini y actualizar metadatos
+ * Actualiza metadatos del attachment con datos de Gemini y renombra archivo
  */
 add_action('add_attachment', 'update_attachment_with_gemini_data');
 
 function update_attachment_with_gemini_data($attachment_id) {
-    // Asegurarse de que esto se ejecuta *después* de la carga y optimización inicial del archivo
-    // Un ligero retraso podría ser beneficioso si la optimización lleva tiempo,
-    // aunque 'add_attachment' se dispara típicamente después de que el archivo se escribe.
-
     $post = get_post($attachment_id);
-
     if ($post->post_type !== 'attachment') return;
 
     $mime = get_post_mime_type($attachment_id);
     if (strpos($mime, 'image/') !== 0) return;
 
-    // Obtener la ruta actual del adjunto
     $current_file_path = get_attached_file($attachment_id);
     if (!$current_file_path || !file_exists($current_file_path)) {
         error_log("Archivo adjunto no encontrado en: " . $current_file_path);
         return;
     }
 
-    // URL de la imagen (usar la URL actual del adjunto para Gemini)
     $image_url  = wp_get_attachment_url($attachment_id);
-
-    // Llamar a Gemini
     $geminiData = getInfoGemini($image_url);
 
     if (is_array($geminiData) && isset($geminiData[0])) {
@@ -150,65 +141,59 @@ function update_attachment_with_gemini_data($attachment_id) {
         $alt         = !empty($data['alt']) ? sanitize_text_field($data['alt']) : '';
         $slug        = !empty($data['slug']) ? sanitize_title($data['slug']) : '';
 
-        // Preparar datos de la publicación para la actualización
         $update_post_args = [
             'ID'           => $attachment_id,
             'post_title'   => $title,
             'post_content' => $description,
         ];
 
-        // Solo actualizar post_name si se proporciona un nuevo slug y es diferente
         if (!empty($slug) && $slug !== $post->post_name) {
             $update_post_args['post_name'] = $slug;
         }
 
-        // Actualizar los detalles de la publicación
         wp_update_post($update_post_args);
 
-        // Actualizar el texto alternativo
         if (!empty($alt)) {
             update_post_meta($attachment_id, '_wp_attachment_image_alt', $alt);
         }
 
-        // --- Renombrar el archivo físico y actualizar metadatos ---
-        if (!empty($slug) && $slug !== sanitize_title(pathinfo($current_file_path, PATHINFO_FILENAME))) {
-            $current_path  = $current_file_path;
-            $info          = pathinfo($current_path);
-            $ext           = strtolower($info['extension']);
-            $new_filename  = $slug . '.' . $ext;
-            $new_path      = dirname($current_path) . '/' . $new_filename;
+        // Renombrar archivo físico
+        $info         = pathinfo($current_file_path);
+        $ext          = strtolower($info['extension']);
+        $new_filename = $slug . '.' . $ext;
+        $new_path     = $info['dirname'] . '/' . $new_filename;
 
-            // Comprobar si el nuevo nombre de archivo es diferente del actual
-            if (basename($current_path) !== $new_filename) {
-                // Intentar renombrar el archivo
-                if (@rename($current_path, $new_path)) {
-                    // Actualizar la ruta del archivo adjunto en la base de datos
-                    update_attached_file($attachment_id, $new_path);
+        if (!empty($slug) && basename($current_file_path) !== $new_filename) {
+            if (@rename($current_file_path, $new_path)) {
+                update_attached_file($attachment_id, $new_path);
 
-                    // Crucialmente, el GUID debe actualizarse para reflejar la nueva URL.
-                    // Obtener información del directorio de carga para construir la nueva URL.
-                    $upload_dir_info = wp_upload_dir();
-                    $relative_path   = str_replace(trailingslashit($upload_dir_info['basedir']), '', $new_path);
-                    $new_url         = $upload_dir_info['baseurl'] . '/' . $relative_path;
+                $upload_dir_info = wp_upload_dir();
+                $relative_path   = str_replace(trailingslashit($upload_dir_info['basedir']), '', $new_path);
+                $new_url         = $upload_dir_info['baseurl'] . '/' . $relative_path;
 
-                    global $wpdb;
-                    $wpdb->update($wpdb->posts, ['guid' => $new_url], ['ID' => $attachment_id]);
+                global $wpdb;
+                $wpdb->update($wpdb->posts, ['guid' => $new_url], ['ID' => $attachment_id]);
 
-                    // Regenerar metadatos usando la *nueva* ruta del archivo.
-                    // Aquí es donde ocurre la magia para todos los tamaños.
-                    require_once(ABSPATH . 'wp-admin/includes/image.php'); // Asegurarse de que esto esté cargado
-                    $metadata = wp_generate_attachment_metadata($attachment_id, $new_path);
-                    if (is_wp_error($metadata)) {
-                        error_log("Error al generar metadatos del adjunto para ID " . $attachment_id . ": " . $metadata->get_error_message());
+                // ✅ Aquí programamos la regeneración para el final del request
+                add_action('shutdown', function() use ($attachment_id, $new_path) {
+                    if (file_exists($new_path)) {
+                        require_once(ABSPATH . 'wp-admin/includes/image.php');
+                        $metadata = wp_generate_attachment_metadata($attachment_id, $new_path);
+                        if (!is_wp_error($metadata) && !empty($metadata)) {
+                            wp_update_attachment_metadata($attachment_id, $metadata);
+                            error_log("Metadata regenerada correctamente para ID {$attachment_id}");
+                        } else {
+                            error_log("Error regenerando metadata para {$attachment_id}");
+                        }
                     } else {
-                        wp_update_attachment_metadata($attachment_id, $metadata);
+                        error_log("Archivo no encontrado para regenerar metadata: {$new_path}");
                     }
-                } else {
-                    error_log("No se pudo renombrar el archivo adjunto de {$current_path} a {$new_path} para el ID de adjunto {$attachment_id}.");
-                }
+                });
+            } else {
+                error_log("No se pudo renombrar el archivo adjunto de {$current_file_path} a {$new_path}");
             }
         }
     } else {
-        error_log("Los datos de Gemini no son válidos o están vacíos para el ID de adjunto: " . $attachment_id);
+        error_log("Los datos de Gemini no son válidos o están vacíos para el ID: " . $attachment_id);
     }
 }

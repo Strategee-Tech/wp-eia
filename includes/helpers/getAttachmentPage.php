@@ -21,10 +21,10 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
     
     // Define tus meta_keys personalizadas aquí (asegúrate de que coincidan con tus definiciones de plugin)
     $my_plugin_meta_keys = [
-        'is_scanned'             => '_my_plugin_is_scanned',
-        'is_in_use'              => '_my_plugin_is_in_use',
-        'has_alt_text'           => '_my_plugin_has_alt_text',
-        'is_blocked_from_deletion' => '_my_plugin_is_blocked_from_deletion',
+        'is_scanned'             => '_stg_is_scanned',
+        'is_in_use'              => '_stg_is_in_use',
+        'has_alt_text'           => '_stg_has_alt_text',
+        'is_blocked_from_deletion' => '_stg_is_blocked_from_deletion',
     ];
 
     // Sanitize and validate pagination parameters

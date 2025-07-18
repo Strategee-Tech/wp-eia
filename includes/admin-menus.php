@@ -13,6 +13,7 @@ add_action( 'admin_menu', 'eia_register_admin_menus' );
 
 function eia_register_admin_menus() {
     $icon_url = WP_EIA_PLUGIN_URL . 'includes/assets/images/stg-small.png'; 
+    error_log( 'URL del icono del plugin: ' . $icon_url ); // Agrega esta línea
     // Menú Principal
     add_menu_page(
         'STG Optimizer',

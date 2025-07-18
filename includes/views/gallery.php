@@ -70,8 +70,7 @@ wp_enqueue_style(
 
 
 
-<h1>STG Optimizer</h1>
-
+<img src="<?php echo plugins_url( '../assets/img/logo.png', __FILE__ ); ?>" alt="" style="width: 150px;">
 <?php
 
 $page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;

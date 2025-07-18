@@ -8,7 +8,7 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
 add_action( 'admin_menu', 'eia_register_admin_menus' );
 
 function eia_register_admin_menus() {
-    $icon_url = WP_EIA_PLUGIN_DIR . 'includes/assets/images/logo-small.png'; 
+    $icon_url = WP_EIA_PLUGIN_URL . 'includes/assets/images/logo-small.png'; 
     // Menú Principal
     add_menu_page(
         'STG Optimizer',

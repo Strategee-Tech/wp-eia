@@ -18,6 +18,11 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
     define( 'WP_EIA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
 
+if ( ! defined( 'WP_EIA_PLUGIN_URL' ) ) {
+    define( 'WP_EIA_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) );
+}
+
+
 // Configuración inicial de Stg Optimizer Plugin
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/configStgPlugin.php';
 

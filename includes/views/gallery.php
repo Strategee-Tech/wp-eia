@@ -368,10 +368,12 @@ function getIconAlt($alt){
                 </div>
             </div>
 
-            <button id="scan-resource-btn" class="button">
-                <div id="scan-loader" class="loader"></div> 
-                Escanear recurso
-            </button>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 10px; margin-bottom: 10px;">
+                <button id="scan-resource-btn" class="button">
+                    <div id="scan-loader" class="loader"></div> 
+                    Escanear recurso
+                </button>
+            </div>
 
             <!-- <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                 <input type="checkbox" id="modal-fast-edit" name="fast_edit" checked/>

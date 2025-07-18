@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileLinkText = document.getElementById('file-link-text');
     const fastEdit = document.getElementById('modal-fast-edit');
     const scanResourceBtn = document.getElementById('scan-resource-btn');
+    const scanLoader = document.getElementById('scan-loader');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
 
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     //         modalSlugLabel.style.display = 'inline';
     //     }
     // });
+
 
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {
@@ -114,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             slug: inputSlug.value,
             width: inputWidth.value,
             resize: width > 1920,
-            fast_edit: fastEdit.checked ? 1 : 0,
+            //fast_edit: fastEdit.checked ? 1 : 0,
         };
 
 
@@ -142,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
                     resize: updatedData.resize,
-                    fast_edit: updatedData.fast_edit,
+                    //fast_edit: updatedData.fast_edit,
                 })
             });
 

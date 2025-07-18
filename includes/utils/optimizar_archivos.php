@@ -126,7 +126,7 @@ function update_attachment_with_gemini_data($attachment_id) {
 
     $current_file_path = get_attached_file($attachment_id);
     if (!$current_file_path || !file_exists($current_file_path)) {
-        error_log("Archivo adjunto no encontrado en: " . $current_file_path);
+        //error_log("Archivo adjunto no encontrado en: " . $current_file_path);
         return;
     }
 
@@ -181,19 +181,19 @@ function update_attachment_with_gemini_data($attachment_id) {
                         $metadata = wp_generate_attachment_metadata($attachment_id, $new_path);
                         if (!is_wp_error($metadata) && !empty($metadata)) {
                             wp_update_attachment_metadata($attachment_id, $metadata);
-                            error_log("Metadata regenerada correctamente para ID {$attachment_id}");
+                            //error_log("Metadata regenerada correctamente para ID {$attachment_id}");
                         } else {
-                            error_log("Error regenerando metadata para {$attachment_id}");
+                            //error_log("Error regenerando metadata para {$attachment_id}");
                         }
                     } else {
-                        error_log("Archivo no encontrado para regenerar metadata: {$new_path}");
+                        //error_log("Archivo no encontrado para regenerar metadata: {$new_path}");
                     }
                 });
             } else {
-                error_log("No se pudo renombrar el archivo adjunto de {$current_file_path} a {$new_path}");
+                //error_log("No se pudo renombrar el archivo adjunto de {$current_file_path} a {$new_path}");
             }
         }
     } else {
-        error_log("Los datos de Gemini no son válidos o están vacíos para el ID: " . $attachment_id);
+        //error_log("Los datos de Gemini no son válidos o están vacíos para el ID: " . $attachment_id);
     }
 }

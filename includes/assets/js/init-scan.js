@@ -10,8 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const user        = 'it@strategee.us';
     const password    = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
     const credentials = btoa(`${user}:${password}`);
-    let totalScanned = '?';
-    
+    let totalScanned = '?';  
  
     scanBtn.addEventListener('click', async function() {
         spinnerLoader.style.display = 'block';
@@ -21,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             scanProgress.textContent = 'Escaneados ' + totalScanned + ' de ' + totalRecords + ' archivos';
 
-            await fetch(url, {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     path: null
                 })
             });
+
+            const data = await response.json();
+            totalScanned = data.total_escaneados;
 
         } while (totalScanned <= totalRecords);
         spinnerLoader.style.display = 'none';    

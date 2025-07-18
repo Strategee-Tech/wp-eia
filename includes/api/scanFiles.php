@@ -35,6 +35,7 @@ function scan_files($request) {
             LEFT JOIN {$wpdb->postmeta} AS pm_in_use 
                 ON p.ID = pm_in_use.post_id AND pm_in_use.meta_key = '_stg_is_scanned'
             WHERE pm_in_use.meta_value = %s
+            ORDER BY RAND()
             LIMIT 1
         ";
 

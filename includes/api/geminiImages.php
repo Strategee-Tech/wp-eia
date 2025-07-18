@@ -11,9 +11,6 @@ function wp_gemini() {
         'methods'             => 'POST', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'gemini',
         'permission_callback' => function () {
-            if (!empty($GLOBALS['is_internal_request'])) {
-                return true; // Permitir internas
-            }
         	require_once dirname(__DIR__) . '/utils/auth.php';
         	return basic_auth_permission_check();
     	}, 

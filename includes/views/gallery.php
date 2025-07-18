@@ -118,7 +118,7 @@ function getIconAlt($alt){
         <form id="filter-form" method="get" class="filter-container" action="">
             
             <div>
-                <input type="hidden" name="page" value="gallery" />
+                <input type="hidden" name="page" value="stg-optimizer" />
                 <input id="scan-input" type="hidden" name="scan" value="0">
                 <input id="delete-input" type="hidden" name="delete" value="0">
                 <input id="optimize-input" type="hidden" name="optimize" value="0">
@@ -369,7 +369,7 @@ function getIconAlt($alt){
             </div>
 
             <button id="scan-resource-btn" class="button">
-                <div id="loader" class="loader"></div> 
+                <div id="scan-loader" class="loader"></div> 
                 Escanear recurso
             </button>
 

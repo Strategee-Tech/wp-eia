@@ -162,7 +162,7 @@ function update_attachment_with_gemini_data($attachment_id) {
 
             if (@rename($current_path, $new_path)) {
                 // Actualizar ruta física
-                //update_attached_file($attachment_id, $new_path);
+                update_attached_file($attachment_id, $new_path);
 
                 // Actualizar meta con ruta relativa
                 $upload_dir    = wp_upload_dir();

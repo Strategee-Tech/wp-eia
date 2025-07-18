@@ -226,7 +226,7 @@ function getIconAlt($alt){
     
 
 
-    <table class="wp-list-table widefat fixed striped">
+    <table class="wp-list-table widefat fixed striped stg-table">
         <thead>
             <tr>
                 <th style="width: 30px;"><input type="checkbox" id="select-all-images"></th> <th style="width: 60px;">ID</th>

@@ -74,19 +74,29 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 }
 
 function getInfoGemini($url){
-    $request = new WP_REST_Request('POST', '/api/v1/gemini');
-    $request->set_body_params(['imageUrl' => $url]); // Si el endpoint necesita parámetros
 
-    $response = rest_do_request($request);
+    require_once(dirname(ABSPATH) . '/credentials.php');
 
-    if ($response->is_error()) {
-        return new WP_REST_Response([
-            'status'  => 'error',
-            'message' => $response->as_error()->get_error_message()
-        ], 400);
-    }
+    $endpoint = site_url('/wp-json/api/v1/gemini');
+    $username = AUTH_USER_BASIC;
+    $password = AUTH_PASSWORD_BASIC;
 
-    return $response;
+    $data = ['imageUrl' => $url];
+    $ch   = curl_init($endpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+
+    $response = curl_exec($ch);
+
+
+    echo "<pre>";
+    print_r($response);
+    die(); 
+
+
 }
 
 function optimizar_archivos($original_path, $params = []) {

@@ -92,7 +92,7 @@ function getInfoGemini($url){
 
     curl_close($ch);
 
-    return json_encode($response); 
+    return json_decode($response, true); 
 }
 
 function optimizar_archivos($original_path, $params = []) {

@@ -368,13 +368,18 @@ function getIconAlt($alt){
                 </div>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+            <button id="scan-resource-btn" class="button">
+                <div id="loader" class="loader"></div> 
+                Escanear recurso
+            </button>
+
+            <!-- <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                 <input type="checkbox" id="modal-fast-edit" name="fast_edit" checked/>
                 <label for="modal-fast-edit">Edición rápida</label>
             </div>
             <div style="text-align: right; font-size: 12px; margin-bottom: 10px; margin-top: 2px;">
                 <small>Si se selecciona la opción de edicion rápida, solo se actualizará el texto alternativo (alt), titulo y descripción. de la imagen</small>
-            </div>
+            </div> -->
             
             <span id="save-status-message" style="margin-left: 10px;"></span>
             <div class="modal-footer">

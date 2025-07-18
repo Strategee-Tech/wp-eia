@@ -23,8 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileLink = document.getElementById('file-link');
     const fileLinkText = document.getElementById('file-link-text');
     const fastEdit = document.getElementById('modal-fast-edit');
+    const scanResourceBtn = document.getElementById('scan-resource-btn');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
+
+    let isLoading = false;
 
     let resize = false;
 
@@ -100,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         saveBtn.disabled = true; // Deshabilita el botón mientras se guarda
         statusMessage.textContent = 'Guardando...';
         statusMessage.style.color = 'blue';
+        isLoading = true;
 
         let width = parseInt(inputWidth.value.split('x')[0]);
 
@@ -168,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 modal.style.display = 'none';
                 statusMessage.textContent = '';
             }, 1000);
+            isLoading = false;
 
         } catch (error) {
             console.error('Error al guardar metadatos:', error);

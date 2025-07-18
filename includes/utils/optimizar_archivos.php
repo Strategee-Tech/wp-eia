@@ -31,12 +31,6 @@ function compress_images($upload) {
     $opt_path = $info['dirname'] . '/' . $info['filename'] . '-opt.' . $ext;
     
     if (strpos($mime, 'image/') === 0) {
-        $geminiData = getInfoGemini('https://eia2025.strategee.us/wp-content/uploads/2025/06/nuestra-universidad-eia.webp');
-
-        echo "<pre>";
-        print_r($geminiData);
-        die(); 
-        die();
         $resultado = optimizar_archivos($original_path, ['type' => 'imagen']);
         if ($resultado) {
             $opt_path = $info['dirname'] . '/' . $info['filename'] . '-opt.webp';
@@ -65,9 +59,6 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
         $upload['file'] = $optimized_path;
         $upload['url']  = str_replace(basename($original_path), basename($optimized_path), $upload['url']);
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
-        // if($forced_mime == 'image/webp'){
-        //    $geminiData = getInfoGemini($upload['url']);
-        // } 
         @unlink($original_path);
     }
     return $upload;
@@ -119,4 +110,75 @@ function optimizar_archivos($original_path, $params = []) {
         return false;
     }
     return $webp_path;
+}
+
+/**
+ * NUEVO: Después de subir el archivo, obtener datos de Gemini y actualizar metadatos
+ */
+add_action('add_attachment', 'update_attachment_with_gemini_data');
+
+function update_attachment_with_gemini_data($attachment_id) {
+    $post = get_post($attachment_id);
+
+    if ($post->post_type !== 'attachment') return;
+
+    $mime = get_post_mime_type($attachment_id);
+    if (strpos($mime, 'image/') !== 0) return;
+
+    // URL de la imagen optimizada (o la original)
+    $image_url  = wp_get_attachment_url($attachment_id);
+
+    // Llamar a Gemini
+    $geminiData = getInfoGemini($image_url);
+
+    if (is_array($geminiData) && isset($geminiData[0])) {
+        $data = $geminiData[0];
+
+        $title       = !empty($data['title']) ? sanitize_text_field($data['title']) : $post->post_title;
+        $description = !empty($data['description']) ? wp_kses_post($data['description']) : '';
+        $alt         = !empty($data['alt']) ? sanitize_text_field($data['alt']) : '';
+        $slug        = !empty($data['slug']) ? sanitize_title($data['slug']) : '';
+
+        // Actualizar post
+        wp_update_post([
+            'ID'           => $attachment_id,
+            'post_title'   => $title,
+            'post_content' => $description,
+            'post_name'    => $slug,
+        ]);
+
+        if (!empty($alt)) {
+            update_post_meta($attachment_id, '_wp_attachment_image_alt', $alt);
+        }
+
+        // Renombrar archivo físico al slug
+        if (!empty($slug)) {
+            $slug          = sanitize_file_name($slug);
+            $current_path  = get_attached_file($attachment_id);
+            $info          = pathinfo($current_path);
+            $ext           = strtolower($info['extension']);
+            $new_filename  = $slug . '.' . $ext;
+            $new_path      = dirname($current_path) . '/' . $new_filename;
+
+            if (@rename($current_path, $new_path)) {
+                // Actualizar ruta física
+                update_attached_file($attachment_id, $new_path);
+
+                // Actualizar meta con ruta relativa
+                $upload_dir    = wp_upload_dir();
+                $relative_path = str_replace(trailingslashit($upload_dir['basedir']), '', $new_path);
+                update_post_meta($attachment_id, '_wp_attached_file', $relative_path);
+
+                // Actualizar GUID
+                $new_url = $upload_dir['baseurl'] . '/' . $relative_path;
+                global $wpdb;
+                $wpdb->update($wpdb->posts, ['guid' => $new_url], ['ID' => $attachment_id]);
+
+                // Regenerar metadatos
+                require_once(ABSPATH . 'wp-admin/includes/image.php');
+                $metadata = wp_generate_attachment_metadata($attachment_id, $new_path);
+                wp_update_attachment_metadata($attachment_id, $metadata);
+            }
+        }
+    }
 }

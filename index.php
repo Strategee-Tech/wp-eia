@@ -19,7 +19,7 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
 }
 
 // Configuración inicial de Stg Optimizer Plugin
-require_once WP_EIA_PLUGIN_DIR . 'inqcludes/utils/configStgPlugin.php';
+//require_once WP_EIA_PLUGIN_DIR . 'inqcludes/utils/configStgPlugin.php';
 
 // Optimización de archivos
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/optimizar_archivos.php';

@@ -176,7 +176,7 @@ function update_attachment_with_gemini_data($attachment_id) {
 
                 // Regenerar metadatos
                 require_once(ABSPATH . 'wp-admin/includes/image.php');
-                $metadata = wp_generate_attachment_metadata($attachment_id, $new_path);
+                $metadata = wp_generate_attachment_metadata($attachment_id, get_attached_file($attachment_id));
                 wp_update_attachment_metadata($attachment_id, $metadata);
             }
         }

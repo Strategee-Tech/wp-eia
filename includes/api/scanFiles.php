@@ -21,11 +21,10 @@ function wp_scan_files() {
 }
 
 function scan_files($request) {
-    $params  = $request->get_json_params();
-
     global $wpdb;
 
-    $result = [];
+    $params  = $request->get_json_params();
+    $result  = [];
 
     if(empty($params)) {
         $sql = "

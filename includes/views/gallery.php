@@ -369,7 +369,7 @@ function getIconAlt($alt){
             </div>
 
             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 10px; margin-bottom: 10px;">
-                <button id="scan-resource-btn" class="button" type="button">
+                <button id="scan-resource-btn" class="button" type="button" style="display: flex; align-items: center; gap: 5px;">
                     <div id="scan-loader" class="loader"></div> 
                     Escanear recurso
                 </button>

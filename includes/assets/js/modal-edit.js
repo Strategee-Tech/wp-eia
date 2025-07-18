@@ -214,6 +214,9 @@ document.addEventListener('DOMContentLoaded', function() {
     scanResourceBtn.addEventListener('click', async function() {
         scanLoader.style.display = 'block';
         scanResourceBtn.disabled = true;
+        iaGenerateBtn.disabled = true;
+        cancelBtn.disabled = true;
+        saveBtn.disabled = true;
         //const result = await scanResource(modalUrl.value);
         //scanLoader.style.display = 'none';
         //scanResourceBtn.disabled = false;

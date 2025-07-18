@@ -34,16 +34,16 @@ document.addEventListener('DOMContentLoaded', function() {
     inputSlug.style.display = 'none';
     modalSlugLabel.style.display = 'none';
 
-    fastEdit.addEventListener('change', function() {
-        resize = this.checked;
-        if(resize){
-            inputSlug.style.display = 'none';
-            modalSlugLabel.style.display = 'none';
-        } else {
-            inputSlug.style.display = 'block';
-            modalSlugLabel.style.display = 'inline';
-        }
-    });
+    // fastEdit.addEventListener('change', function() {
+    //     resize = this.checked;
+    //     if(resize){
+    //         inputSlug.style.display = 'none';
+    //         modalSlugLabel.style.display = 'none';
+    //     } else {
+    //         inputSlug.style.display = 'block';
+    //         modalSlugLabel.style.display = 'inline';
+    //     }
+    // });
 
     editTriggers.forEach(trigger => {
         trigger.addEventListener('click', async function() {

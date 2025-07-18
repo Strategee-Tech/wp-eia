@@ -59,6 +59,10 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
         $upload['file'] = $optimized_path;
         $upload['url']  = str_replace(basename($original_path), basename($optimized_path), $upload['url']);
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
+
+        echo "<pre>";
+        print_r($upload);
+        die(); 
         @unlink($original_path);
     }
     return $upload;

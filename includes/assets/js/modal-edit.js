@@ -215,8 +215,8 @@ document.addEventListener('DOMContentLoaded', function() {
         scanLoader.style.display = 'block';
         scanResourceBtn.disabled = true;
         //const result = await scanResource(modalUrl.value);
-        scanLoader.style.display = 'none';
-        scanResourceBtn.disabled = false;
+        //scanLoader.style.display = 'none';
+        //scanResourceBtn.disabled = false;
         //inputAlt.value = result.alt;
         //inputTitle.value = result.title;
         //inputDescription.value = result.description;

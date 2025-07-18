@@ -28,3 +28,21 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/api/deleteFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/scanFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/geminiImages.php';
 
+
+//Funcion para buscar postmeta ElementorCss
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getElementorCss.php';
+
+//Funcion para buscar postMeta ElementorData 
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getElementorData.php';
+
+//Funcion para buscar postmeta Enclosure 
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getEnclosure.php';
+
+//Funcion para buscar postmeta Thumbnail 
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getThumbnail.php';
+
+//Funcion para buscar en cursos postcontent 
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getPostContentCursos.php';
+
+//Funcion para buscar en post postcontent 
+require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getPostContentPosts.php';

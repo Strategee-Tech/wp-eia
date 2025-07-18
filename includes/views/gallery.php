@@ -111,113 +111,119 @@ function getIconAlt($alt){
 }
 ?>
 
-
 <div class="wrap">
 
-    <form id="filter-form" method="get" class="filter-container" action="">
-        
-        <div>
-            <input type="hidden" name="page" value="gallery" />
-            <input id="scan-input" type="hidden" name="scan" value="0">
-            <input id="delete-input" type="hidden" name="delete" value="0">
-            <input id="optimize-input" type="hidden" name="optimize" value="0">
-            <div>
-                <label for="search">Buscar</label>
-                <input type="search" name="search" id="search" placeholder="Buscar..." value="<?php echo esc_attr( $search ); ?>">
-            </div>
-            <div>
-                <label for="mime_type">Tipo de archivo</label>
-                <select name="mime_type" id="">
-                    <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
-                    <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>
-                    <option <?php echo $mime_type === 'audio' ? 'selected' : ''; ?> value="audio">Audios</option>
-                    <option <?php echo $mime_type === 'video' ? 'selected' : ''; ?> value="video">Videos</option>
-                    <option <?php echo $mime_type === 'text' ? 'selected' : ''; ?> value="text">Textos</option>
-                    <option <?php echo $mime_type === 'application' ? 'selected' : ''; ?> value="application">Documentos</option>
-                </select>
-            </div>
-            <div>
-                <label for="year">Año</label>
-                <select name="year" id="">
-                    <option value="all">Todos</option>
-                    <option <?php echo $year === '2025' ? 'selected' : ''; ?> value="2025">2025</option>
-                    <option <?php echo $year === '2024' ? 'selected' : ''; ?> value="2024">2024</option>
-                    <option <?php echo $year === '2023' ? 'selected' : ''; ?> value="2023">2023</option>
-                    <option <?php echo $year === '2022' ? 'selected' : ''; ?> value="2022">2022</option>
-                    <option <?php echo $year === '2021' ? 'selected' : ''; ?> value="2021">2021</option>
-                    <option <?php echo $year === '2020' ? 'selected' : ''; ?> value="2020">2020</option>
-                </select>
-            </div>
-            <div>
-                <label for="month">Mes</label>
-                <select name="month" id="">
-                    <option value="all">Todos</option>
-                    <option <?php echo $month === '01' ? 'selected' : ''; ?> value="01">01</option>
-                    <option <?php echo $month === '02' ? 'selected' : ''; ?> value="02">02</option>
-                    <option <?php echo $month === '03' ? 'selected' : ''; ?> value="03">03</option>
-                    <option <?php echo $month === '04' ? 'selected' : ''; ?> value="04">04</option>
-                    <option <?php echo $month === '05' ? 'selected' : ''; ?> value="05">05</option>
-                    <option <?php echo $month === '06' ? 'selected' : ''; ?> value="06">06</option>
-                    <option <?php echo $month === '07' ? 'selected' : ''; ?> value="07">07</option>
-                    <option <?php echo $month === '08' ? 'selected' : ''; ?> value="08">08</option>
-                    <option <?php echo $month === '09' ? 'selected' : ''; ?> value="09">09</option>
-                    <option <?php echo $month === '10' ? 'selected' : ''; ?> value="10">10</option>
-                    <option <?php echo $month === '11' ? 'selected' : ''; ?> value="11">11</option>
-                    <option <?php echo $month === '12' ? 'selected' : ''; ?> value="12">12</option>
-                </select>
-            </div>
-            <div>
-                <label for="month">Estado</label>
-                <select name="usage_status" id="">
-                    <option value="all">Todos</option>
-                    <option <?php echo $usage_status === 'in_use' ? 'selected' : ''; ?> value="in_use">En Uso</option>
-                    <option <?php echo $usage_status === 'not_in_use' ? 'selected' : ''; ?> value="not_in_use">Sin Uso</option>
-                    <option <?php echo $usage_status === 'has_alt' ? 'selected' : ''; ?> value="has_alt">Con Alt</option>
-                    <option <?php echo $usage_status === 'no_alt' ? 'selected' : ''; ?> value="no_alt">Sin Alt</option>
-                    <option <?php echo $usage_status === 'scanned' ? 'selected' : ''; ?> value="scanned">Escaneado</option>
-                    <option <?php echo $usage_status === 'unscanned' ? 'selected' : ''; ?> value="unscanned">Sin Escanear</option>
-                    <option <?php echo $usage_status === 'blocked' ? 'selected' : ''; ?> value="blocked">Excluidos</option>
-                    <option <?php echo $usage_status === 'not_blocked' ? 'selected' : ''; ?> value="not_blocked">Sin Excluir</option>
-                </select>
-            </div>
-        </div>
-        <div style='flex-grow: 1;'></div>
-        <button id="filter-btn" class="btn" type="submit">
-            <span class="dashicons dashicons-filter"></span>
-            Filtrar
-        </button>
-        <?php if(count($image_data['files_to_delete']) > 0): ?>
-        <button id="delete-all-btn" class="btn delete-btn" type="button">
-            <span class="dashicons dashicons-trash"></span>
-            Eliminar (<?php echo count($image_data['files_to_delete']); ?>)
-        </button>
-        <?php endif; ?>
+    <div id="options-container" class="options-container">
 
-
-        <button id="scan-all-btn" class="btn" type="button">
-            <span id="icon-scan" class="dashicons dashicons-filter"></span>
-            <div id="spinner-loader" class="spinner-loader"></div>
-            Escanear Todos
-        </button>
-
-    </form>
-
-    <div id="options-container" style="display: flex; align-items: center; justify-content: space-between;">
-        <span id="scan-progress">
+        <form id="filter-form" method="get" class="filter-container" action="">
             
-        </span>
-        
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <button id="scan-all-btn" class="btn primary-btn" type="button" style="display: flex; flex-direction: row; gap: 5px;"> 
-                <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
-                <span id="icon-scan">Escanear Todos</span>
+            <div>
+                <input type="hidden" name="page" value="gallery" />
+                <input id="scan-input" type="hidden" name="scan" value="0">
+                <input id="delete-input" type="hidden" name="delete" value="0">
+                <input id="optimize-input" type="hidden" name="optimize" value="0">
+                <div>
+                    <label for="search">Buscar</label>
+                    <input type="search" name="search" id="search" placeholder="Buscar..." value="<?php echo esc_attr( $search ); ?>">
+                </div>
+                <div>
+                    <label for="mime_type">Tipo de archivo</label>
+                    <select name="mime_type" id="">
+                        <option <?php echo $mime_type === 'all' ? 'selected' : ''; ?> value="all">Todos</option>
+                        <option <?php echo $mime_type === 'image' ? 'selected' : ''; ?> value="image">Imagenes</option>
+                        <option <?php echo $mime_type === 'audio' ? 'selected' : ''; ?> value="audio">Audios</option>
+                        <option <?php echo $mime_type === 'video' ? 'selected' : ''; ?> value="video">Videos</option>
+                        <option <?php echo $mime_type === 'text' ? 'selected' : ''; ?> value="text">Textos</option>
+                        <option <?php echo $mime_type === 'application' ? 'selected' : ''; ?> value="application">Documentos</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="year">Año</label>
+                    <select name="year" id="">
+                        <option value="all">Todos</option>
+                        <option <?php echo $year === '2025' ? 'selected' : ''; ?> value="2025">2025</option>
+                        <option <?php echo $year === '2024' ? 'selected' : ''; ?> value="2024">2024</option>
+                        <option <?php echo $year === '2023' ? 'selected' : ''; ?> value="2023">2023</option>
+                        <option <?php echo $year === '2022' ? 'selected' : ''; ?> value="2022">2022</option>
+                        <option <?php echo $year === '2021' ? 'selected' : ''; ?> value="2021">2021</option>
+                        <option <?php echo $year === '2020' ? 'selected' : ''; ?> value="2020">2020</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="month">Mes</label>
+                    <select name="month" id="">
+                        <option value="all">Todos</option>
+                        <option <?php echo $month === '01' ? 'selected' : ''; ?> value="01">01</option>
+                        <option <?php echo $month === '02' ? 'selected' : ''; ?> value="02">02</option>
+                        <option <?php echo $month === '03' ? 'selected' : ''; ?> value="03">03</option>
+                        <option <?php echo $month === '04' ? 'selected' : ''; ?> value="04">04</option>
+                        <option <?php echo $month === '05' ? 'selected' : ''; ?> value="05">05</option>
+                        <option <?php echo $month === '06' ? 'selected' : ''; ?> value="06">06</option>
+                        <option <?php echo $month === '07' ? 'selected' : ''; ?> value="07">07</option>
+                        <option <?php echo $month === '08' ? 'selected' : ''; ?> value="08">08</option>
+                        <option <?php echo $month === '09' ? 'selected' : ''; ?> value="09">09</option>
+                        <option <?php echo $month === '10' ? 'selected' : ''; ?> value="10">10</option>
+                        <option <?php echo $month === '11' ? 'selected' : ''; ?> value="11">11</option>
+                        <option <?php echo $month === '12' ? 'selected' : ''; ?> value="12">12</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="month">Estado</label>
+                    <select name="usage_status" id="">
+                        <option value="all">Todos</option>
+                        <option <?php echo $usage_status === 'in_use' ? 'selected' : ''; ?> value="in_use">En Uso</option>
+                        <option <?php echo $usage_status === 'not_in_use' ? 'selected' : ''; ?> value="not_in_use">Sin Uso</option>
+                        <option <?php echo $usage_status === 'has_alt' ? 'selected' : ''; ?> value="has_alt">Con Alt</option>
+                        <option <?php echo $usage_status === 'no_alt' ? 'selected' : ''; ?> value="no_alt">Sin Alt</option>
+                        <option <?php echo $usage_status === 'scanned' ? 'selected' : ''; ?> value="scanned">Escaneado</option>
+                        <option <?php echo $usage_status === 'unscanned' ? 'selected' : ''; ?> value="unscanned">Sin Escanear</option>
+                        <option <?php echo $usage_status === 'blocked' ? 'selected' : ''; ?> value="blocked">Excluidos</option>
+                        <option <?php echo $usage_status === 'not_blocked' ? 'selected' : ''; ?> value="not_blocked">Sin Excluir</option>
+                    </select>
+                </div>
+            </div>
+            <div style='flex-grow: 1;'></div>
+            <button id="filter-btn" class="btn" type="submit">
+                <span class="dashicons dashicons-filter"></span>
+                Filtrar
             </button>
-            <button id="delete-all-btn" class="btn delete-btn" type="button" style="display: flex; flex-direction: row; gap: 5px; "> 
-                <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
-                <span id='icon-delete'>Eliminar Todos</span>
+            <?php if(count($image_data['files_to_delete']) > 0): ?>
+            <button id="delete-all-btn" class="btn delete-btn" type="button">
+                <span class="dashicons dashicons-trash"></span>
+                Eliminar (<?php echo count($image_data['files_to_delete']); ?>)
             </button>
+            <?php endif; ?>
+
+
+            <button id="scan-all-btn" class="btn" type="button">
+                <span id="icon-scan" class="dashicons dashicons-filter"></span>
+                <div id="spinner-loader" class="spinner-loader"></div>
+                Escanear Todos
+            </button>
+
+        </form>
+
+        <div id="options-container" style="display: flex; align-items: center; justify-content: space-between;">
+            <span id="scan-progress">
+                
+            </span>
+            
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="scan-all-btn" class="btn primary-btn" type="button" style="display: flex; flex-direction: row; gap: 5px;"> 
+                    <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
+                    <span id="icon-scan">Escanear Todos</span>
+                </button>
+                <button id="delete-all-btn" class="btn delete-btn" type="button" style="display: flex; flex-direction: row; gap: 5px; "> 
+                    <div id="spinner-loader" style="display: none;" class="spinner-loader"></div>
+                    <span id='icon-delete'>Eliminar Todos</span>
+                </button>
+            </div>
         </div>
+
+
     </div>
+
+    
 
 
     <table class="wp-list-table widefat fixed striped">

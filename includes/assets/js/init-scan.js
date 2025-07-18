@@ -38,7 +38,3 @@ document.addEventListener('DOMContentLoaded', function() {
         iconScan.style.display = 'block';
     });
 });
-
-function esperarSegundos(segundos) {
-    return new Promise(resolve => setTimeout(resolve, segundos * 1000));
-}

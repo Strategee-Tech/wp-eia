@@ -123,6 +123,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
 
 
     // --- 1. Query for TOTAL records (without pagination) ---
+    // No necesita cambios, ya usa DISTINCT.
     $total_query_sql_template = "
         SELECT COUNT(DISTINCT p.ID)
         FROM " . $wpdb->posts . " AS p
@@ -156,7 +157,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         $attachments_query_params[] = $offset; // Add offset
 
         $attachments_query_sql_template = "
-            SELECT
+            SELECT DISTINCT  <--- AÑADE ESTO AQUÍ
                 p.ID AS attachment_id,
                 p.post_title,
                 p.post_name,
@@ -209,9 +210,12 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
             $attachment['file_filesize'] = isset( $metadata['filesize'] ) ? (int) $metadata['filesize'] : null;
 
             // Convert '1'/'0' string values to boolean for easier consumption
+            // Importante: Si pm_alt.meta_value (image_alt_text) es el alt text nativo de WP,
+            // no lo conviertas a booleano aquí, ya que es una cadena de texto.
+            // Solo convierte tus metas booleanas personalizadas.
             $attachment['is_scanned']             = ( '1' === $attachment['is_scanned_status'] );
             $attachment['is_in_use']              = ( '1' === $attachment['is_in_use_status'] );
-            $attachment['has_alt_text_plugin']    = ( '1' === $attachment['has_alt_text_status'] ); // Renombre para evitar conflicto con image_alt_text
+            $attachment['has_alt_text_plugin']    = ( '1' === $attachment['has_alt_text_status'] ); 
             $attachment['is_blocked_from_deletion'] = ( '1' === $attachment['is_blocked_status'] );
 
             // Clean up raw status values if you prefer not to expose them
@@ -224,7 +228,10 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         // Populate files_to_delete if usage_status is 'not_in_use' (assuming this is the "unused" filter)
         if($usage_status === 'not_in_use'){
             foreach ($attachments_in_folder as $attachment) {
-                $files_to_delete[] = $attachment['attachment_id'];
+                // Solo añade si el adjunto realmente cumple la condición de "no en uso" después de la conversión booleana
+                if (isset($attachment['is_in_use']) && $attachment['is_in_use'] === false) {
+                    $files_to_delete[] = $attachment['attachment_id'];
+                }
             }
         }
     

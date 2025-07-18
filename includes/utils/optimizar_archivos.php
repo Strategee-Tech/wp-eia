@@ -74,7 +74,6 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 }
 
 function getInfoGemini($url){
-
     require_once(dirname(ABSPATH) . '/credentials.php');
 
     $endpoint = site_url('/wp-json/api/v1/gemini');
@@ -91,12 +90,9 @@ function getInfoGemini($url){
 
     $response = curl_exec($ch);
 
+    curl_close($ch);
 
-    echo "<pre>";
-    print_r($response);
-    die(); 
-
-
+    return json_encode($response); 
 }
 
 function optimizar_archivos($original_path, $params = []) {

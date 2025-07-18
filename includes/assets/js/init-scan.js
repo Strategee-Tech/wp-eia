@@ -6,13 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
     spinnerLoader.style.display = 'none';    
     iconScan.style.display = 'block';
 
-    let currentPage = 0;
-    const totalPages = Math.ceil(totalRecords / 20);
-
     const url         = `${window.location.origin}/wp-json/api/v1/scan-files`;
     const user        = 'it@strategee.us';
     const password    = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
     const credentials = btoa(`${user}:${password}`);
+    let totalScanned = '?';
+    
  
     scanBtn.addEventListener('click', async function() {
         spinnerLoader.style.display = 'block';
@@ -20,8 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         do{
 
-            currentPage++;
-            scanProgress.textContent = currentPage + ' de ' + (totalPages + 1);
+            scanProgress.textContent = 'Escaneados ' + totalScanned + ' de ' + totalRecords + ' archivos';
 
             await fetch(url, {
                 method: 'POST',
@@ -30,12 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Authorization': `Basic ${credentials}`
                 },
                 body: JSON.stringify({
-                    totalRecords: totalRecords,
-                    currentPage: currentPage
+                    attachment_id: null,
+                    path: null
                 })
             });
 
-        } while (currentPage <= totalPages);
+        } while (totalScanned <= totalRecords);
         spinnerLoader.style.display = 'none';    
         iconScan.style.display = 'block';
     });

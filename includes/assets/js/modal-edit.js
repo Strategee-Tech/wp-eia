@@ -217,9 +217,12 @@ document.addEventListener('DOMContentLoaded', function() {
         iaGenerateBtn.disabled = true;
         cancelBtn.disabled = true;
         saveBtn.disabled = true;
-        //const result = await scanResource(modalUrl.value);
-        //scanLoader.style.display = 'none';
-        //scanResourceBtn.disabled = false;
+
+        const res = await scanFile(currentAttachmentId, modalUrl.value);
+        console.log(res);
+
+        scanLoader.style.display = 'none';
+        scanResourceBtn.disabled = false;
         //inputAlt.value = result.alt;
         //inputTitle.value = result.title;
         //inputDescription.value = result.description;

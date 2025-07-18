@@ -7,6 +7,7 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
+
 require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentPage.php';
 
 //Helpers
@@ -16,6 +17,13 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentIdByPath.php';
 wp_enqueue_script(
     'delete-files', // Handle o identificador único
     plugins_url( '../assets/js/delete-files.js', __FILE__ ), // URL del script dentro de tu plugin
+    array(), // Dependencias (ninguna en este caso)
+    '1.0.0', // Versión
+    true // Cargar en el footer
+);
+wp_enqueue_script(
+    'scan-service', // Handle o identificador único
+    plugins_url( '../assets/js/scanService.js', __FILE__ ), // URL del script dentro de tu plugin
     array(), // Dependencias (ninguna en este caso)
     '1.0.0', // Versión
     true // Cargar en el footer

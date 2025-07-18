@@ -27,8 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Authorization': `Basic ${credentials}`
                 },
                 body: JSON.stringify({
-                    attachment_id: null,
-                    path: null
                 })
             });
 

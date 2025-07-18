@@ -3,7 +3,7 @@ function get_elemetor_css($path) {
     global $wpdb;
 
     // Escapar la cadena para REGEXP
-    $pattern = str_replace('/', '\\\\/', $path);
+    $pattern = preg_quote($path, '/'); // ejemplo: 2025\/03\/mi\-imagen\.jpg
 
     $sql = $wpdb->prepare(
         "SELECT pm.post_id 

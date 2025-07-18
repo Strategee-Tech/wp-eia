@@ -3,7 +3,8 @@ function get_post_content_cursos($path) {
     global $wpdb;
 
     // Crear patrón seguro para REGEXP
-    $pattern = str_replace('/', '\\\\/', $path);
+    $info    = pathinfo($path);
+    $pattern = preg_quote($info['dirname'] . '/' . $info['filename'], '/');
 
     // Query
     $sql = $wpdb->prepare(

@@ -2,7 +2,9 @@
 function get_post_content_posts($path) {
     global $wpdb;
 
-    $pattern = str_replace('/', '\\\\/', $path);
+    // Escapar el path para REGEXP
+    $info    = pathinfo($path);
+    $pattern = preg_quote($info['dirname'] . '/' . $info['filename'], '/');
 
     // Query optimizada
     $sql = $wpdb->prepare(

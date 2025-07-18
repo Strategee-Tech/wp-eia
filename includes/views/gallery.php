@@ -69,8 +69,8 @@ wp_enqueue_style(
 ?>
 
 
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding: 20px;">
-    <img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/images/stg_optimizer.png'); ?>" alt="" style="width: 220px;">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; padding-left: 0;">
+    <img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/images/stg_optimizer.png'); ?>" alt="" style="width: 250px;">
     <img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/images/by-stg.png'); ?>" alt="" style="width: 100px;">
 </div>
 

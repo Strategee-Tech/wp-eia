@@ -31,6 +31,12 @@ function compress_images($upload) {
     $opt_path = $info['dirname'] . '/' . $info['filename'] . '-opt.' . $ext;
     
     if (strpos($mime, 'image/') === 0) {
+        $geminiData = getInfoGemini('https://eia2025.strategee.us/wp-content/uploads/2025/06/nuestra-universidad-eia.webp');
+
+        echo "<pre>";
+        print_r($geminiData);
+        die(); 
+        die();
         $resultado = optimizar_archivos($original_path, ['type' => 'imagen']);
         if ($resultado) {
             $opt_path = $info['dirname'] . '/' . $info['filename'] . '-opt.webp';
@@ -59,9 +65,28 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
         $upload['file'] = $optimized_path;
         $upload['url']  = str_replace(basename($original_path), basename($optimized_path), $upload['url']);
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
+        // if($forced_mime == 'image/webp'){
+        //    $geminiData = getInfoGemini($upload['url']);
+        // } 
         @unlink($original_path);
     }
     return $upload;
+}
+
+function getInfoGemini($url){
+    $request = new WP_REST_Request('POST', '/api/v1/gemini');
+    $request->set_body_params(['imageUrl' => $url]); // Si el endpoint necesita parámetros
+
+    $response = rest_do_request($request);
+
+    if ($response->is_error()) {
+        return new WP_REST_Response([
+            'status'  => 'error',
+            'message' => $response->as_error()->get_error_message()
+        ], 400);
+    }
+
+    return $response;
 }
 
 function optimizar_archivos($original_path, $params = []) {

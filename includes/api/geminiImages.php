@@ -11,6 +11,11 @@ function wp_gemini() {
         'methods'             => 'POST', // Usamos GET ya que solo estamos recuperando datos
         'callback'            => 'gemini',
         'permission_callback' => function () {
+            // Permitir si la llamada se hace internamente mediante rest_do_request
+            if (defined('REST_REQUEST') && REST_REQUEST) {
+                return true; // Permite llamadas internas
+            }
+            // Si es externa, aplicar Basic Auth
         	require_once dirname(__DIR__) . '/utils/auth.php';
         	return basic_auth_permission_check();
     	}, 

@@ -91,33 +91,48 @@ function stg_activate_meta_keys() {
         return;
     }
 
-    $meta_keys = unserialize( STG_ATTACHMENT_META_KEYS );
 
-    // Para evitar cargar todos los adjuntos de golpe, podemos hacer una consulta por cada meta_key
-    // o una consulta general y luego verificar cada adjunto.
-    // Para 6000 adjuntos, una consulta general es manejable.
-    $args = array(
-        'post_type'      => 'attachment',
-        'posts_per_page' => -1, // Obtener todos los adjuntos
-        'post_status'    => 'inherit',
-        'fields'         => 'ids', // Solo IDs
-    );
-    $attachments = get_posts( $args );
+    $meta_keys  = unserialize( STG_ATTACHMENT_META_KEYS );
+    $batch_size = 50; // Ajusta el tamaño del lote
+    $paged = 1;
 
-    if ( ! empty( $attachments ) ) {
+    do {
+        $args = array(
+            'post_type'      => 'attachment',
+            'posts_per_page' => $batch_size,
+            'paged'          => $paged,
+            'post_status'    => 'inherit',
+            'fields'         => 'ids',
+        );
+
+        $attachments = get_posts( $args );
+
+        if ( empty( $attachments ) ) {
+            // Marca que la operación ha sido completada.
+            update_option( 'stg_meta_keys_added', true );
+            break; // No hay más adjuntos
+        }
+
         foreach ( $attachments as $attachment_id ) {
             foreach ( $meta_keys as $meta_key ) {
-                // Solo añade la meta_key si no existe.
+
+                // ✅ Verificar texto alternativo
+                $alt_text = get_metadata( 'post', $attachment_id, '_wp_attachment_image_alt', true );
+                if ( ! empty( $alt_text ) ) {
+                    stg_set_attachment_has_alt_text( $attachment_id, true );
+                }
+
+                // ✅ Añadir meta_key si no existe
                 if ( ! metadata_exists( 'post', $attachment_id, $meta_key ) ) {
-                    // Valor inicial '0' (false) para los estados booleanos.
                     add_post_meta( $attachment_id, $meta_key, '0', true );
                 }
             }
         }
-    }
 
-    // Marca que la operación ha sido completada.
-    update_option( 'stg_meta_keys_added', true );
+        $paged++; // Siguiente lote
+        wp_cache_flush(); // ✅ Libera memoria de caché en cada ciclo
+
+    } while ( true ); 
 }
 register_activation_hook( __FILE__, 'stg_activate_meta_keys' );
 add_action( 'plugins_loaded', 'stg_activate_meta_keys' );

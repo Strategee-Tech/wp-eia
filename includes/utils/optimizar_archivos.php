@@ -61,43 +61,60 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
 
         if($forced_mime == 'image/webp') {
-            $geminiData = getInfoGemini($upload['url']);
-            if (is_array($geminiData) && isset($geminiData[0])) { 
-                if(!empty($geminiData[0])) { 
+            $max_attempts = 5;
+            $attempt      = 0;
+            $success      = false;
 
-                    $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
+            do {
+                $attempt++;
+                $geminiData = getInfoGemini($upload['url']);
+                if (is_array($geminiData) && isset($geminiData[0])) { 
+                    if(!empty($geminiData[0])) { 
 
-                    //Ruta actual del archivo
-                    $current_path = $upload['file']; // Ej: /var/www/.../uploads/2025/07/original.webp
+                        $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
 
-                    //Directorio actual (donde está el archivo)
-                    $dir = dirname($current_path); // Ej: /var/www/.../uploads/2025/07
+                        //Ruta actual del archivo
+                        $current_path = $upload['file']; // Ej: /var/www/.../uploads/2025/07/original.webp
 
-                    //Nueva ruta física
-                    $new_path = $dir . '/' . $slug;
+                        //Directorio actual (donde está el archivo)
+                        $dir = dirname($current_path); // Ej: /var/www/.../uploads/2025/07
 
-                    //Renombrar el archivo en el servidor
-                    if (rename($current_path, $new_path)) {
-                        //Construir nueva URL
-                        $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
+                        //Nueva ruta física
+                        $new_path = $dir . '/' . $slug;
 
-                        //Actualizar file y type
-                        $upload['file'] = $new_path; 
-                    } else {
-                        error_log('Error al renombrar el archivo a: ' . $new_path);
-                    } 
+                        //Renombrar el archivo en el servidor
+                        if (rename($current_path, $new_path)) {
+                            //Construir nueva URL
+                            $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
 
-                    $gemini_data = [
-                        'alt_temp'         => $geminiData['0']['alt'],
-                        'slug_temp'        => $geminiData['0']['slug'],
-                        'description_temp' => $geminiData['0']['description'],
-                        'title_temp'       => $geminiData['0']['title'],
-                    ]; 
-                    $unique_key = 'gemini_' . md5($upload['url']); 
-                    set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
+                            //Actualizar file y type
+                            $upload['file'] = $new_path; 
+                        } else {
+                            error_log('Error al renombrar el archivo a: ' . $new_path);
+                        } 
+
+                        $gemini_data = [
+                            'alt_temp'         => $geminiData['0']['alt'],
+                            'slug_temp'        => $geminiData['0']['slug'],
+                            'description_temp' => $geminiData['0']['description'],
+                            'title_temp'       => $geminiData['0']['title'],
+                        ]; 
+                        $unique_key = 'gemini_' . md5($upload['url']); 
+                        set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
+                        $success = true;
+                    }
+                } 
+
+                if (!$success && $attempt < $max_attempts) {
+                    sleep(1); // Pausa opcional de 1 segundo antes de reintentar
                 }
-            } 
-        } 
+
+            } while (!$success && $attempt < $max_attempts);
+
+            if (!$success) {
+                error_log('Gemini API no devolvió datos válidos después de ' . $max_attempts . ' intentos.');
+            }
+        }  
         @unlink($original_path);
     }
     return $upload;

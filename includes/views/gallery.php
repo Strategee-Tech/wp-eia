@@ -245,7 +245,8 @@ function getIconAlt($alt){
             if ( empty( $image_data['records'] ) ) :
             ?>
                 <tr>
-                    <td colspan="10">No se encontraron archivos en el directorio especificado.</td> </tr>
+                    <td colspan="9">No se encontraron archivos en el directorio especificado.</td> 
+                </tr>
             <?php
             else :
                 foreach ( $image_data['records'] as $image ) :

@@ -61,7 +61,9 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         foreach ( $words as $word ) {
             $word = trim( $word );
             if ( ! empty( $word ) ) {
-                $like_conditions[] = "p.post_title LIKE %s";
+                // Busca en título o slug
+                $like_conditions[] = "(p.post_title LIKE %s OR p.post_name LIKE %s)";
+                $query_params[] = '%' . $wpdb->esc_like( $word ) . '%';
                 $query_params[] = '%' . $wpdb->esc_like( $word ) . '%';
             }
         }

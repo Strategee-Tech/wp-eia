@@ -10,9 +10,6 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
 
 require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentPage.php';
 
-//Helpers
-require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentIdByPath.php';
-
 
 wp_enqueue_script(
     'delete-files', // Handle o identificador único

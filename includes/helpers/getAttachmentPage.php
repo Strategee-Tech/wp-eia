@@ -24,7 +24,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         'is_scanned'               => '_stg_is_scanned',
         'is_in_use'                => '_stg_is_in_use',
         'has_alt_text'             => '_stg_has_alt_text',
-        'is_blocked_from_deletion' => '_stg_is_blocked_from_deletion',
+        'is_blocked_from_deletion' => '_stg_is_excluded',
     ];
 
     // Sanitize and validate pagination parameters
@@ -141,8 +141,8 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
     );
     
     // --- DEPURACIÓN: Ver la consulta total ---
-    error_log( 'DEBUG (Total Query): ' . $total_query );
-    error_log( 'DEBUG (Total Query Params): ' . print_r($query_params, true) );
+    // error_log( 'DEBUG (Total Query): ' . $total_query );
+    // error_log( 'DEBUG (Total Query Params): ' . print_r($query_params, true) );
 
     $total_records = $wpdb->get_var( $total_query );
 
@@ -194,8 +194,8 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         );
 
         // --- DEPURACIÓN: Ver la consulta de los registros ---
-        error_log( 'DEBUG (Attachments Query): ' . $attachments_query );
-        error_log( 'DEBUG (Attachments Query Params): ' . print_r($attachments_query_params, true) );
+        // error_log( 'DEBUG (Attachments Query): ' . $attachments_query );
+        // error_log( 'DEBUG (Attachments Query Params): ' . print_r($attachments_query_params, true) );
 
         $attachments_in_folder = $wpdb->get_results( $attachments_query, ARRAY_A );
 
@@ -253,7 +253,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
         // y el adjunto cumple con que 'is_in_use' sea false después de la conversión.
         if($usage_status === 'not_in_use'){
             foreach ($attachments_in_folder as $attachment) {
-                if (isset($attachment['is_in_use']) && $attachment['is_in_use'] === false) {
+                if (isset($attachment['is_in_use']) && $attachment['is_in_use'] == false && $attachment['is_scanned'] == true && $attachment['is_blocked_from_deletion'] == false) {
                     $files_to_delete[] = $attachment['attachment_id'];
                 }
             }

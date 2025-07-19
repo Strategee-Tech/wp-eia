@@ -144,12 +144,15 @@ function generateImageMetadata(string $imageUrl): array {
         $errorData = json_decode($response, true);
         throw new Exception("Error de la API: " . ($errorData['error']['message'] ?? 'Error desconocido') . " (Código HTTP: " . $httpCode . ")");
     }
-
     $data = json_decode($response, true);
+    error_log('Respuesta Gemini: ' . print_r($response, true));
+    error_log('Respuesta Gemini: ' . print_r($data, true));
 
     // Accede a la parte de texto dentro de 'candidates'
     $result = json_decode($data['candidates'][0]['content']['parts'][0]['text'], true);
-
+    if($result == null) {
+        return array();
+    }
     return $result;
 }
 

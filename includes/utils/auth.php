@@ -350,7 +350,7 @@ function actualizar_post_postmeta($params = array(), $wpdb, $update_slug = false
     // Actualiza texto alternativo si fue enviado
     if (!empty($params['alt_text'])) {
         update_post_meta($params['post_id'], '_wp_attachment_image_alt', $params['alt_text']);
-        update_post_meta($params['post_id'], '_stg_status_alt', 'Con Alt');
+        stg_set_attachment_has_alt_text( $params['post_id'], true );
     }
 }
 

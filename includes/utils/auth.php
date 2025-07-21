@@ -169,7 +169,37 @@ function update_yoast_info($new_url, $old_url, $post_id, $old_partial) {
     }
 }
 
-function update_post_meta_elementor_data($basename, $new_url, $old_url, $attachment_id){
+function update_post_meta_elementor_data($wpdb, $attachment_id, $old_path, $new_path){
+
+    // UPDATE wp_postmeta
+    // SET meta_value = REPLACE(
+    //     meta_value,
+    //     '/2025\\/07\\/Sin-titulo-3.webp',
+    //     '/2025\\/07\\/Sin-titulo-3.png'
+    // )
+    // WHERE meta_key = '_elementor_data'
+    // AND meta_value LIKE '%"id":177837%';
+
+    // Definir las cadenas a reemplazar
+    $old_path = str_replace('/', '\\/', $old_path);
+    $new_path = str_replace('/', '\\/', $new_path);
+
+    $sql = $wpdb->prepare(
+        "UPDATE {$wpdb->postmeta}
+         SET meta_value = REPLACE(meta_value, %s, %s)
+         WHERE meta_key = '_elementor_data'
+         AND meta_value LIKE %s",
+        $old_path,   // valor actual que quieres reemplazar
+        $new_path,   // nuevo valor
+        '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
+    );
+
+    $rows_affected = $wpdb->query($sql);
+
+    //echo "Filas actualizadas: " . $rows_affected;
+} 
+
+function update_post_meta_elementor_data_old($basename, $new_url, $old_url, $attachment_id){
     global $wpdb;
     // Extraer año/mes desde la URL vieja
     preg_match('#/uploads/(\d{4})/(\d{2})/#', $old_url, $matches);

@@ -212,3 +212,17 @@ function find_all_related_thumbnails($original_path) {
     }
     return $related_files;
 }
+
+function get_related_urls($original_path, $miniaturas) {
+    $upload_dir   = wp_get_upload_dir();
+    $base_url     = $upload_dir['baseurl'];
+    $base_dir     = $upload_dir['basedir'];
+    $related_urls = [];
+    if(!empty($miniaturas)) {
+    	foreach ($miniaturas as $path) {
+        	$relative = str_replace($base_dir, '', $path);
+        	$related_urls[] = $base_url . $relative;
+    	}
+    }
+    return $related_urls;
+}

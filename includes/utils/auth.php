@@ -199,122 +199,25 @@ function update_post_meta_elementor_data($wpdb, $attachment_id, $old_path, $new_
     //echo "Filas actualizadas: " . $rows_affected;
 } 
 
-function update_post_meta_elementor_data_old($basename, $new_url, $old_url, $attachment_id){
-    global $wpdb;
-    // Extraer año/mes desde la URL vieja
-    preg_match('#/uploads/(\d{4})/(\d{2})/#', $old_url, $matches);
-    $year_month_path = !empty($matches[0]) ? $matches[0] : null;
-    if (!$year_month_path) {
-        // Evita procesar si no tienes la ruta esperada
-        return;
-    }
-    $meta_key = '_elementor_data';
-    $rows     = $wpdb->get_results(
-        $wpdb->prepare(
-            "SELECT post_id, meta_value 
-             FROM {$wpdb->prefix}postmeta
-             WHERE meta_key = %s 
-             AND meta_value LIKE %s",
-            $meta_key,
-            '%' . $wpdb->esc_like($basename) . '%' //nombredelarchivo.[ext]
-        ),
-        ARRAY_A
-    );
+function update_elementor_css_url($old_path, $new_path) {
+    $wp_cli_path = '/usr/local/bin/wp'; // Ruta a WP-CLI
+    $wp_path     = ABSPATH; // Ruta a WP 
+    $table       = 'wp_postmeta';
+    $where       = "meta_key = '_elementor_css'";
 
-    $query = $wpdb->prepare(
-        "SELECT post_id, meta_value
-         FROM {$wpdb->postmeta}
-         WHERE meta_key = %s
-         AND meta_value LIKE %s
-         AND meta_value LIKE %s",
-        $meta_key,
-        '%"id":%',           // Primer LIKE fijo
-        '%' . $attachment_id . '%' // Segundo LIKE dinámico
-    );
-    $rows_attachments = $wpdb->get_results($query, ARRAY_A);
+    // Escapar parámetros para seguridad
+    $old_esc     = escapeshellarg($old_path);
+    $new_esc     = escapeshellarg($new_path);
+    $wp_path_esc = escapeshellarg($wp_path);
+    $where_esc   = escapeshellarg($where);
 
-    if (!empty($rows)) {
-        foreach ($rows as $row) {
-            $updated   = false;
-            $json_data = json_decode($row['meta_value'], true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
-                $json_data = update_elementor_structure_recursive($json_data, $basename, $new_url, $year_month_path, $attachment_id, $updated);
-                if ($updated) {
-                    update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
-                }
-            }
-        }
-    }
+    // Construir el comando dinámicamente
+    $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=meta_value --where=$where_esc --precise --allow-root --path=$wp_path_esc";
 
-    if (!empty($rows_attachments)) {
-        foreach ($rows_attachments as $row) {
-            $updated   = false;
-            $json_data = json_decode($row['meta_value'], true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($json_data)) {
-                $json_data = update_elementor_structure_recursive($json_data, $basename, $new_url, $year_month_path, $attachment_id, $updated);
-                if ($updated) {
-                    update_post_meta($row['post_id'], $meta_key, wp_slash(json_encode($json_data)));
-                }
-            }
-        }
-    }
-}
+    // Ejecutar WP-CLI
+    $output  = shell_exec($command . " 2>&1"); 
 
-function update_elementor_structure_recursive($data, $basename, $new_url, $year_month_path, $attachment_id, &$updated) {
-    foreach ($data as $key => &$value) {
-        if (is_array($value)) {
-            // Si tiene id y coincide con el attachment_id, actualiza la URL en este bloque
-            if (isset($value['id']) && $value['id'] == $attachment_id && isset($value['url'])) {
-                $value['url'] = $new_url;
-                $updated = true;
-            }
-
-            // Si encuentra coincidencia por basename (por si no hay id)
-            if (isset($value['url']) && strpos($value['url'], $year_month_path . $basename) !== false) {
-                $value['url'] = str_replace($year_month_path . $basename, $year_month_path . basename($new_url), $value['url']);
-                $updated = true;
-            }
-
-            // Recorremos niveles anidados
-            $value = update_elementor_structure_recursive($value, $basename, $new_url, $year_month_path, $attachment_id, $updated);
-        }
-    }
-    return $data;
-}
-
-function update_elementor_css_url($new_url, $file_path_relative) {
-    global $wpdb;
-
-    // Para _elementor_css y otros (slash normal)
-    $elementor_css_pattern = preg_quote($file_path_relative, '/'); // "2025/03/descarga\.png"
-
-    $meta_key = '_elementor_css';
-    $rows     = $wpdb->get_results(
-        $wpdb->prepare(
-            "SELECT post_id, meta_value 
-            FROM {$wpdb->prefix}postmeta
-            WHERE meta_key = %s 
-            AND meta_value REGEXP %s",
-            $meta_key,
-            $elementor_css_pattern
-        ),
-        ARRAY_A
-    );
-
-    if(!empty($rows)) {   
-        foreach ($rows as $row) {
-            $meta_value = maybe_unserialize($row['meta_value']);
-            if (!empty($meta_value['css']) && is_string($meta_value['css'])) {
-                // Reemplazar la URL antigua por la nueva
-                $regex   = '/[^"\']*' . $elementor_css_pattern . '/';
-                $new_css = preg_replace($regex, $new_url, $meta_value['css']);
-                if ($new_css != $meta_value['css']) {
-                    $meta_value['css'] = $new_css;
-                    update_post_meta($row['post_id'], $meta_key, $meta_value);
-                }
-            }
-        }
-    } 
+    echo "<pre>$output</pre>";
 }
 
 function regenerate_metadata($attachment_id, $fileType = 'image'){

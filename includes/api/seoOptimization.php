@@ -149,19 +149,17 @@ function optimization_files($request) {
 	    	// Regenerar metadatos
 	    	//regenerate_metadata($post->ID);
 
-	    	$elementor_data = get_elementor_data($post->ID);
-	    	if($elementor_data == true) {
-	    		update_post_meta_elementor_data($wpdb, $post->ID, $relative_path, $new_rel_path);
-	    	}
+	    	// $elementor_data = get_elementor_data($post->ID);
+	    	// if($elementor_data == true) {
+	    	// 	update_post_meta_elementor_data($wpdb, $post->ID, $relative_path, $new_rel_path);
+	    	// }
 
-
+	    	update_elementor_css_url($relative_path, $new_rel_path);
+	    	
 	    	echo "<pre>";
 	    	print_r($elementor_data);
 	    	print_r($new_url);
-	    	die(); 
-
-	    	// Actualizar los _elementor_data
-			//update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
+	    	die();  
 
 	    	//Actualizar elementor_css_url
 	    	update_elementor_css_url($new_url, $relative_path);

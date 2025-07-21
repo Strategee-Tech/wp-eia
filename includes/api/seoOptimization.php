@@ -51,8 +51,8 @@ function optimization_files($request) {
 		    ], 500);
 		} 
 
-		// $params['fast_edit'] = 0;
-		// $params['slug'] 	 = 'Sin-titulo-3'; //Sin-titulo-3
+		$params['fast_edit'] = 0;
+		$params['slug'] 	 = 'Sin-titulo-3'; //Sin-titulo-3
 	
 		global $wpdb;
     	if($params['fast_edit'] == 1) {
@@ -155,7 +155,7 @@ function optimization_files($request) {
 	    	// }
 
 	    	update_elementor_css_url($relative_path, $new_rel_path);
-	    	
+
 	    	echo "<pre>";
 	    	print_r($elementor_data);
 	    	print_r($new_url);

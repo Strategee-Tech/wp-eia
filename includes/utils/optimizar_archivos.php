@@ -147,7 +147,7 @@ function update_attachment_with_gemini_data($attachment_id) {
         ]; 
         wp_update_post($update_post_args);
         update_post_meta($attachment_id, '_wp_attachment_image_alt', $gemini_data['alt_temp']);
-        stg_set_attachment_has_alt_text( $params['post_id'], true );
+        stg_set_attachment_has_alt_text( $attachment_id, true );
         
         // Luego bórralo para no dejar basura
         delete_transient($unique_key);

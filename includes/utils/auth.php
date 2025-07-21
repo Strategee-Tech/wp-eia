@@ -366,7 +366,7 @@ function call_compress_api($type, $file, $temp_path, $resize = false) {
     $post_fields = [
         'file'   => new CURLFile($file),
         'type'   => $type,
-        'resize' => $resize ? 'true' : 'false'
+        'resize' => $resize
     ];
 
     // Función interna para enviar request
@@ -430,36 +430,4 @@ function is_json_error($data) {
         return isset($decoded['error']);
     }
     return false;
-}
-
-
-function call_compress_api2($type, $file, $temp_path, $resize = false){
-    $endpoint    = 'https://apicompress.strategee.us/comprimir.php';
-    $post_fields = [
-        'file'   => new CURLFile($file),
-        'type'   => $type,
-        'resize' => $resize
-    ];
-
-    // Inicializar cURL
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $endpoint);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 6000);
-
-    // Ejecutar
-    $response  = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($http_code !== 200 || !$response) {
-        throw new Exception("Error al comprimir archivo desde API externa. Código: $http_code");
-    }
-
-    // Guardar el archivo comprimido recibido
-    file_put_contents($temp_path, $response);
-
-    return $temp_path;
 }

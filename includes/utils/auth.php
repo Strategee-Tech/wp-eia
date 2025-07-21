@@ -354,7 +354,86 @@ function actualizar_post_postmeta($params = array(), $wpdb, $update_slug = false
     }
 }
 
-function call_compress_api($type, $file, $temp_path, $resize = false){
+function call_compress_api($type, $file, $temp_path, $resize = false) {
+    // Endpoints: primario y fallback
+    $primary_endpoint   = 'https://apicompressv2.strategee.us/comprimir.php';
+    $secondary_endpoint = 'https://apicompress.strategee.us/comprimir.php';
+
+    // Tamaño original para logs
+    $size_original = filesize($file);
+
+    // Datos POST
+    $post_fields = [
+        'file'   => new CURLFile($file),
+        'type'   => $type,
+        'resize' => $resize ? 'true' : 'false'
+    ];
+
+    // Función interna para enviar request
+    $send_request = function($endpoint) use ($post_fields) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $endpoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 600);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $response  = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return [
+            'code' => $http_code,
+            'body' => $response
+        ];
+    };
+
+    // Intento 1: endpoint primario
+    $result = $send_request($primary_endpoint);
+
+    // Si falla o devuelve error JSON, usar fallback
+    if ($result['code'] !== 200 || is_json_error($result['body'])) {
+        error_log("Fallo en endpoint primario ({$primary_endpoint}). Intentando fallback...");
+        $result = $send_request($secondary_endpoint);
+    }
+
+    // Validar resultado final
+    if ($result['code'] !== 200) {
+        throw new Exception("Error al comprimir archivo. Código HTTP: {$result['code']}");
+    }
+
+    // ¿Es JSON de error?
+    if (is_json_error($result['body'])) {
+        $error = json_decode($result['body'], true);
+        throw new Exception("Error API: " . ($error['error'] ?? 'Desconocido'));
+    }
+
+    // Guardar archivo comprimido
+    file_put_contents($temp_path, $result['body']);
+
+    // Logs de tamaño antes y después
+    $size_final = filesize($temp_path);
+    //error_log("Compresión completada. Original: {$size_original} bytes → Optimizado: {$size_final} bytes");
+
+    return $temp_path;
+}
+
+/**
+ * Verifica si la respuesta es JSON con error
+ */
+function is_json_error($data) {
+    if (empty($data)) return false;
+    json_decode($data);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        $decoded = json_decode($data, true);
+        return isset($decoded['error']);
+    }
+    return false;
+}
+
+
+function call_compress_api2($type, $file, $temp_path, $resize = false){
     $endpoint    = 'https://apicompress.strategee.us/comprimir.php';
     $post_fields = [
         'file'   => new CURLFile($file),

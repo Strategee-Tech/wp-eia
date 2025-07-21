@@ -15,7 +15,7 @@
  * @param string      $usage_status Filtra por estado de uso/alt ('all', 'scanned', 'unscanned', 'in_use', 'not_in_use', 'has_alt', 'no_alt', 'blocked', 'not_blocked').
  * @return array Un array asociativo con los registros de archivos y los datos de paginación.
  */
-function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_type = null, $search_term = null, $usage_status = 'all' ) {
+function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_type = 'all', $search_term = null, $usage_status = 'all' ) {
 
     global $wpdb;
     
@@ -28,16 +28,14 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
     ];
 
     // Sanitize and validate pagination parameters
-    $page = max( 1, intval( $page ) );
+    $page     = max( 1, intval( $page ) );
     $per_page = max( 1, intval( $per_page ) );
-    $offset = ( $page - 1 ) * $per_page;
+    $offset   = ( $page - 1 ) * $per_page;
 
     // Initialize WHERE conditions and query parameters
-    $where_conditions = [
-        "p.post_type = 'attachment'",
-    ];
-    $query_params = [];
-    $files_to_delete = []; 
+    $where_conditions = ["p.post_type = 'attachment'"];
+    $query_params     = [];
+    $files_to_delete  = []; 
 
     // Filter by MIME type
     if ( ! empty( $mime_type ) ) { // Simplificado de is_null a empty
@@ -47,7 +45,7 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
 
     // Filter by folder (relative path)
     if ( ! empty( $folder ) ) { // Simplificado de is_null a empty
-        $clean_folder = trailingslashit( sanitize_text_field( $folder ) );
+        $clean_folder   = trailingslashit( sanitize_text_field( $folder ) );
         $where_conditions[] = "pm_file.meta_value LIKE %s";
         $query_params[] = '%' . $wpdb->esc_like( $clean_folder ) . '%';
     }

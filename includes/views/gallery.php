@@ -74,36 +74,35 @@ wp_enqueue_style(
 
 <?php
 
-$page                       = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;
-$per_page                   = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 20;
+$page         = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;
+$per_page     = isset( $_GET['per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['per_page'] ) ) : 20;
 
-$mime_type                  = isset( $_GET['mime_type'] ) ? sanitize_text_field( wp_unslash( $_GET['mime_type'] ) ) : null;
-$mime_type                  = $mime_type === 'all' ? null : $mime_type;
+$mime_type    = isset( $_GET['mime_type'] ) ? sanitize_text_field( wp_unslash( $_GET['mime_type'] ) ) : null;
+$mime_type    = $mime_type === 'all' ? null : $mime_type;
 
-$usage_status               = isset( $_GET['usage_status'] ) ? sanitize_text_field( wp_unslash( $_GET['usage_status'] ) ) : null;
-$usage_status               = $usage_status === 'all' ? null : $usage_status;
+$usage_status = isset( $_GET['usage_status'] ) ? sanitize_text_field( wp_unslash( $_GET['usage_status'] ) ) : null;
+$usage_status = $usage_status === 'all' ? null : $usage_status;
 
 
-$search                     = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : null;
+$search       = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : null;
 
-$year                       = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : null;
-$month                      = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : null;
-
+$year         = isset( $_GET['year'] ) ? sanitize_text_field( wp_unslash( $_GET['year'] ) ) : null;
+$month        = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : null;
 
 
 $folder = null;
 
-if($month !== 'all' && $year !== 'all'){
-    $folder = $year . '/' . $month;
-} else if($month !== 'all' && $year === 'all'){
-    $folder = '/' . $month;
-} else if($month === 'all' && $year !== 'all'){
-    $folder = $year . '/';
+if($month !== null && $year !== null){
+    if($month !== 'all' && $year !== 'all'){
+        $folder = $year . '/' . $month;
+    } else if($month !== 'all' && $year === 'all'){
+        $folder = '/' . $month;
+    } else if($month === 'all' && $year !== 'all'){
+        $folder = $year . '/';
+    }
 }
 
-//$image_data = getPaginatedImages($page, $per_page, $status, $folder, $scan, $delete, $optimize);
 $image_data = getAttachmentPage($page, $per_page, $folder, $mime_type, $search, $usage_status);
-
 
 function getIconAlt($alt){
     $iconSize = '';

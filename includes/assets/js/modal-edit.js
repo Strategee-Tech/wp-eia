@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileLinkText = document.getElementById('file-link-text');
     const scanResourceBtn = document.getElementById('scan-resource-btn');
     const scanLoader = document.getElementById('scan-loader');
+    const fastEdit = document.getElementById('modal-fast-edit');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
     let currentPath = null;
@@ -115,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             slug: inputSlug.value,
             width: inputWidth.value,
             resize: width > 1920,
-            //fast_edit: fastEdit.checked ? 1 : 0,
+            fast_edit: fastEdit.checked ? 1 : 0,
         };
 
 
@@ -124,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Usamos la API REST de WP, no tu endpoint personalizado, para actualizar los campos estándar.
             // URL: /wp-json/wp/v2/media/{id}
             let endpoint ='';
-            console.log(updatedData);
             if(width > 0){
                 endpoint = `${window.location.origin}/wp-json/api/v1/seo-optimization`;
             } else {
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
                     resize: updatedData.resize,
-                    fast_edit: false,
+                    fast_edit: updatedData.fast_edit,
                 })
             });
 

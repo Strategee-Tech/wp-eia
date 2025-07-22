@@ -51,9 +51,6 @@ function optimization_files($request) {
 		    ], 500);
 		} 
 
-		$params['fast_edit'] = 0;
-		$params['slug'] 	 = 'Sin-titulo-3'; //Sin-titulo-3
-	
 		global $wpdb;
     	if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
@@ -75,22 +72,22 @@ function optimization_files($request) {
 	    		$params['resize'] = false;
 	    	}
 
-	  //   	try {
-		 //    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
-			//     if (!file_exists($compress_file) || filesize($compress_file) === 0) {
-			//     	return new WP_REST_Response([
-			// 	        'status'  => 'error',
-			// 	        'message' => 'El archivo comprimido no se recibió correctamente.',
-			// 	    ], 500);
-			//     } 
+	    	try {
+		    	$compress_file = call_compress_api('imagen', $original_path, $temp_img, $params['resize']);
+			    if (!file_exists($compress_file) || filesize($compress_file) === 0) {
+			    	return new WP_REST_Response([
+				        'status'  => 'error',
+				        'message' => 'El archivo comprimido no se recibió correctamente.',
+				    ], 500);
+			    } 
 
-		 //  	} catch (Exception $e) {
-			//     return new WP_REST_Response([
-			//         'status'  => 'error',
-			//         'message' => 'Falló la compresión de la imagen.',
-			//         'detalle' => $e->getMessage()
-			//     ], 500);
-			// }
+		  	} catch (Exception $e) {
+			    return new WP_REST_Response([
+			        'status'  => 'error',
+			        'message' => 'Falló la compresión de la imagen.',
+			        'detalle' => $e->getMessage()
+			    ], 500);
+			}
 
 			$params['slug'] = slug_unico(
 			    sanitize_file_name($params['slug']),
@@ -104,9 +101,9 @@ function optimization_files($request) {
 
 		 	// Eliminar el archivo original
 		 	if(file_exists($original_path)){
-	    		//unlink($original_path); // elimina el original
+	    		unlink($original_path); // elimina el original
 		 	}	
-	    	//rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
+	    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
 	    	$dimensions = 'N/A';
 	        $image_info = @getimagesize( $new_path );
@@ -133,7 +130,7 @@ function optimization_files($request) {
 			if(!empty($miniaturas)) {
 	    		foreach ($miniaturas as $key => $path) {
 	    			if(file_exists($path)) {
-	    				//unlink($path);
+	    				unlink($path);
 	    			}
 	    		}
 	    	}
@@ -141,25 +138,21 @@ function optimization_files($request) {
 	    	$params['post_name']      = $params['slug'];
 			$params['guid']           = esc_url_raw($new_url); 
 			$params['post_mime_type'] = $mimeType;
-	    	//actualizar_post_postmeta($params, $wpdb, true);
+	    	actualizar_post_postmeta($params, $wpdb, true);
 
 			// Actualizar derivados del metadata
-	    	//update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+	    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
 	    	// Regenerar metadatos
-	    	//regenerate_metadata($post->ID);
+	    	regenerate_metadata($post->ID);
  
-	    	// update_urls($relative_path, $new_rel_path, 'wp_posts', 'post_content');
-	    	// update_urls($relative_path, $new_rel_path, 'wp_learnpress_courses', 'post_content');
+	    	update_urls($relative_path, $new_rel_path, 'wp_posts', 'post_content');
+	    	update_urls($relative_path, $new_rel_path, 'wp_learnpress_courses', 'post_content');
 	    	update_urls($relative_path, $new_rel_path, 'wp_postmeta', 'meta_value');
-	    	// update_urls($relative_path, $new_rel_path, 'wp_yoast_indexable', 'open_graph_image,twitter_image,open_graph_image_meta');
-	    	// update_urls($relative_path, $new_rel_path, 'wp_yoast_seo_links', 'url');
-	    	// update_urls($relative_path, $new_rel_path, 'wp_redirection_items', 'action_data');
- 
-	    	echo "<pre>";
-	    	print_r($new_url);
-	    	die();  
-	    	
+	    	update_urls($relative_path, $new_rel_path, 'wp_yoast_indexable', 'open_graph_image,twitter_image,open_graph_image_meta');
+	    	update_urls($relative_path, $new_rel_path, 'wp_yoast_seo_links', 'url');
+	    	update_urls($relative_path, $new_rel_path, 'wp_redirection_items', 'action_data');
+  
 			wp_cache_flush();
 
 			$datos_drive = array(

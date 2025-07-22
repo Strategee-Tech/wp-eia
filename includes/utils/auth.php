@@ -89,7 +89,8 @@ function update_urls($old_path, $new_path, $table, $columns, $dry_run = false) {
 
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 
-    echo "<pre>$output</pre>";
+    // echo "<pre>$output</pre>";
+    error_log("Respuesta WP-CLI ({$output}).");
     return $output;
 }
 

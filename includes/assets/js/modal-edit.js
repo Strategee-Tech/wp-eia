@@ -34,8 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     modalSlugLabel.style.display = 'none';
 
     fastEdit.addEventListener('change', function() {
-        var valFastEdit = this.checked;
-        if(valFastEdit){
+        if(this.checked){
             inputSlug.style.display = 'none';
             modalSlugLabel.style.display = 'none';
         } else {

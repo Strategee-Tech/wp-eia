@@ -148,24 +148,18 @@ function optimization_files($request) {
 
 	    	// Regenerar metadatos
 	    	//regenerate_metadata($post->ID);
-
-	    	// $elementor_data = get_elementor_data($post->ID);
-	    	// if($elementor_data == true) {
-	    	// 	update_post_meta_elementor_data($wpdb, $post->ID, $relative_path, $new_rel_path);
-	    	// }
-
-	    	update_meta_value_urls($relative_path, $new_rel_path);
-
+ 
+	    	// update_urls($relative_path, $new_rel_path, 'wp_posts', 'post_content');
+	    	// update_urls($relative_path, $new_rel_path, 'wp_learnpress_courses', 'post_content');
+	    	update_urls($relative_path, $new_rel_path, 'wp_postmeta', 'meta_value');
+	    	// update_urls($relative_path, $new_rel_path, 'wp_yoast_indexable', 'open_graph_image,twitter_image,open_graph_image_meta');
+	    	// update_urls($relative_path, $new_rel_path, 'wp_yoast_seo_links', 'url');
+	    	// update_urls($relative_path, $new_rel_path, 'wp_redirection_items', 'action_data');
+ 
 	    	echo "<pre>";
 	    	print_r($new_url);
 	    	die();  
-
-	    	//Actualizar elementor_css_url
-	    	update_elementor_css_url($new_url, $relative_path);
-
-	    	// Actualizar post_content y Yoast
-			update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);
-
+	    	
 			wp_cache_flush();
 
 			$datos_drive = array(

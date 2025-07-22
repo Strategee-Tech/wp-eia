@@ -70,152 +70,27 @@ function slug_unico($slug_deseado, $id_actual = 0) {
     return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }
 
-function update_yoast_info($new_url, $old_url, $post_id, $old_partial) {
-    global $wpdb;
-    //actualizar post_content de una imagen dentro de una pagina
-    $wpdb->query(
-        $wpdb->prepare(
-            "UPDATE {$wpdb->posts} 
-            SET post_content = REPLACE(post_content, %s, %s) 
-            WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft', 'revision') AND post_type IN ('post', 'page', 'custom_post_type', 'lp_course', 'service', 'portfolio', 'gva_event', 'gva_header', 'footer', 'team', 'elementskit_template', 'elementskit_content','elementor_library')",
-            $old_url,
-            $new_url,
-            '%' . basename($old_url) . '%'
-        )
-    );
-
-    //actualizar post_content de una imagen dentro de un programa
-    $wpdb->query(
-        $wpdb->prepare(
-            "UPDATE {$wpdb->prefix}learnpress_courses 
-            SET post_content = REPLACE(post_content, %s, %s) 
-            WHERE post_content LIKE %s AND post_status IN ('publish', 'private', 'draft', 'revision')",
-            $old_url,
-            $new_url,
-            '%' . basename($old_url) . '%'
-        )
-    );
-
-    // Tabla de Yoast SEO
-    $tabla_yoast_seo_links = $wpdb->prefix . 'yoast_seo_links';
-    $tabla_indexable       = $wpdb->prefix . 'yoast_indexable';
-    $tabla_redirection     = $wpdb->prefix . 'redirection_items';
-
-    // Actualiza la fila cuyo match_url contenga la ruta parcial de la tabla de redirecciones
-    $wpdb->query(
-        $wpdb->prepare(
-            "UPDATE $tabla_redirection SET action_data = %s WHERE match_url LIKE %s",
-            $new_url,
-            '%' . $wpdb->esc_like($old_partial) . '%'
-        )
-    );
-    
-    // Actualizar tabla yoast_indexable (open graph y twitter image)
-    $wpdb->query(
-        $wpdb->prepare(
-            "UPDATE $tabla_indexable 
-            SET open_graph_image = %s, twitter_image = %s
-            WHERE open_graph_image = %s AND twitter_image = %s",
-            $new_url,     // nuevo open_graph_image
-            $new_url,     // nuevo twitter_image
-            $old_url,     // viejo open_graph_image
-            $old_url      // viejo twitter_image
-        )
-    );
-
-    // Actualizar tabla yoast_seo_links (url general)
-    $wpdb->query(
-        $wpdb->prepare(
-            "UPDATE $tabla_yoast_seo_links
-             SET url = %s
-             WHERE url = %s",
-            $new_url,
-            $old_url
-        )
-    );
-
-    // 1. Buscar todas las filas que contienen la URL antigua
-    $filas = $wpdb->get_results(
-        $wpdb->prepare(
-            "SELECT id, open_graph_image_meta FROM $tabla_indexable 
-             WHERE open_graph_image LIKE %s",
-            '%' . $new_url . '%'
-        ),
-        ARRAY_A
-    );
-
-    if(!empty($filas)) {
-        foreach ($filas as $fila) {
-            $json = $fila['open_graph_image_meta'];
-            $id   = $fila['id'];
-            $meta = json_decode($json, true); // Convertir a array asociativo
-            if (json_last_error() == JSON_ERROR_NONE && is_array($meta)) {
-                // 3. Reemplazar solo la clave "id" si coincide
-                if (isset($meta['url']) && $post_id == $meta['id']) {
-                    $meta['url'] = $new_url;
-
-                    // 4. Codificar de nuevo el JSON
-                    $nuevo_json = wp_json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-                    // 5. Actualizar en base de datos
-                    $wpdb->update(
-                        $tabla_indexable,
-                        ['open_graph_image_meta' => $nuevo_json],
-                        ['id' => $id]
-                    );
-                }
-            } 
-        }
-    }
-}
-
-function update_post_meta_elementor_data($wpdb, $attachment_id, $old_path, $new_path){
-
-    // UPDATE wp_postmeta
-    // SET meta_value = REPLACE(
-    //     meta_value,
-    //     '/2025\\/07\\/Sin-titulo-3.webp',
-    //     '/2025\\/07\\/Sin-titulo-3.png'
-    // )
-    // WHERE meta_key = '_elementor_data'
-    // AND meta_value LIKE '%"id":177837%';
-
-    // Definir las cadenas a reemplazar
-    $old_path = str_replace('/', '\\/', $old_path);
-    $new_path = str_replace('/', '\\/', $new_path);
-
-    $sql = $wpdb->prepare(
-        "UPDATE {$wpdb->postmeta}
-         SET meta_value = REPLACE(meta_value, %s, %s)
-         WHERE meta_key = '_elementor_data'
-         AND meta_value LIKE %s",
-        $old_path,   // valor actual que quieres reemplazar
-        $new_path,   // nuevo valor
-        '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
-    );
-
-    $rows_affected = $wpdb->query($sql);
-
-    //echo "Filas actualizadas: " . $rows_affected;
-} 
-
-function update_meta_value_urls($old_path, $new_path) {
+function update_urls($old_path, $new_path, $table, $columns, $dry_run = false) {
     $wp_cli_path = '/usr/local/bin/wp'; // Ruta a WP-CLI
-    $wp_path     = ABSPATH; // Ruta a WP 
-    $table       = 'wp_postmeta'; 
+    $wp_path     = ABSPATH; // Ruta a WP  
 
     // Escapar parámetros para seguridad
     $old_esc     = escapeshellarg($old_path);
     $new_esc     = escapeshellarg($new_path);
-    $wp_path_esc = escapeshellarg($wp_path); 
+    $wp_path_esc = escapeshellarg($wp_path);
+    $columns_esc = escapeshellarg($columns); 
 
     // Construir el comando dinámicamente
-    $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=meta_value --precise --allow-root --path=$wp_path_esc";
+
+    $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=$columns_esc --precise --allow-root --path=$wp_path_esc";
+    if ($dry_run) {
+        $command .= " --dry-run";
+    }
 
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 
-
     echo "<pre>$output</pre>";
+    return $output;
 }
 
 function regenerate_metadata($attachment_id, $fileType = 'image'){

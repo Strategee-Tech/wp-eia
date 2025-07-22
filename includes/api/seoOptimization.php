@@ -154,10 +154,9 @@ function optimization_files($request) {
 	    	// 	update_post_meta_elementor_data($wpdb, $post->ID, $relative_path, $new_rel_path);
 	    	// }
 
-	    	update_elementor_css_url($relative_path, $new_rel_path);
+	    	update_meta_value_urls($relative_path, $new_rel_path);
 
 	    	echo "<pre>";
-	    	print_r($elementor_data);
 	    	print_r($new_url);
 	    	die();  
 

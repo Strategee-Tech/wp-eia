@@ -199,20 +199,18 @@ function update_post_meta_elementor_data($wpdb, $attachment_id, $old_path, $new_
     //echo "Filas actualizadas: " . $rows_affected;
 } 
 
-function update_elementor_css_url($old_path, $new_path) {
+function update_meta_value_urls($old_path, $new_path) {
     $wp_cli_path = '/usr/local/bin/wp'; // Ruta a WP-CLI
     $wp_path     = ABSPATH; // Ruta a WP 
-    $table       = 'wp_postmeta';
-    $where       = "meta_key = '_elementor_css'";
+    $table       = 'wp_postmeta'; 
 
     // Escapar parámetros para seguridad
     $old_esc     = escapeshellarg($old_path);
     $new_esc     = escapeshellarg($new_path);
-    $wp_path_esc = escapeshellarg($wp_path);
-    $where_esc   = escapeshellarg($where);
+    $wp_path_esc = escapeshellarg($wp_path); 
 
     // Construir el comando dinámicamente
-    $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=meta_value --where=$where_esc --precise --allow-root --path=$wp_path_esc";
+    $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=meta_value --precise --allow-root --path=$wp_path_esc";
 
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 

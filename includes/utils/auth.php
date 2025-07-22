@@ -142,7 +142,11 @@ function actualizar_post_postmeta($params = array(), $wpdb, $update_slug = false
         if(isset($params['post_mime_type'])) {
             unset($params['post_mime_type']);
         }   
-    }   
+    } else {
+        $update_data['post_name'] = $params['post_name'];
+        $update_data['guid']      = $params['guid'];
+        $update_data['post_mime_type'] = $params['post_mime_type'];
+    }
 
     // Preparar actualización de campos
     if (!empty($params['title']))      $update_data['post_title']   = sanitize_text_field($params['title']);

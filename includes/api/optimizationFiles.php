@@ -49,7 +49,6 @@ function optimization($request) {
 		} 
 
 		global $wpdb;
-		$params['fast_edit'] = 1;
 		if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
 			return new WP_REST_Response([

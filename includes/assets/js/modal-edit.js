@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let resize = false;
 
-    inputSlug.style.display = 'none';
-    modalSlugLabel.style.display = 'none';
+    //inputSlug.style.display = 'none';
+    //modalSlugLabel.style.display = 'none';
 
     // fastEdit.addEventListener('change', function() {
     //     resize = this.checked;
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     slug: updatedData.slug,
                     post_id: currentAttachmentId,
                     resize: updatedData.resize,
-                    fast_edit: true,
+                    fast_edit: false,
                 })
             });
 

@@ -52,6 +52,7 @@ function optimization_files($request) {
 		} 
 
 		global $wpdb;
+		$params['fast_edit'] = 1;
     	if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
 			return new WP_REST_Response([
@@ -60,10 +61,17 @@ function optimization_files($request) {
 			], 200);
 		} else {
 
-			$miniaturas = find_all_related_thumbnails($original_path);
-	    	$ext        = '.webp';
-	    	$mimeType   = 'image/webp';
-	    	$old_url    = $post->guid;
+			// Obtener la base de uploads
+			$wp_uploads_basedir = wp_get_upload_dir()['basedir'];
+			$wp_uploads_baseurl = wp_get_upload_dir()['baseurl'];
+			$relative_path 		= str_replace($wp_uploads_basedir, '', $original_path);  // /2025/06/Banner-Web2-intento-1.webp
+
+			$miniaturas      = find_all_related_thumbnails($original_path);
+	    	$ext             = '.webp';
+	    	$mimeType        = 'image/webp';
+	    	$old_url         = $post->guid;
+	    	$old_min_urls    = get_related_urls($original_path, $miniaturas);
+			$mins_to_replace = array_merge([$relative_path], $old_min_urls);
 
 	    	// Crear archivo temporal WebP en la misma carpeta
 	    	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
@@ -101,7 +109,7 @@ function optimization_files($request) {
 
 		 	// Eliminar el archivo original
 		 	if(file_exists($original_path)){
-	    		unlink($original_path); // elimina el original
+	    		//unlink($original_path); // elimina el original
 		 	}	
 	    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
@@ -112,13 +120,9 @@ function optimization_files($request) {
 	        }
 	        $file_size_bytes_after = filesize($new_path) / 1024;
 
-			// Obtener la base de uploads
-			$wp_uploads_basedir = wp_get_upload_dir()['basedir'];
-			$wp_uploads_baseurl = wp_get_upload_dir()['baseurl'];
 
 			// Obtener la subcarpeta donde está el archivo original
-			$relative_path = str_replace($wp_uploads_basedir, '', $original_path);  // /2025/06/Banner-Web2-intento-1.webp
-			$folder        = dirname($relative_path);                               // /2025/06
+			$folder        = dirname($relative_path); // /2025/06
 			$old_rel_path  = '/wp-content/uploads'.$folder.'/'.$info['basename'];
 			$new_rel_path  = $folder.'/'.$new_filename;
 
@@ -130,26 +134,51 @@ function optimization_files($request) {
 			if(!empty($miniaturas)) {
 	    		foreach ($miniaturas as $key => $path) {
 	    			if(file_exists($path)) {
-	    				unlink($path);
+	    				//unlink($path);
 	    			}
 	    		}
 	    	}
 	    	$params['post_name']      = $params['slug'];
 			$params['guid']           = esc_url_raw($new_url); 
 			$params['post_mime_type'] = $mimeType;
-	    	actualizar_post_postmeta($params, $wpdb, true);
+	    	//actualizar_post_postmeta($params, $wpdb, true);
 
 			// Actualizar derivados del metadata
-	    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+	    	//update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
 	    	// Regenerar metadatos
-	    	regenerate_metadata($post->ID);
+	    	//regenerate_metadata($post->ID);
 
-	    	update_urls(
-			    $relative_path,
-			    $new_rel_path,
-			    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
-			); 
+	    	if (preg_match('/(-scaled|-\d+x\d+)(?=\.[^.]+$)/i', $original_path)) {
+	    		//miniatura
+		    	$news_miniaturas      = find_all_related_thumbnails($new_path);
+		    	$new_mins_urls        = get_related_urls($new_path, $news_miniaturas);
+				$news_mins_to_replace = array_merge([$new_rel_path], $new_mins_urls);
+
+				foreach ($mins_to_replace as $i => $old_miniature_rel_path) {
+    				if (isset($news_mins_to_replace[$i])) {
+				  		//update_urls(
+						//     $old_miniature_rel_path,
+						//     $news_mins_to_replace[$i],
+						//     ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
+						// ); 
+			    	}
+				}
+			} else {
+	  	  		// update_urls(
+				//     $relative_path,
+				//     $new_rel_path[$i],
+				//     ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
+				// ); 
+				echo "original";
+			}
+
+
+			echo "<pre>";
+			print_r($mins_to_replace);
+			echo "<br>";
+			print_r($news_mins_to_replace);
+			die();
   
 			wp_cache_flush();
 
@@ -188,8 +217,10 @@ function optimization_files($request) {
 }
 
 function find_all_related_thumbnails($original_path) {
-    $dir 		   = dirname($original_path);
-    $filename 	   = basename($original_path);
+	$original_path_clean = preg_replace('/(-scaled|-\d+x\d+)+(?=\.[^.]+$)/', '', $original_path);
+
+    $dir 		   = dirname($original_path_clean);
+    $filename 	   = basename($original_path_clean);
     $filename_base = preg_replace('/\.[^.]+$/', '', $filename); // sin extensión
     $related_files = [];
 
@@ -200,25 +231,41 @@ function find_all_related_thumbnails($original_path) {
         // - nombre-scaled.jpg
         // - nombre-scaled-300x200.webp
         if (
-            preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?(\.[a-z0-9]+){1,2}$/i', $file)
+            preg_match('/^' . preg_quote($filename_base, '/') . '(-(scaled|\d+x\d+)){0,2}(\.[a-z0-9]+){1,2}$/i', $file)
+            //preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?(\.[a-z0-9]+){1,2}$/i', $file)
             //preg_match('/^' . preg_quote($filename_base, '/') . '(-scaled)?(-\d+x\d+)?\.[a-z0-9]+$/i', $file)
-            && $full_path !== $original_path // no borres el original
+            && $full_path !== $original_path_clean // no borres el original
         ) {
             $related_files[] = $full_path;
         }
     }
+
+    // Ordenar por tamaño (extraer ancho y alto del nombre)
+    usort($related_files, function($a, $b) {
+        preg_match('/-(\d+)x(\d+)/', $a, $matchA);
+        preg_match('/-(\d+)x(\d+)/', $b, $matchB);
+
+        $widthA = isset($matchA[1]) ? (int)$matchA[1] : 0;
+        $widthB = isset($matchB[1]) ? (int)$matchB[1] : 0;
+        $heightA = isset($matchA[2]) ? (int)$matchA[2] : 0;
+        $heightB = isset($matchB[2]) ? (int)$matchB[2] : 0;
+
+        // Orden por ancho primero, luego alto
+        return ($widthA <=> $widthB) ?: ($heightA <=> $heightB);
+    });
+
     return $related_files;
 }
 
 function get_related_urls($original_path, $miniaturas) {
     $upload_dir   = wp_get_upload_dir();
-    $base_url     = $upload_dir['baseurl'];
+    // $base_url     = $upload_dir['baseurl'];
     $base_dir     = $upload_dir['basedir'];
     $related_urls = [];
     if(!empty($miniaturas)) {
     	foreach ($miniaturas as $path) {
         	$relative = str_replace($base_dir, '', $path);
-        	$related_urls[] = $base_url . $relative;
+        	$related_urls[] = $relative;
     	}
     }
     return $related_urls;

@@ -28,11 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
     let currentPath = null;
 
-
     let resize = false;
 
-    //inputSlug.style.display = 'none';
-    //modalSlugLabel.style.display = 'none';
+    inputSlug.style.display = 'none';
+    modalSlugLabel.style.display = 'none';
 
     fastEdit.addEventListener('change', function() {
         var valFastEdit = this.checked;

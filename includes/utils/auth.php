@@ -70,19 +70,24 @@ function slug_unico($slug_deseado, $id_actual = 0) {
     return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }
 
-function update_urls($old_path, $new_path, $table, $columns, $dry_run = false) {
+function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
     $wp_cli_path = '/usr/local/bin/wp'; // Ruta a WP-CLI
     $wp_path     = ABSPATH; // Ruta a WP  
 
     // Escapar parámetros para seguridad
     $old_esc     = escapeshellarg($old_path);
     $new_esc     = escapeshellarg($new_path);
-    $wp_path_esc = escapeshellarg($wp_path);
-    $columns_esc = escapeshellarg($columns); 
+    $wp_path_esc = escapeshellarg($wp_path); 
 
     // Construir el comando dinámicamente
+    // $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=$columns_esc --precise --allow-root --path=$wp_path_esc";
+    $command = "$wp_cli_path search-replace $old_esc $new_esc --all-tables-with-prefix --precise --allow-root --path=$wp_path_esc";
+    
+    if (!empty($columns)) {
+        $cols = escapeshellarg(implode(',', $columns));
+        $command .= " --include-columns=$cols";
+    }
 
-    $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=$columns_esc --precise --allow-root --path=$wp_path_esc";
     if ($dry_run) {
         $command .= " --dry-run";
     }

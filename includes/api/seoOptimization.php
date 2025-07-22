@@ -52,7 +52,6 @@ function optimization_files($request) {
 		} 
 
 		global $wpdb;
-		$params['fast_edit'] = 1;
     	if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
 			return new WP_REST_Response([
@@ -64,15 +63,21 @@ function optimization_files($request) {
 			// Obtener la base de uploads
 			$wp_uploads_basedir = wp_get_upload_dir()['basedir'];
 			$wp_uploads_baseurl = wp_get_upload_dir()['baseurl'];
-			$relative_path 		= str_replace($wp_uploads_basedir, '', $original_path);  // /2025/06/Banner-Web2-intento-1.webp
 
-			$miniaturas      = find_all_related_thumbnails($original_path);
+			if (preg_match('/(-scaled|-\d+x\d+)(?=\.[^.]+$)/i', $original_path)) {
+			    $original_base_path = preg_replace('/(-scaled|-\d+x\d+)+(?=\.[^.]+$)/', '', $original_path);
+				$miniaturas         = find_all_related_thumbnails($original_path);
+				$relative_path      = str_replace($wp_uploads_basedir, '', $original_base_path);
+			} else {
+				$miniaturas 	= find_all_related_thumbnails($original_path);
+				$relative_path  = str_replace($wp_uploads_basedir, '', $original_path);  // /2025/06/Banner-Web2-intento-1.webp
+			}
+			$old_min_urls    = get_related_urls($original_path, $miniaturas);
+			$mins_to_replace = array_merge([$relative_path], $old_min_urls);
 	    	$ext             = '.webp';
 	    	$mimeType        = 'image/webp';
 	    	$old_url         = $post->guid;
-	    	$old_min_urls    = get_related_urls($original_path, $miniaturas);
-			$mins_to_replace = array_merge([$relative_path], $old_min_urls);
-
+	    	
 	    	// Crear archivo temporal WebP en la misma carpeta
 	    	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
 
@@ -109,7 +114,7 @@ function optimization_files($request) {
 
 		 	// Eliminar el archivo original
 		 	if(file_exists($original_path)){
-	    		//unlink($original_path); // elimina el original
+	    		unlink($original_path); // elimina el original
 		 	}	
 	    	rename($compress_file, $new_path); // renombra el WebP para que quede con el nuevo nombre
 
@@ -134,52 +139,35 @@ function optimization_files($request) {
 			if(!empty($miniaturas)) {
 	    		foreach ($miniaturas as $key => $path) {
 	    			if(file_exists($path)) {
-	    				//unlink($path);
+	    				unlink($path);
 	    			}
 	    		}
 	    	}
 	    	$params['post_name']      = $params['slug'];
 			$params['guid']           = esc_url_raw($new_url); 
 			$params['post_mime_type'] = $mimeType;
-	    	//actualizar_post_postmeta($params, $wpdb, true);
+	    	actualizar_post_postmeta($params, $wpdb, true);
 
 			// Actualizar derivados del metadata
-	    	//update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
+	    	update_post_meta($post->ID, '_wp_attached_file', ltrim($folder, '/').'/'.$new_filename);
 
 	    	// Regenerar metadatos
-	    	//regenerate_metadata($post->ID);
+	    	regenerate_metadata($post->ID);
+ 
+	    	$news_miniaturas      = find_all_related_thumbnails($new_path);
+	    	$new_mins_urls        = get_related_urls($new_path, $news_miniaturas);
+			$news_mins_to_replace = array_merge([$new_rel_path], $new_mins_urls);
 
-	    	if (preg_match('/(-scaled|-\d+x\d+)(?=\.[^.]+$)/i', $original_path)) {
-	    		//miniatura
-		    	$news_miniaturas      = find_all_related_thumbnails($new_path);
-		    	$new_mins_urls        = get_related_urls($new_path, $news_miniaturas);
-				$news_mins_to_replace = array_merge([$new_rel_path], $new_mins_urls);
-
-				foreach ($mins_to_replace as $i => $old_miniature_rel_path) {
-    				if (isset($news_mins_to_replace[$i])) {
-				  		//update_urls(
-						//     $old_miniature_rel_path,
-						//     $news_mins_to_replace[$i],
-						//     ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
-						// ); 
-			    	}
-				}
-			} else {
-	  	  		// update_urls(
-				//     $relative_path,
-				//     $new_rel_path[$i],
-				//     ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
-				// ); 
-				echo "original";
+			foreach ($mins_to_replace as $i => $old_miniature_rel_path) {
+				if (isset($news_mins_to_replace[$i])) {
+			  		update_urls(
+					    $old_miniature_rel_path,
+					    $news_mins_to_replace[$i],
+					    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
+					); 
+		    	}
 			}
 
-
-			echo "<pre>";
-			print_r($mins_to_replace);
-			echo "<br>";
-			print_r($news_mins_to_replace);
-			die();
-  
 			wp_cache_flush();
 
 			$datos_drive = array(

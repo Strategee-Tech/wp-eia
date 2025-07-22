@@ -95,11 +95,11 @@ function optimization($request) {
 	    		regenerate_metadata($post->ID, $regenerate_metadata);
 	    	}
 
-	    	// Actualizar los _elementor_data
-			update_post_meta_elementor_data($info['basename'], $new_url, $old_url, $post->ID);
-
-			// Actualizar post_content
-			update_yoast_info($new_url, $old_url, $post->ID, $old_rel_path);
+	    	update_urls(
+			    $relative_path,
+			    $new_rel_path,
+			    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
+			); 
 
 			wp_cache_flush();
 

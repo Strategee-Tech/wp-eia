@@ -146,12 +146,12 @@ function optimization_files($request) {
 	    	// Regenerar metadatos
 	    	regenerate_metadata($post->ID);
  
-	    	update_urls($relative_path, $new_rel_path, 'wp_posts', 'post_content');
-	    	update_urls($relative_path, $new_rel_path, 'wp_learnpress_courses', 'post_content');
-	    	update_urls($relative_path, $new_rel_path, 'wp_postmeta', 'meta_value');
-	    	update_urls($relative_path, $new_rel_path, 'wp_yoast_indexable', 'open_graph_image,twitter_image,open_graph_image_meta');
-	    	update_urls($relative_path, $new_rel_path, 'wp_yoast_seo_links', 'url');
-	    	update_urls($relative_path, $new_rel_path, 'wp_redirection_items', 'action_data');
+	    	update_urls($relative_path, $new_rel_path, $wpdb->prefix.'posts', 'post_content');
+	    	update_urls($relative_path, $new_rel_path, $wpdb->prefix.'learnpress_courses', 'post_content');
+	    	update_urls($relative_path, $new_rel_path, $wpdb->prefix.'postmeta', 'meta_value');
+	    	update_urls($relative_path, $new_rel_path, $wpdb->prefix.'yoast_indexable', 'open_graph_image,twitter_image,open_graph_image_meta');
+	    	update_urls($relative_path, $new_rel_path, $wpdb->prefix.'yoast_seo_links', 'url');
+	    	update_urls($relative_path, $new_rel_path, $wpdb->prefix.'redirection_items', 'action_data');
   
 			wp_cache_flush();
 

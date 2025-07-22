@@ -38,7 +38,7 @@ wp_enqueue_script(
     'modal-edit',
     plugins_url( '../assets/js/modal-edit.js', __FILE__ ),
     array(),
-    '1.0.1',
+    '1.0.2',
     true
 );
 

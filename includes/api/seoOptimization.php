@@ -145,7 +145,7 @@ function optimization_files($request) {
 	    	// Regenerar metadatos
 	    	regenerate_metadata($post->ID);
 
-	    	update_urls_all_tables(
+	    	update_urls(
 			    $relative_path,
 			    $new_rel_path,
 			    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],

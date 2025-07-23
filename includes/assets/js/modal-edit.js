@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const scanResourceBtn = document.getElementById('scan-resource-btn');
     const scanLoader = document.getElementById('scan-loader');
     const fastEdit = document.getElementById('modal-fast-edit');
+    const labelFastEdit = document.getElementById('fast_edit_option');
+    const labelCompleteEdit = document.getElementById('complete_edit');
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
     let currentPath = null;
@@ -37,9 +39,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if(this.checked){
             inputSlug.style.display = 'none';
             modalSlugLabel.style.display = 'none';
+            labelFastEdit.style.display = 'block';
+            labelCompleteEdit.style.display = 'none';
         } else {
             inputSlug.style.display = 'block';
             modalSlugLabel.style.display = 'inline';
+            labelFastEdit.style.display = 'none';
+            labelCompleteEdit.style.display = 'block';
         }
     });
 

@@ -93,7 +93,7 @@ function stg_activate_meta_keys() {
 
 
     $meta_keys  = unserialize( STG_ATTACHMENT_META_KEYS );
-    $batch_size = 50; // Ajusta el tamaño del lote
+    $batch_size = 30; // Ajusta el tamaño del lote
     $paged = 1;
 
     do {

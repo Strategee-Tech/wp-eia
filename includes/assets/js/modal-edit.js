@@ -188,10 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
-
     iaGenerateBtn.addEventListener('click', async function() {
-
         document.getElementById('gemini-icon').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
         iaGenerateBtn.disabled = true;
@@ -209,10 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         inputSlug.value = result.slug;
         statusMessage.textContent = 'Generado exitoso!';
         statusMessage.style.color = 'green';
-
     });
-
-
 
     scanResourceBtn.addEventListener('click', async function() {
         scanLoader.style.display = 'block';
@@ -223,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const res = await scanFile(currentAttachmentId, currentPath);
         console.log(res);
-
 
         const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
         if (row) {
@@ -242,16 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
             statusMessage.textContent = '';
         }, 1000);
 
-
-        //inputAlt.value = result.alt;
-        //inputTitle.value = result.title;
-        //inputDescription.value = result.description;
-        //inputSlug.value = result.slug;
         statusMessage.textContent = 'Generado exitoso!';
         statusMessage.style.color = 'green';
     });
-
-
-
-
 });

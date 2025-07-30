@@ -18,9 +18,7 @@ function wp_gemini() {
 }
 
 function gemini($request) {
-    $params  = $request->get_json_params();
-
-    //$currentPage = $params['currentPage'];
+    $params   = $request->get_json_params();
     $imageUrl = $params['imageUrl'];
     
     try{
@@ -44,11 +42,7 @@ function gemini($request) {
     return new WP_REST_Response([
         $metadata
     ], 200);
-
-
 }
-
-
 
 function imageUrlToBase64(string $imageUrl): string {
     $imageData = file_get_contents($imageUrl);

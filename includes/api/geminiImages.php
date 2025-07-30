@@ -29,6 +29,7 @@ function gemini($request) {
     } catch (Exception $e) {
         return new WP_REST_Response([
             'status'  => 'error',
+            'error'   => $e->getMessage(),
             'message' => 'Error al generar la información con Gemini.'
         ], 500);
     }

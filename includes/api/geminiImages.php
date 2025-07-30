@@ -20,7 +20,14 @@ function wp_gemini() {
 function gemini($request) {
     $params   = $request->get_json_params();
     $imageUrl = $params['imageUrl'];
-    
+
+    if (empty($params) || !is_array($params)) {
+        return new WP_REST_Response([
+            'status'  => 'error',
+            'message' => 'No se recibió un JSON válido.'
+        ], 400);
+    }
+
     try{
         $metadata = generateImageMetadata($imageUrl);
 
@@ -30,13 +37,6 @@ function gemini($request) {
             'error'   => $e->getMessage(),
             'message' => 'Error al generar la información con Gemini.'
         ], 500);
-    }
-
-    if (empty($params) || !is_array($params)) {
-        return new WP_REST_Response([
-            'status'  => 'error',
-            'message' => 'No se recibió un JSON válido.'
-        ], 400);
     }
 
     return new WP_REST_Response([

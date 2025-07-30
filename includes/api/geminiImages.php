@@ -138,12 +138,14 @@ function generateImageMetadata(string $imageUrl): array {
     curl_close($ch);
 
     if ($response === false) {
-        throw new Exception("Error al conectar con la API de Google Gemini.");
+        error_log("Error al conectar con la API de Google Gemini.");
+        return []; // Devuelves array vacío en caso de error
     }
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        throw new Exception("Error de la API: " . ($errorData['error']['message'] ?? 'Error desconocido') . " (Código HTTP: " . $httpCode . ")");
+        error_log("Error de la API: " . ($errorData['error']['message'] ?? 'Error desconocido') . " (Código HTTP: " . $httpCode . ")");
+        return []; // Devuelves array vacío en caso de error
     }
     $data = json_decode($response, true);
     error_log('Respuesta Gemini: ' . print_r($response, true));
@@ -152,7 +154,7 @@ function generateImageMetadata(string $imageUrl): array {
     // Accede a la parte de texto dentro de 'candidates'
     $result = json_decode($data['candidates'][0]['content']['parts'][0]['text'], true);
     if($result == null) {
-        return array();
+        return [];
     }
     return $result;
 }

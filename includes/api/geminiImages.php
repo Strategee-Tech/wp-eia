@@ -18,7 +18,7 @@ function wp_gemini() {
 }
 
 function gemini($request) {
-    $params   = $request->get_json_params();
+    $params   = $request->get_json_params(); 
     $imageUrl = $params['imageUrl'];
 
     if (empty($params) || !is_array($params)) {
@@ -27,17 +27,16 @@ function gemini($request) {
             'message' => 'No se recibió un JSON válido.'
         ], 400);
     }
-
+    
     try{
         $metadata = generateImageMetadata($imageUrl);
-
     } catch (Exception $e) {
         return new WP_REST_Response([
             'status'  => 'error',
             'error'   => $e->getMessage(),
             'message' => 'Error al generar la información con Gemini.'
         ], 500);
-    }
+    } 
 
     return new WP_REST_Response([
         $metadata
@@ -118,8 +117,8 @@ function generateImageMetadata(string $imageUrl): array {
         ]
     ];
 
-    $apiKey = 'AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik'; // Reemplaza con tu clave de API de Google Gemini
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key=' . $apiKey;
+    $apiKey = 'AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik'; // Api Key de la cuenta de notificaciones@
+    $url    = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key=' . $apiKey;
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -132,14 +131,12 @@ function generateImageMetadata(string $imageUrl): array {
     curl_close($ch);
 
     if ($response === false) {
-        error_log("Error al conectar con la API de Google Gemini.");
-        return []; // Devuelves array vacío en caso de error
+        throw new Exception("Error al conectar con la API de Google Gemini.");
     }
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        error_log("Error de la API: " . ($errorData['error']['message'] ?? 'Error desconocido') . " (Código HTTP: " . $httpCode . ")");
-        return []; // Devuelves array vacío en caso de error
+        throw new Exception("Error de la API: " . ($errorData['error']['message'] ?? 'Error desconocido') . " (Código HTTP: " . $httpCode . ")");
     }
     $data = json_decode($response, true);
     error_log('Respuesta Gemini: ' . print_r($response, true));
@@ -148,7 +145,7 @@ function generateImageMetadata(string $imageUrl): array {
     // Accede a la parte de texto dentro de 'candidates'
     $result = json_decode($data['candidates'][0]['content']['parts'][0]['text'], true);
     if($result == null) {
-        return [];
+        return array();
     }
     return $result;
 }

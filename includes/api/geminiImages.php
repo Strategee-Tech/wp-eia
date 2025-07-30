@@ -124,7 +124,7 @@ function generateImageMetadata(string $imageUrl): array {
         ]
     ];
 
-    $apiKey = 'AIzaSyCgo9gEgPrCp_81LGuxLh5rpEgdWCkmeBA'; // Reemplaza con tu clave de API de Google Gemini
+    $apiKey = 'AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik'; // Reemplaza con tu clave de API de Google Gemini
     $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key=' . $apiKey;
 
     $ch = curl_init($url);

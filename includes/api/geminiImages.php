@@ -29,7 +29,7 @@ function gemini($request) {
     } catch (Exception $e) {
         return new WP_REST_Response([
             'status'  => 'error',
-            'message' => 'Error al escanear archivos.'
+            'message' => 'Error al generar la información con Gemini.'
         ], 500);
     }
 

@@ -197,15 +197,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = await geminiPost(modalUrl.value);
         document.getElementById('gemini-icon').style.display = 'block';
         document.getElementById('loader').style.display = 'none';
+        iaGenerateBtn.disabled = false;
+        cancelBtn.disabled = false;
+        saveBtn.disabled = false;
         if ('error' in result) {
-            document.getElementById('gemini-icon').style.display = 'none';
-            document.getElementById('loader').style.display = 'block';
             statusMessage.textContent = result.error;
             statusMessage.style.color = 'red';
         } else {
-            iaGenerateBtn.disabled = false;
-            cancelBtn.disabled = false;
-            saveBtn.disabled = false;
             inputAlt.value = result.alt;
             inputTitle.value = result.title;
             inputDescription.value = result.description;

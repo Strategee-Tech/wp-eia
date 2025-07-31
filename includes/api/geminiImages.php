@@ -24,6 +24,7 @@ function gemini($request) {
     if (empty($params) || !is_array($params)) {
         return new WP_REST_Response([
             'status'  => 'error',
+            'error'   => 'Error en el servicio. Intenta nuevamente.',
             'message' => 'No se recibió un JSON válido.'
         ], 400);
     }

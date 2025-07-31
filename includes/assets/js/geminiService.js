@@ -15,7 +15,7 @@ async function geminiPost(imageUrl) {
         })
     });
     const data   = await response.json();
-    const result = JSON.parse(JSON.stringify(data[0]));
+    const result = (Array.isArray(data) && data[0] !== undefined) ? JSON.parse(JSON.stringify(data[0])) : JSON.parse(JSON.stringify(data));
     return result;
 }
 

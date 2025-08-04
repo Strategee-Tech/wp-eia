@@ -138,6 +138,7 @@ function limpiar_uploads_callback() {
     echo "<input type='file' name='data_file' accept='.txt,.csv'>"; // Cambiado a .txt y .csv
     echo "<p class='submit'><input type='submit' name='submit_file' id='submit' class='button button-primary' value='Cargar y Mostrar'></p>";
     echo "</form>";
+    
 
     // Procesar el archivo si se ha subido
     if (isset($_POST['submit_file']) && isset($_FILES['data_file'])) {

@@ -23,6 +23,7 @@ function get_post_content_posts($path) {
            AND post_content REGEXP %s
          LIMIT 1",
         $pattern
+        
     );
     $result = $wpdb->get_var($sql);
     return $result ? true : false;

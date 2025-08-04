@@ -21,10 +21,23 @@ function eia_register_admin_menus() {
         $icon_url,
         1
     );
+
+    add_submenu_page(
+        'stg-optimizer',          // Slug del menú padre
+        'Configuración',          // Título de la página
+        'Configuración',          // Título del submenú
+        'manage_options',
+        'stg-configuration',
+        'render_configuration'
+    );
 }
 
 // --- Funciones de renderizado (simplemente incluyen el archivo de la vista) ---
 
 function render_main() {
     require_once WP_EIA_PLUGIN_DIR . 'includes/views/gallery.php';
+}
+
+function render_configuration() {
+    require_once WP_EIA_PLUGIN_DIR . 'includes/views/configuration.php';
 }

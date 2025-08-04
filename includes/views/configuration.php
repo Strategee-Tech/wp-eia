@@ -6,34 +6,33 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     echo '<div class="notice notice-success is-dismissible"><p>¡Configuración guardada!</p></div>';
 }
 
-
-
 $api_key = get_option('gemini_api_key', '');
 $api_url = get_option('gemini_api_url', '');
 $prompt  = get_option('gemini_prompt', '');
 ?>
 
-
-
-
 <div class="wrap">
     <h1>Configuraciones</h1>
     <form method="post">
         <?php wp_nonce_field('guardar_config_gemini'); ?>
-        <table class="form-table">
-            <tr>
-                <th><label for="gemini_api_key">API Key Gemini</label></th>
-                <td><input type="text" name="gemini_api_key" id="gemini_api_key" class="regular-text" value="<?php echo esc_attr($api_key); ?>" /></td>
-            </tr>
-            <tr>
-                <th><label for="gemini_api_url">Url Api Gemini (e.g: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent)</label></th>
-                <td><input type="text" name="gemini_api_url" id="gemini_api_url" class="regular-text" value="<?php echo esc_attr($api_url); ?>" /></td>
-            </tr>
-            <tr>
-                <th><label for="gemini_prompt">Prompt De Gemini</label></th>
-                <td><textarea name="gemini_prompt" id="gemini_prompt" class="large-text" rows="30"><?php echo esc_textarea($prompt); ?></textarea></td>
-            </tr>
-        </table>
-        <?php submit_button('Guardar configuración'); ?>
+
+        <div class="form-field">
+            <label for="gemini_api_key"><strong>API Key Gemini</strong></label><br>
+            <input type="text" name="gemini_api_key" id="gemini_api_key" class="regular-text" value="<?php echo esc_attr($api_key); ?>" />
+        </div>
+
+        <div class="form-field" style="margin-top: 20px;">
+            <label for="gemini_api_url"><strong>URL de la API de Gemini</strong><br><small>(e.g: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent)</small></label><br>
+            <input type="text" name="gemini_api_url" id="gemini_api_url" class="regular-text" value="<?php echo esc_attr($api_url); ?>" />
+        </div>
+
+        <div class="form-field" style="margin-top: 20px;">
+            <label for="gemini_prompt"><strong>Prompt de Gemini</strong></label><br>
+            <textarea name="gemini_prompt" id="gemini_prompt" class="large-text" rows="10"><?php echo esc_textarea($prompt); ?></textarea>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <?php submit_button('Guardar configuración'); ?>
+        </div>
     </form>
 </div>

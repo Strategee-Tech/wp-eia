@@ -15,7 +15,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2:${GITHUB_TOKEN}@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror --all --force
             - git push github-mirror --tags --force
@@ -27,7 +27,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2:${GITHUB_TOKEN}@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror $BITBUCKET_BRANCH --force
             - git push github-mirror --tags --force
@@ -39,7 +39,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2:${GITHUB_TOKEN}@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror $BITBUCKET_BRANCH --force
             - git push github-mirror --tags --force
@@ -51,7 +51,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2:${GITHUB_TOKEN}@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror $BITBUCKET_BRANCH --force
             - git push github-mirror --tags --force

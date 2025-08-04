@@ -19,7 +19,6 @@ function eia_register_admin_menus() {
         $icon_url,
         1
     );
-
     add_submenu_page(
         'stg-optimizer',          // Slug del menú padre
         'Configuración',          // Título de la página

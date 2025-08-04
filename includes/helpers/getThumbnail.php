@@ -18,4 +18,6 @@ function get_thumbnail($id) {
 
     // Si existe, devuelve true, si no false
     return $result ? true : false;
+
+    
 }

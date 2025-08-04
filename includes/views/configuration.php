@@ -4,9 +4,15 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     update_option('gemini_prompt', sanitize_textarea_field($_POST['gemini_prompt']));
     echo '<div class="notice notice-success is-dismissible"><p>¡Configuración guardada!</p></div>';
 }
+
+
+
 $api_key = get_option('gemini_api_key', '');
 $prompt  = get_option('gemini_prompt', '');
 ?>
+
+
+
 
 <div class="wrap">
     <h1>Configuraciones</h1>

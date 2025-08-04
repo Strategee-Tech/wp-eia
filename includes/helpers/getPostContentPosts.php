@@ -24,6 +24,8 @@ function get_post_content_posts($path) {
          LIMIT 1",
         $pattern
         
+
+        
     );
     $result = $wpdb->get_var($sql);
     return $result ? true : false;

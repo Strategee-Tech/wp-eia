@@ -38,6 +38,7 @@ function render_main() {
     require_once WP_EIA_PLUGIN_DIR . 'includes/views/gallery.php';
 }
 
+//Menu de configuraciones
 function render_configuration() {
     require_once WP_EIA_PLUGIN_DIR . 'includes/views/configuration.php';
 }

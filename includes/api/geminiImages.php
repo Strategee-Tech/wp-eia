@@ -53,16 +53,17 @@ function imageUrlToBase64(string $imageUrl): string {
 }
 
 function generateImageMetadata(string $imageUrl): array {
-    $prompt = 'Como experto en SEO y marketing digital especializado en contenido educativo para sitios web universitarios, analiza detalladamente la siguiente imagen. Genera un objeto JSON válido, sin texto adicional, que incluya las siguientes propiedades, optimizadas para el contexto de la Universidad EIA:
+    // $prompt = 'Como experto en SEO y marketing digital especializado en contenido educativo para sitios web universitarios, analiza detalladamente la siguiente imagen. Genera un objeto JSON válido, sin texto adicional, que incluya las siguientes propiedades, optimizadas para el contexto de la Universidad EIA:
 
-    - **title**: Un título corto, atractivo y descriptivo (máx. 60 caracteres) para uso en la meta-etiqueta <title> o como encabezado H1/H2, que refleje el contenido de la imagen y sea relevante para la Universidad EIA. Incorpora palabras clave relevantes para educación superior o áreas de estudio si aplica.
-    - **description**: Una meta-descripción detallada y persuasiva (máx. 160 caracteres) que resuma el contenido visual de la imagen, invite a la interacción y esté optimizada para aparecer en resultados de búsqueda, destacando aspectos únicos de la Universidad EIA o el ambiente académico.
-    - **alt**: Un texto alternativo conciso y preciso (máx. 125 caracteres) que describa la imagen para usuarios con discapacidad visual y para los motores de búsqueda. Debe ser informativo y reflejar fielmente lo que se ve, incluyendo elementos clave de la Universidad EIA si son visibles (ej. \'Estudiantes en el campus EIA\', \'Laboratorio de Mecatrónica EIA\').
-    - **legend**: Una leyenda o pie de foto más extenso y contextual (máx. 250 caracteres) que complemente el contenido principal de la página. Debe añadir valor informativo o narrativo, explicando el contexto de la imagen dentro de las actividades, eventos, logros o vida estudiantil de la Universidad EIA.
-    - **slug**: Un slug amigable para URLs (máx. 50 caracteres) derivado del título o descripción, en minúsculas, usando guiones como separadores de palabras y sin caracteres especiales. Debe ser descriptivo y SEO-friendly, relevante para el contenido de la Universidad EIA.
+    // - **title**: Un título corto, atractivo y descriptivo (máx. 60 caracteres) para uso en la meta-etiqueta <title> o como encabezado H1/H2, que refleje el contenido de la imagen y sea relevante para la Universidad EIA. Incorpora palabras clave relevantes para educación superior o áreas de estudio si aplica.
+    // - **description**: Una meta-descripción detallada y persuasiva (máx. 160 caracteres) que resuma el contenido visual de la imagen, invite a la interacción y esté optimizada para aparecer en resultados de búsqueda, destacando aspectos únicos de la Universidad EIA o el ambiente académico.
+    // - **alt**: Un texto alternativo conciso y preciso (máx. 125 caracteres) que describa la imagen para usuarios con discapacidad visual y para los motores de búsqueda. Debe ser informativo y reflejar fielmente lo que se ve, incluyendo elementos clave de la Universidad EIA si son visibles (ej. \'Estudiantes en el campus EIA\', \'Laboratorio de Mecatrónica EIA\').
+    // - **legend**: Una leyenda o pie de foto más extenso y contextual (máx. 250 caracteres) que complemente el contenido principal de la página. Debe añadir valor informativo o narrativo, explicando el contexto de la imagen dentro de las actividades, eventos, logros o vida estudiantil de la Universidad EIA.
+    // - **slug**: Un slug amigable para URLs (máx. 50 caracteres) derivado del título o descripción, en minúsculas, usando guiones como separadores de palabras y sin caracteres especiales. Debe ser descriptivo y SEO-friendly, relevante para el contenido de la Universidad EIA.
     
-    Asegúrate de que la salida sea un objeto JSON **estrictamente válido** y nada más. siempre responde en español, no describamos tan detalladamente a las personas, nos enfocamos mas en el contexto educativo';
+    // Asegúrate de que la salida sea un objeto JSON **estrictamente válido** y nada más. siempre responde en español, no describamos tan detalladamente a las personas, nos enfocamos mas en el contexto educativo';
 
+    $prompt      = get_option('gemini_prompt');
     $base64Image = imageUrlToBase64($imageUrl);
 
     $imageExtension = pathinfo($imageUrl, PATHINFO_EXTENSION);
@@ -118,7 +119,7 @@ function generateImageMetadata(string $imageUrl): array {
         ]
     ];
 
-    $apiKey = 'AIzaSyD8B9Ff8DG-sNI_iYZvN-i2IHuzcUipUik'; // Api Key de la cuenta de notificaciones@
+    $apiKey = get_option('gemini_api_key'); // Api Key de la cuenta de notificaciones@
     $url    = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key=' . $apiKey;
 
     $ch = curl_init($url);

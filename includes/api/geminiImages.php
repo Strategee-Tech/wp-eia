@@ -120,7 +120,7 @@ function generateImageMetadata(string $imageUrl): array {
     ];
 
     $apiKey = get_option('gemini_api_key'); // Api Key de la cuenta de notificaciones@
-    $url    = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key=' . $apiKey;
+    $url    = get_option('gemini_api_url').'?key='.$apiKey;
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

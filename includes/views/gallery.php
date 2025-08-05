@@ -398,8 +398,8 @@ function getIconAlt($alt){
                 <label for="modal-fast-edit">Edición rápida</label>
             </div>
             <div style="text-align: right; font-size: 12px; margin-bottom: 10px; margin-top: 2px;">
-                <small id="fast_edit_option">Si se selecciona la opción de edicion rápida, solo se actualizará el texto alternativo (alt), título y descripción de la imagen.</small>
-                <small style="display: none;" id="complete_edit">Se actualizará el texto alternativo (alt), título, descripción y se optimizará la imagen. Esto puede tardar unos minutos.</small>
+                <small id="fast_edit_option">Si se selecciona la opción de edicion rápida, solo se actualizará el texto alternativo (alt), título y descripción del archivo.</small>
+                <small style="display: none;" id="complete_edit">Se actualizará el texto alternativo (alt), título, descripción y se optimizará el archivo. Esto puede tardar unos minutos.</small>
             </div>
             
             <span id="save-status-message" style="margin-left: 10px;"></span>

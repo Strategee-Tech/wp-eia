@@ -189,17 +189,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     iaGenerateBtn.addEventListener('click', async function() {
+        statusMessage.textContent = '';
         document.getElementById('gemini-icon').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
         iaGenerateBtn.disabled = true;
-        cancelBtn.disabled = true;
-        saveBtn.disabled = true;
+        cancelBtn.disabled     = true;
+        saveBtn.disabled       = true;
         const result = await geminiPost(modalUrl.value);
         document.getElementById('gemini-icon').style.display = 'block';
         document.getElementById('loader').style.display = 'none';
         iaGenerateBtn.disabled = false;
-        cancelBtn.disabled = false;
-        saveBtn.disabled = false;
+        cancelBtn.disabled     = false;
+        saveBtn.disabled       = false;
         if ('error' in result) {
             statusMessage.textContent = result.error;
             statusMessage.style.color = 'red';

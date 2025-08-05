@@ -8,13 +8,11 @@ if ( ! function_exists( 'wp_crop_image' ) ) {
 
 // Función de validación de permisos con autenticación básica
 function basic_auth_permission_check() {
-    // Ruta absoluta al archivo credentials.php
-    $path_to_credentials = dirname(ABSPATH) . '/credentials.php';
+    $AUTH_USER_BASIC     = get_option('user_auth');
+    $AUTH_PASSWORD_BASIC = get_option('pass_auth');
 
-    // Verificación si el archivo existe antes de incluirlo
-    if (file_exists($path_to_credentials)) {
-        require_once($path_to_credentials);
-    } else {
+    // Verificación si estan establecidas las credenciales
+    if (empty($AUTH_USER_BASIC ) || empty($AUTH_PASSWORD_BASIC)) {
         return new WP_Error('server_error', 'No se encontró el archivo de credenciales.', array('status' => 500));
     }
 
@@ -33,7 +31,7 @@ function basic_auth_permission_check() {
     list($username, $password) = explode(':', $decoded_credentials);
 
     // Validar las credenciales con las que se han enviado
-    if ($username !== AUTH_USER_BASIC || $password !== AUTH_PASSWORD_BASIC) {
+    if ($username != $AUTH_USER_BASIC || $password != $AUTH_PASSWORD_BASIC) {
         return new WP_Error('forbidden', 'Invalid credentials.', array('status' => 403));
     }
 

@@ -157,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const result = await response.json();
-            console.log('Adjunto actualizado:', result);
             statusMessage.textContent = 'Guardado exitoso!';
             statusMessage.style.color = 'green';
 
@@ -243,8 +242,6 @@ document.addEventListener('DOMContentLoaded', function() {
         saveBtn.disabled = true;
 
         const res = await scanFile(currentAttachmentId, currentPath);
-        console.log(res);
-
         const row = document.querySelector(`.edit-attachment-trigger[data-attachment-id="${currentAttachmentId}"]`).closest('tr');
         if (row) {
             row.children[8].textContent = res.en_uso ? 'En Uso' : 'Sin Uso';

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (typeof filesToDelete !== 'undefined' && filesToDelete !== null) {
 
-            if(confirm('¿Estas seguro de eliminar los archivo?')){
+            if(confirm('¿Estás seguro de eliminar los archivos?')){
 
                 console.log(filesToDelete);
 

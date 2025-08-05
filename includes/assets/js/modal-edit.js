@@ -204,12 +204,33 @@ document.addEventListener('DOMContentLoaded', function() {
             statusMessage.textContent = result.error;
             statusMessage.style.color = 'red';
         } else {
-            inputAlt.value = result.alt;
-            inputTitle.value = result.title;
-            inputDescription.value = result.description;
-            inputSlug.value = result.slug;
-            statusMessage.textContent = '¡Generado exitoso!';
-            statusMessage.style.color = 'green';
+            var errorGemini = true;
+            if (result.hasOwnProperty('alt')) {
+                inputAlt.value = result.alt;
+                errorGemini = false;
+            }
+
+            if (result.hasOwnProperty('title')) {
+                inputTitle.value = result.title;
+                errorGemini = false;
+            }
+
+            if (result.hasOwnProperty('description')) {
+                inputDescription.value = result.description;
+                errorGemini = false;
+            }
+
+            if (result.hasOwnProperty('slug')) {
+                inputSlug.value = result.slug;
+                errorGemini = false;
+            }
+            if(errorGemini == true) {
+                statusMessage.textContent = 'No se ha podido generar la información, intenta nuevamente.';
+                statusMessage.style.color = 'red';
+            } else {
+                statusMessage.textContent = '¡Generado exitoso!';
+                statusMessage.style.color = 'green';
+            }
         }
     });
 

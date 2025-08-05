@@ -103,24 +103,29 @@ function optimization($request) {
 
 			wp_cache_flush();
 
-			$datos_drive = array(
-				'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
-				'sheet'    => 'Documentos!A1',
-				'values'   => [[
-					date('Y-m-d H:i:s'),
-					$new_url,
-					number_format($file_size_bytes_before),
-					number_format($file_size_bytes_after),
-					isset($params['alt_text']) ? $params['alt_text'] : '',
-					isset($params['slug']) ? $params['slug'] : '',
-					isset($params['title']) ? $params['title'] : '',
-					isset($params['description']) ? $params['description'] : '',
-					$ext,
-					'N/A',
-					(isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
-				]]
-			);
-			$respuesta = save_google_sheet($datos_drive); // Llamada directa
+			$sheet_id = get_option('google_sheet_id');
+			$sheet    = get_option('name_sheet_files');
+
+			if(!empty($sheet_id) && !empty($sheet)) {
+				$datos_drive = array(
+					'id_sheet' => $sheet_id,
+					'sheet'    => $sheet.'!A1',
+					'values'   => [[
+						date('Y-m-d H:i:s'),
+						$new_url,
+						number_format($file_size_bytes_before),
+						number_format($file_size_bytes_after),
+						isset($params['alt_text']) ? $params['alt_text'] : '',
+						isset($params['slug']) ? $params['slug'] : '',
+						isset($params['title']) ? $params['title'] : '',
+						isset($params['description']) ? $params['description'] : '',
+						$ext,
+						'N/A',
+						(isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
+					]]
+				);
+				$respuesta = save_google_sheet($datos_drive); // Llamada directa
+			}
 
 			return new WP_REST_Response([
 				'status'        => 'success',

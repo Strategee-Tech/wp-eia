@@ -6,8 +6,6 @@ if ( ! current_user_can( 'manage_options' ) ) {
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/getPaginatedImages.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/imageNames.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/filePagination.php';
-
-
 require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getAttachmentPage.php';
 
 
@@ -63,6 +61,19 @@ wp_enqueue_style(
     array(),
     '1.0.0'
 );
+
+// Obtener credenciales desde wp_options
+$credentials = array(
+    'user_auth' => get_option('user_auth'),
+    'pass_auth' => get_option('pass_auth'),
+);
+
+wp_localize_script('delete-files', 'credentials', $credentials);
+wp_localize_script('init-scan', 'credentials', $credentials);
+wp_localize_script('modal-edit', 'credentials', $credentials);
+wp_localize_script('geminiService', 'credentials', $credentials);
+wp_localize_script('scan-service', 'credentials', $credentials);
+
 ?>
 
 

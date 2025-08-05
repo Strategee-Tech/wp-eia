@@ -81,7 +81,6 @@ wp_localize_script('scan-service', 'credentials', $credentials);
     <img src="<?php echo esc_url(WP_EIA_PLUGIN_URL . 'includes/assets/images/by-stg.png'); ?>" alt="" style="width: 100px;">
 </div>
 
-
 <?php
 
 $page         = isset( $_GET['pagination'] ) ? sanitize_text_field( wp_unslash( $_GET['pagination'] ) ) : 1;

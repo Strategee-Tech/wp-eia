@@ -15,7 +15,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror --all --force
             - git push github-mirror --tags --force
@@ -27,7 +27,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror $BITBUCKET_BRANCH --force
             - git push github-mirror --tags --force
@@ -39,7 +39,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror $BITBUCKET_BRANCH --force
             - git push github-mirror --tags --force
@@ -51,7 +51,7 @@ pipelines:
           script:
             - git config user.name "Bitbucket Pipelines Bot"
             - git config user.email "pipelines-bot@bitbucket.org"
-            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
+            - GH_REPO_URL="https://oauth2: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@github.com/VictorZRC/wp-eia.git"
             - git remote add github-mirror $GH_REPO_URL
             - git push github-mirror $BITBUCKET_BRANCH --force
             - git push github-mirror --tags --force

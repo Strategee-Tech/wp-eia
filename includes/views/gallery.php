@@ -16,6 +16,7 @@ wp_enqueue_script(
     '1.0.0', // Versión
     true // Cargar en el footer
 );
+
 wp_enqueue_script(
     'scan-service', // Handle o identificador único
     plugins_url( '../assets/js/scanService.js', __FILE__ ), // URL del script dentro de tu plugin
@@ -156,12 +157,12 @@ function getIconAlt($alt){
                     <label for="year">Año</label>
                     <select name="year" id="">
                         <option value="all">Todos</option>
-                        <option <?php echo $year === '2025' ? 'selected' : ''; ?> value="2025">2025</option>
-                        <option <?php echo $year === '2024' ? 'selected' : ''; ?> value="2024">2024</option>
-                        <option <?php echo $year === '2023' ? 'selected' : ''; ?> value="2023">2023</option>
-                        <option <?php echo $year === '2022' ? 'selected' : ''; ?> value="2022">2022</option>
-                        <option <?php echo $year === '2021' ? 'selected' : ''; ?> value="2021">2021</option>
-                        <option <?php echo $year === '2020' ? 'selected' : ''; ?> value="2020">2020</option>
+                        <?php $currentYear = date('Y'); $startYear = 2020; ?>
+                        <?php for ($y = $currentYear; $y >= $startYear; $y--): ?>
+                            <option value="<?php echo $y; ?>" <?php echo $selectedYear == $y ? 'selected' : ''; ?>>
+                                <?php echo $y; ?>
+                            </option>
+                        <?php endfor; ?> 
                     </select>
                 </div>
                 <div>

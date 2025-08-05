@@ -159,7 +159,7 @@ function getIconAlt($alt){
                         <option value="all">Todos</option>
                         <?php $currentYear = date('Y'); $startYear = 2020; ?>
                         <?php for ($y = $currentYear; $y >= $startYear; $y--): ?>
-                            <option value="<?php echo $y; ?>" <?php echo $selectedYear == $y ? 'selected' : ''; ?>>
+                            <option value="<?php echo $y; ?>" <?php echo $year == $y ? 'selected' : ''; ?>>
                                 <?php echo $y; ?>
                             </option>
                         <?php endfor; ?> 

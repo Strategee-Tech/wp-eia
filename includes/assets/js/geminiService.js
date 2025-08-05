@@ -18,7 +18,6 @@ async function geminiPost(imageUrl) {
     const result = (Array.isArray(data) && data[0] !== undefined) ? JSON.parse(JSON.stringify(data[0])) : JSON.parse(JSON.stringify(data));
     return result;
 }
-
 async function imageUrlToBase64(imageUrl) {
     try {
         // 1. Obtener la imagen usando fetch
@@ -46,7 +45,6 @@ async function imageUrlToBase64(imageUrl) {
             reader.onerror = reject;
             reader.readAsDataURL(blob); // Lee el Blob como Data URL
         });
-
     } catch (error) {
         console.error("Error al convertir URL a Base64:", error);
         throw error; // Propagar el error

@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inputTitle.value = result.title;
             inputDescription.value = result.description;
             inputSlug.value = result.slug;
-            statusMessage.textContent = 'Generado exitoso!';
+            statusMessage.textContent = '¡Generado exitoso!';
             statusMessage.style.color = 'green';
         }
     });
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
             statusMessage.textContent = '';
         }, 1000);
 
-        statusMessage.textContent = 'Generado exitoso!';
+        statusMessage.textContent = '¡Archivo Escaneado!';
         statusMessage.style.color = 'green';
     });
 });

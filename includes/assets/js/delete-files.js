@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const sendBtn     = document.getElementById('delete-all-btn');
     const url         = `${window.location.origin}/wp-json/api/v1/borrar-archivos`;
-    const user        = 'it@strategee.us';
-    const password    = 'f7f720a2499f9b06c0b5cce877da9fff#.!';
+    const user        = infoCredentials.user_auth;
+    const password    = infoCredentials.pass_auth;
     const credentials = btoa(`${user}:${password}`);
 
     sendBtn.addEventListener('click', async function() {

@@ -160,8 +160,11 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
         // --- 3. Calcular los datos de paginación para retornar ---
         $current_page_count = count( $attachments_in_folder );
 
+        $tabla_cursos        = $wpdb->prefix . 'learnpress_courses';
+        $tabla_cursos_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $tabla_cursos));
+        $programas           = 0;
+
         if($scan == 1){
-            
             foreach ($attachments_in_folder as &$attachment) {
                 
                 $in_content_query = $wpdb->prepare(
@@ -173,22 +176,23 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
 					'%' . $wpdb->esc_like($attachment['file_path_relative']) . '%'
 				);
 
-                $programas = $wpdb->prepare(
-					"SELECT COUNT(*) 
-					 FROM {$wpdb->prefix}learnpress_courses
-					 WHERE post_content LIKE %s 
-					 AND post_status IN ('publish', 'private', 'draft')",
-					'%' . $wpdb->esc_like($attachment['file_path_relative']) . '%'
-				); 
-
                 if($attachment['optimization_status'] == 'optimizada'){
                     continue;
                 }
 
-                $filenamewithfolder = str_replace('/', '\/', $attachment['file_path_relative']);
-                $in_content = $wpdb->get_var($in_content_query);
-                $programas = $wpdb->get_var($programas);
+                $filenamewithfolder  = str_replace('/', '\/', $attachment['file_path_relative']);
+                $in_content          = $wpdb->get_var($in_content_query);
 
+                if ($tabla_cursos_exists == $tabla_cursos) {
+                    $programas = $wpdb->prepare(
+                        "SELECT COUNT(*) 
+                         FROM {$tabla_cursos}
+                         WHERE post_content LIKE %s 
+                         AND post_status IN ('publish', 'private', 'draft')",
+                        '%' . $wpdb->esc_like($attachment['file_path_relative']) . '%'
+                    ); 
+                    $programas = $wpdb->get_var($programas);
+                }
 
                 if($in_content == 0 && $programas == 0){
                     $attachment['optimization_status'] = 'eliminar';
@@ -204,13 +208,8 @@ function getPaginatedImages( $page = 1, $per_page = 10, $status = null, $folder 
                     $attachment['optimization_status'] = 'por optimizar';
                     update_post_meta($attachment['attachment_id'], '_stg_optimized_status', 'por optimizar');
                 }
-
-
             }
             unset($attachment);
-
-
-
         }
 
         $pagination_data = [

@@ -63,16 +63,16 @@ wp_enqueue_style(
 );
 
 // Obtener credenciales desde wp_options
-$credentials = array(
+$infoCredentials = array(
     'user_auth' => get_option('user_auth'),
     'pass_auth' => get_option('pass_auth'),
 );
 
-wp_localize_script('delete-files', 'credentials', $credentials);
-wp_localize_script('init-scan', 'credentials', $credentials);
-wp_localize_script('modal-edit', 'credentials', $credentials);
-wp_localize_script('geminiService', 'credentials', $credentials);
-wp_localize_script('scan-service', 'credentials', $credentials);
+wp_localize_script('delete-files', 'infoCredentials', $infoCredentials);
+wp_localize_script('init-scan', 'infoCredentials', $infoCredentials);
+wp_localize_script('modal-edit', 'infoCredentials', $infoCredentials);
+wp_localize_script('geminiService', 'infoCredentials', $infoCredentials);
+wp_localize_script('scan-service', 'infoCredentials', $infoCredentials);
 
 ?>
 <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; padding-left: 0;">

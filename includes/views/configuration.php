@@ -24,12 +24,12 @@ $pass_auth = get_option('pass_auth', '');
             <label for="credentials_auth"><strong>Autenticación Básica</strong></label><br>
         </div>
 
-        <div class="form-field">
+        <div class="form-field" style="margin-top: 20px;">
             <label for="user_auth"><strong>Usuario</strong></label><br>
             <input type="text" name="user_auth" id="user_auth" class="regular-text" value="<?php echo esc_attr($user_auth); ?>" />
         </div>
 
-        <div class="form-field">
+        <div class="form-field" style="margin-top: 20px;">
             <label for="pass_auth"><strong>Contraseña</strong></label><br>
             <input type="text" name="pass_auth" id="pass_auth" class="regular-text" value="<?php echo esc_attr($pass_auth); ?>" />
         </div>

@@ -37,9 +37,12 @@ function borrar_archivos($request) {
         ], 400);
     }
 
+    $sheet_id = get_option('google_sheet_id');
+    $sheet    = get_option('name_sheet_deleteds');
+
     $datos_drive = [
-        'id_sheet' => '1r1WXkd812cJPu4BUvIeGDGYXfSsnebSAgOvDSvIEQyM',
-        'sheet'    => 'Eliminado!A1',
+        'id_sheet' => $sheet_id,
+        'sheet'    => $sheet.'!A1',
         'values'   => [],
     ];
 
@@ -88,7 +91,9 @@ function borrar_archivos($request) {
 
     // Llamar una sola vez a Google Sheets al final
     if (!empty($datos_drive['values'])) {
-        save_google_sheet($datos_drive);
+        if(!empty($sheet_id) && !empty($sheet)) {
+            save_google_sheet($datos_drive);
+        }
         return new WP_REST_Response([
             'status'   => 'success', 
             'message'  => 'Archivos Eliminados.',

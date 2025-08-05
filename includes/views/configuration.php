@@ -5,9 +5,10 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     update_option('user_auth', sanitize_text_field($_POST['user_auth']));
     update_option('pass_auth', sanitize_text_field($_POST['pass_auth']));
     update_option('gemini_prompt', sanitize_textarea_field($_POST['gemini_prompt']));
-    update_option('google_sheet_id', sanitize_textarea_field($_POST['google_sheet_id']));
-    update_option('name_sheet_images', sanitize_textarea_field($_POST['name_sheet_images']));
-    update_option('name_sheet_files', sanitize_textarea_field($_POST['name_sheet_files']));
+    update_option('google_sheet_id', sanitize_text_field($_POST['google_sheet_id']));
+    update_option('name_sheet_images', sanitize_text_field($_POST['name_sheet_images']));
+    update_option('name_sheet_files', sanitize_text_field($_POST['name_sheet_files']));
+    update_option('name_sheet_deleteds', sanitize_text_field($_POST['name_sheet_deleteds']));
     echo '<div class="notice notice-success is-dismissible"><p>¡Configuración guardada!</p></div>';
 }
 $api_key   = get_option('gemini_api_key', '');
@@ -15,9 +16,10 @@ $api_url   = get_option('gemini_api_url', '');
 $prompt    = get_option('gemini_prompt', '');
 $user_auth = get_option('user_auth', '');
 $pass_auth = get_option('pass_auth', '');
-$google_sheet_id   = get_option('google_sheet_id', '');
-$name_sheet_images = get_option('name_sheet_images', '');
-$name_sheet_files  = get_option('name_sheet_files', '');
+$google_sheet_id     = get_option('google_sheet_id', '');
+$name_sheet_images   = get_option('name_sheet_images', '');
+$name_sheet_files    = get_option('name_sheet_files', '');
+$name_sheet_deleteds = get_option('name_sheet_deleteds', '');
 
 ?>
 
@@ -57,6 +59,11 @@ $name_sheet_files  = get_option('name_sheet_files', '');
         <div class="form-field" style="margin-top: 20px;">
             <label for="name_sheet_files"><strong>Nombre de la hoja para los archivos (Multimedia y documentos)</strong></label><br>
             <input type="text" name="name_sheet_files" id="name_sheet_files" class="regular-text" value="<?php echo esc_attr($name_sheet_files); ?>" />
+        </div>
+
+        <div class="form-field" style="margin-top: 20px;">
+            <label for="name_sheet_deleteds"><strong>Nombre de la hoja para los archivos eliminados</strong></label><br>
+            <input type="text" name="name_sheet_deleteds" id="name_sheet_deleteds" class="regular-text" value="<?php echo esc_attr($name_sheet_deleteds); ?>" />
         </div>
 
         <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>

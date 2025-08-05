@@ -53,11 +53,33 @@ function scan_files($request) {
         $checks = [
             function() use ($file_value) { return get_elementor_data($file_value); },
             function() use ($file_value) { return get_elementor_css($file_value); },
-            function() use ($file_value) { return get_post_content_posts($file_value); },
-            function() use ($file_value) { return get_post_content_cursos($file_value); },
-            function() use ($file_value) { return get_enclosure($file_value); },
-            function() use ($post_id) { return get_thumbnail($post_id); }
+            function() use ($file_value) { return get_post_content_posts($file_value); }
         ];
+
+        // ✅ Validamos si la tabla existe antes de añadir la función al array
+        $table_name   = $wpdb->prefix . 'learnpress_courses';
+        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
+
+
+        echo "<pre>";
+        print_r($table_name);
+        echo "<br>";
+        print_r($table_exists);
+        die(); 
+
+        if ($table_exists === $table_name) {
+            $checks[] = function() use ($file_value) {
+                return get_post_content_cursos($file_value);
+            };
+        }
+
+        // Agregamos el resto
+        $checks[] = function() use ($file_value) {
+            return get_enclosure($file_value);
+        };
+        $checks[] = function() use ($post_id) {
+            return get_thumbnail($post_id);
+        };
 
         $found = false;
         foreach ($checks as $check) {

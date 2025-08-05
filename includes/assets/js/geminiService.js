@@ -1,7 +1,7 @@
 async function geminiPost(imageUrl) {
     const url         = `${window.location.origin}/wp-json/api/v1/gemini`;
     const user        = infoCredentials.user_auth;
-    const password    = infoCredentials.pass_auth;
+    const password    = infoCredentials.pass_auth; 
     const credentials = btoa(`${user}:${password}`);
 
     const response = await fetch(url, {
@@ -18,6 +18,7 @@ async function geminiPost(imageUrl) {
     const result = (Array.isArray(data) && data[0] !== undefined) ? JSON.parse(JSON.stringify(data[0])) : JSON.parse(JSON.stringify(data));
     return result;
 }
+
 
 async function imageUrlToBase64(imageUrl) {
     try {

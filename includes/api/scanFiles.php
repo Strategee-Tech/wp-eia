@@ -60,14 +60,7 @@ function scan_files($request) {
         $table_name   = $wpdb->prefix . 'learnpress_courses';
         $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
 
-
-        echo "<pre>";
-        print_r($table_name);
-        echo "<br>";
-        print_r($table_exists);
-        die(); 
-
-        if ($table_exists === $table_name) {
+        if ($table_exists == $table_name) {
             $checks[] = function() use ($file_value) {
                 return get_post_content_cursos($file_value);
             };

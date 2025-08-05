@@ -155,11 +155,10 @@ function update_attachment_with_gemini_data($attachment_id) {
 }
 
 function getInfoGemini($url){
-    require_once(dirname(ABSPATH) . '/credentials.php');
+    $AUTH_USER_BASIC     = get_option('user_auth');
+    $AUTH_PASSWORD_BASIC = get_option('pass_auth');
 
     $endpoint = site_url('/wp-json/api/v1/gemini');
-    $username = AUTH_USER_BASIC;
-    $password = AUTH_PASSWORD_BASIC;
 
     $data = ['imageUrl' => $url];
     $ch   = curl_init($endpoint);
@@ -167,7 +166,7 @@ function getInfoGemini($url){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+    curl_setopt($ch, CURLOPT_USERPWD, "$AUTH_USER_BASIC:$AUTH_PASSWORD_BASIC");
 
     $response = curl_exec($ch);
 

@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentAttachmentId = null; // Para almacenar el ID del adjunto que se está editando
     let currentPath = null;
-
+    let useIA  = false;
     let resize = false;
 
     inputSlug.style.display = 'none';
@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
             width: inputWidth.value,
             resize: width > 1920,
             fast_edit: fastEdit.checked ? 1 : 0,
+            ia:useIA,
         };
 
 
@@ -230,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 statusMessage.textContent = '¡Generado exitoso!';
                 statusMessage.style.color = 'green';
+                useIA = true;
             }
         }
     });

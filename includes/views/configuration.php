@@ -83,13 +83,13 @@ $google_api_download_url = get_option('google_api_download_url');
         </div>
 
         <div class="form-field" style="margin-top: 20px;">
-            <label for="google_api_download_url"><strong>Url del archivo de Google Api Client</strong></label><br>
-            <input type="text" name="google_api_download_url" id="google_api_download_url" class="regular-text" value="<?php echo esc_attr($google_api_download_url); ?>" />
+            <label for="name_sheet_deleteds"><strong>Nombre de la hoja para los archivos eliminados</strong></label><br>
+            <input type="text" name="name_sheet_deleteds" id="name_sheet_deleteds" class="regular-text" value="<?php echo esc_attr($name_sheet_deleteds); ?>" />
         </div>
 
         <div class="form-field" style="margin-top: 20px;">
-            <label for="name_sheet_deleteds"><strong>Nombre de la hoja para los archivos eliminados</strong></label><br>
-            <input type="text" name="name_sheet_deleteds" id="name_sheet_deleteds" class="regular-text" value="<?php echo esc_attr($name_sheet_deleteds); ?>" />
+            <label for="google_api_download_url"><strong>Url del archivo de Google Api Client</strong></label><br>
+            <input type="text" name="google_api_download_url" id="google_api_download_url" class="regular-text" value="<?php echo esc_attr($google_api_download_url); ?>" />
         </div>
 
         <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>

@@ -167,8 +167,9 @@ function optimization_files($request) {
 					); 
 		    	}
 			}
-
+			
 			wp_cache_flush();
+			clean_post_cache($post->ID);
 
 			$sheet_id = get_option('google_sheet_id');
 			$sheet    = get_option('name_sheet_images');

@@ -186,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
             statusMessage.style.color = 'red';
         } finally {
             saveBtn.disabled = false; // Habilita el botón de nuevo
+            location.reload();
         }
     });
 

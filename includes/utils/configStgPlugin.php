@@ -124,12 +124,13 @@ function download_google_api_client($custom_url = null){
     $default_url  = 'https://github.com/googleapis/google-api-php-client/releases/download/v2.18.3/google-api-php-client-v2.18.3-PHP8.0.zip';
     $download_url = $custom_url ?: get_option('google_api_download_url', $default_url);
     $last_url     = get_option('google_api_download_last_url', '');
-    $folder_name  = 'google_api_php_client2';
-    $folder_path  = $base_dir . '/' . $folder_name;
+    $folder_name  = 'google_api_php_client';
+    $upload_dir   = wp_upload_dir();
+    $folder_path  = ABSPATH . 'wp-content/' . $folder_name;
     $zip_file     = $folder_path . '/google-api-php-client.zip';
 
-    // Si el archivo existe y la URL no cambió, no hacer nada
-    if (file_exists($folder_path) && $download_url == $last_url) {
+    // Si la URL no cambió, no hacer nada
+    if ($download_url == $last_url) {
         return;
     }
 
@@ -140,7 +141,6 @@ function download_google_api_client($custom_url = null){
         return;
     }
 
-    // Crear la carpeta
     if (!file_exists($folder_path)) {
         mkdir($folder_path, 0755, true);
     }
@@ -155,6 +155,24 @@ function download_google_api_client($custom_url = null){
     update_option('google_api_download_last_url', $download_url);
 
     shell_exec("rm \"$zip_file\"");
+
+    $folder_credenciales = $folder_path.'/credentials';
+    $url_credentials     = 'https://drive.google.com/uc?export=download&id=1K9PeAl3X67uKr_CEaBANb2hAwI8MdtMx';
+
+    if(!file_exists($folder_credenciales)) {
+        mkdir($folder_credenciales, 0755, true);
+        // Obtener contenido del archivo
+        $temp_content      = file_get_contents($url_credentials);
+
+        // Detectar el nombre original del archivo (opcionalmente puedes forzar uno si lo sabes)
+        $original_filename = 'info_credentials.json'; // O cualquier otro nombre si lo conoces
+
+        // Ruta completa donde se guardará
+        $file_path = $folder_credenciales . '/' . $original_filename;
+
+        // Guardar el archivo
+        file_put_contents($file_path, $temp_content);
+    }
 }
 
 

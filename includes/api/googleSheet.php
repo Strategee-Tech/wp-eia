@@ -19,9 +19,23 @@ function save_google_sheet($datos) {
     }
 
     try {
-        require_once dirname(ABSPATH).'/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
+        $ruta_google_api = trailingslashit(ABSPATH . 'wp-content/google_api_php_client');
+        $autoload_path   = $ruta_google_api . 'vendor/autoload.php';
+        $credenciales    = $ruta_google_api . 'credentials/info_credentials.json';
+
+        // Validaciones previas
+        if (!file_exists($autoload_path)) {
+            throw new Exception('No se encontró el archivo autoload.php en: ' . $autoload_path);
+        }
+
+        if (!file_exists($credenciales)) {
+            throw new Exception('No se encontró el archivo de credenciales en: ' . $credenciales);
+        }
+
+        require_once $autoload_path;
+
         $client = new Google_Client();
-        $client->setAuthConfig(dirname(ABSPATH).'/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/credentials/effortless-lock-294114-ae7e961598ae.json');
+        $client->setAuthConfig($credenciales);
         $client->addScope(Google_Service_Sheets::SPREADSHEETS);
 
         $service       = new Google_Service_Sheets($client);

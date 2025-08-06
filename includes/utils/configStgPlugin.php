@@ -120,22 +120,26 @@ function download_wp_cli($custom_url = null){
 }
 
 function download_google_api_client($custom_url = null){
-    $base_dir     = dirname(ABSPATH);
-    $default_url  = 'https://github.com/googleapis/google-api-php-client/releases/download/v2.18.3/google-api-php-client-v2.18.3-PHP8.0.zip';
-    $download_url = $custom_url ?: get_option('google_api_download_url', $default_url);
-    $last_url     = get_option('google_api_download_last_url', '');
-    $folder_name  = 'google_api_php_client';
-    $upload_dir   = wp_upload_dir();
-    $folder_path  = ABSPATH . 'wp-content/' . $folder_name;
-    $zip_file     = $folder_path . '/google-api-php-client.zip';
+    $base_dir      = dirname(ABSPATH);
+    $default_url   = 'https://github.com/googleapis/google-api-php-client/releases/download/v2.18.3/google-api-php-client-v2.18.3-PHP8.0.zip';
+    $download_url  = $custom_url ?: get_option('google_api_download_url', $default_url);
+    $last_url      = get_option('google_api_download_last_url', '');
+    $folder_name   = 'google_api_php_client';
+    $folder_path   = ABSPATH . 'wp-content/' . $folder_name;
+    $zip_file      = $folder_path . '/google-api-php-client.zip';
+    $autoload_path = $folder_path . '/vendor/autoload.php';
 
     // Si la URL no cambió, no hacer nada
     if ($download_url == $last_url) {
         return;
     }
 
+    if (is_dir($folder_path)) {
+        shell_exec("rm -rf " . $folder_path . '/*');
+    }
+
     // Validar si shell_exec está habilitado
-    if (!file_exists($folder_path) && !function_exists('shell_exec')) {
+    if (!file_exists($autoload_path) && !function_exists('shell_exec')) {
         echo "⚠️ shell_exec no está habilitado. Debes crear manualmente la carpeta <code>$folder_name</code> en <code>$base_dir</code> y descargar el archivo ZIP desde <a href='$default_url' target='_blank'>$default_url</a>";
         error_log("shell_exec no está habilitado.");
         return;

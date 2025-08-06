@@ -4,7 +4,7 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     update_option('gemini_api_url', sanitize_text_field($_POST['gemini_api_url']));
     update_option('user_auth', sanitize_text_field($_POST['user_auth']));
     update_option('pass_auth', sanitize_text_field($_POST['pass_auth']));
-    update_option('gemini_prompt', $_POST['gemini_prompt']);
+    update_option('gemini_prompt', trim($_POST['gemini_prompt']));
     update_option('google_sheet_id', sanitize_text_field($_POST['google_sheet_id']));
     update_option('name_sheet_images', sanitize_text_field($_POST['name_sheet_images']));
     update_option('name_sheet_files', sanitize_text_field($_POST['name_sheet_files']));
@@ -119,7 +119,7 @@ $google_api_download_url = get_option('google_api_download_url');
 
         <div class="form-field" style="margin-top: 20px;">
             <label for="gemini_prompt"><strong>Prompt de Gemini</strong></label><br>
-            <textarea name="gemini_prompt" id="gemini_prompt" class="large-text" rows="10"><?php echo $prompt; ?></textarea>
+            <textarea name="gemini_prompt" id="gemini_prompt" class="large-text" rows="10"><?php echo esc_textarea($prompt); ?></textarea>
         </div>
 
         <div style="margin-top: 20px;">

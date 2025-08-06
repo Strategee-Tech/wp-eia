@@ -80,47 +80,45 @@ function stg_set_attachment_excluded( $attachment_id, $status ) {
     return stg_set_attachment_status( $attachment_id, STG_META_IS_EXCLUDED, $status );
 }
 
-function download_wp_cli(){
-    $default_url = 'https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar';
-    $dir         = ABSPATH . 'wp-content/wp-cli'; // o cualquier ruta dentro del proyecto
-    $filename    = 'wp'; // nuevo nombre del archivo (sin .phar)
-    $filepath    = "{$dir}/{$filename}";
+function download_wp_cli($custom_url = null){
+    $default_url  = 'https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar';
+    $download_url = $custom_url ?: get_option('wp_cli_download_url', $default_url);
+    $last_url     = get_option('wp_cli_last_url', '');
+    $dir          = ABSPATH . 'wp-content/wp-cli';
+    $filename     = 'wp';
+    $filepath     = "{$dir}/{$filename}";
 
-    // Si el archivo ya existe, no hacemos nada
-    if (file_exists($filepath)) {
+    // Si el archivo existe y la URL no cambió, no hacer nada
+    if (file_exists($filepath) && $download_url == $last_url) {
         return;
     }
 
-    // Si shell_exec no está disponible y no existe el archivo, mostrar advertencia
-    if (!function_exists('shell_exec')) {
-        echo "⚠️ shell_exec no está habilitado en este servidor. Sube el siguiente archivo: <a href='$default_url' target='_blank'>$default_url</a> renombrado como 'wp' a la ruta <code>wp-content/wp-cli/</code> con permisos de ejecución 755.";
-        error_log("shell_exec no está habilitado en este servidor. Sube el siguiente archivo: [$default_url] reenombrado como 'wp' a la siguiente ruta: wp-content/wp-cli/ con permisos de ejecución 755");
+    // Si no se puede ejecutar shell_exec y el archivo no existe
+    if (!file_exists($filepath) && !function_exists('shell_exec')) {
+        echo "⚠️ <strong>shell_exec</strong> no está habilitado. Sube manualmente el archivo desde <a href='$download_url' target='_blank'>$download_url</a> renombrado como <code>wp</code> a <code>wp-content/wp-cli/</code> con permisos 755.";
+        error_log("shell_exec no habilitado. Debes subir [$download_url] manualmente como 'wp'.");
         return;
-    }   
-
-    //Validar y crear la opción si no existe
-    $download_url = get_option('wp_cli_download_url');
-
-    if ($download_url == false) {
-        add_option('wp_cli_download_url', $default_url);
-        $download_url = $default_url;
     }
 
-    // Crear la carpeta si no existe
+    // Crear carpeta si no existe
     if (!file_exists($dir)) {
         mkdir($dir, 0755, true);
     }
 
-    // Descargar wp-cli.phar
+    // Descargar
     shell_exec("curl -L {$download_url} -o {$filepath}");
 
-    // Hacerlo ejecutable (0755 = rwxr-xr-x)
+    // Hacer ejecutable
     chmod($filepath, 0755);
 
-    // Verificar que funciona
+    // Guardar la última URL usada
+    update_option('wp_cli_last_url', $download_url);
+
+    // Verificar
     $info = shell_exec("php {$filepath} --info");
     error_log("WP-CLI info: $info");
 }
+
 
 /**
  * Función que se ejecuta al activar el plugin o en plugins_loaded.

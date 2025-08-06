@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     post_id: currentAttachmentId,
                     resize: updatedData.resize,
                     fast_edit: updatedData.fast_edit,
+                    ia:updatedData.ia,
                 })
             });
 

@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fileLinkText.style.display = 'none';
             }
 
-            
+            useIA = false;
 
             inputSlug.value = currentSlug;
             inputTitle.value = currentTitle;

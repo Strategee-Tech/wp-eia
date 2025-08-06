@@ -65,6 +65,12 @@ function generateImageMetadata(string $imageUrl): array {
 
     $prompt      = get_option('gemini_prompt');
     $base64Image = imageUrlToBase64($imageUrl);
+    $apiKey      = get_option('gemini_api_key'); // Api Key de la cuenta de notificaciones@
+    $url         = get_option('gemini_api_url').'?key='.$apiKey;
+
+    if(empty($prompt) || empty($apiKey) || empty($url)) {
+        throw new Exception("Error al conectar con la API de Google Gemini. Verifica si se ha configurado la Apikey, la url de la Api o el prompt.");
+    }
 
     $imageExtension = pathinfo($imageUrl, PATHINFO_EXTENSION);
     $imageMimeType = 'image/jpeg'; // Valor por defecto
@@ -118,9 +124,6 @@ function generateImageMetadata(string $imageUrl): array {
             ]
         ]
     ];
-
-    $apiKey = get_option('gemini_api_key'); // Api Key de la cuenta de notificaciones@
-    $url    = get_option('gemini_api_url').'?key='.$apiKey;
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

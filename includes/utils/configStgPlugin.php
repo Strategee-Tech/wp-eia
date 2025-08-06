@@ -80,6 +80,21 @@ function stg_set_attachment_excluded( $attachment_id, $status ) {
     return stg_set_attachment_status( $attachment_id, STG_META_IS_EXCLUDED, $status );
 }
 
+function download_wp_cli(){
+    $dir = ABSPATH . 'wp-content/wp-cli'; // o cualquier ruta dentro del proyecto
+
+    // Crear la carpeta si no existe
+    if (!file_exists($dir)) {
+        mkdir($dir, 0755, true);
+    }
+
+    // Descargar wp-cli.phar
+    shell_exec("curl -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o {$dir}/wp-cli.phar");
+
+    // Verificar que funciona
+    $info = shell_exec("php {$dir}/wp-cli.phar --info");
+    error_log("WP-CLI info: $info");
+}
 
 /**
  * Función que se ejecuta al activar el plugin o en plugins_loaded.
@@ -143,6 +158,7 @@ add_action( 'plugins_loaded', 'stg_activate_meta_keys' );
  */
 function stg_deactivate_meta_keys() {
     delete_option( 'stg_meta_keys_added' );
+    download_wp_cli();
 }
 register_deactivation_hook( __FILE__, 'stg_deactivate_meta_keys' );
 

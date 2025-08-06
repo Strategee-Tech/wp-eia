@@ -10,11 +10,19 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     update_option('name_sheet_files', sanitize_text_field($_POST['name_sheet_files']));
     update_option('name_sheet_deleteds', sanitize_text_field($_POST['name_sheet_deleteds']));
     update_option('wp_cli_download_url', sanitize_text_field($_POST['wp_cli_download_url']));
+    update_option('google_api_download_url', sanitize_text_field($_POST['google_api_download_url']));
 
     // Ejecutar la descarga de WP-CLI si se guardó una URL válida 
     if (!empty($_POST['wp_cli_download_url']) && filter_var($_POST['wp_cli_download_url'], FILTER_VALIDATE_URL)) {
         if (function_exists('download_wp_cli')) {
             download_wp_cli(sanitize_text_field($_POST['wp_cli_download_url'])); // llamada directa
+        }
+    }
+
+    // Ejecutar la descarga de Google Api client si se guardó una URL válida 
+    if (!empty($_POST['google_api_download_url']) && filter_var($_POST['google_api_download_url'], FILTER_VALIDATE_URL)) {
+        if (function_exists('download_google_api_client')) {
+            download_google_api_client(sanitize_text_field($_POST['google_api_download_url'])); // llamada directa
         }
     }
 
@@ -30,6 +38,7 @@ $name_sheet_images   = get_option('name_sheet_images', '');
 $name_sheet_files    = get_option('name_sheet_files', '');
 $name_sheet_deleteds = get_option('name_sheet_deleteds', '');
 $wp_cli_download_url = get_option('wp_cli_download_url');
+$google_api_download_url = get_option('google_api_download_url');
 
 ?>
 
@@ -69,6 +78,11 @@ $wp_cli_download_url = get_option('wp_cli_download_url');
         <div class="form-field" style="margin-top: 20px;">
             <label for="name_sheet_files"><strong>Nombre de la hoja para los archivos (Multimedia y documentos)</strong></label><br>
             <input type="text" name="name_sheet_files" id="name_sheet_files" class="regular-text" value="<?php echo esc_attr($name_sheet_files); ?>" />
+        </div>
+
+        <div class="form-field" style="margin-top: 20px;">
+            <label for="google_api_download_url"><strong>Url del archivo de Google Api Client</strong></label><br>
+            <input type="text" name="google_api_download_url" id="google_api_download_url" class="regular-text" value="<?php echo esc_attr($google_api_download_url); ?>" />
         </div>
 
         <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>

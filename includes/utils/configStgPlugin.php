@@ -119,6 +119,44 @@ function download_wp_cli($custom_url = null){
     error_log("WP-CLI info: $info");
 }
 
+function download_google_api_client($custom_url = null){
+    $base_dir     = dirname(ABSPATH);
+    $default_url  = 'https://github.com/googleapis/google-api-php-client/releases/download/v2.18.3/google-api-php-client-v2.18.3-PHP8.0.zip';
+    $download_url = $custom_url ?: get_option('google_api_download_url', $default_url);
+    $last_url     = get_option('google_api_download_last_url', '');
+    $folder_name  = 'google_api_php_client2';
+    $folder_path  = $base_dir . '/' . $folder_name;
+    $zip_file     = $folder_path . '/google-api-php-client.zip';
+
+    // Si el archivo existe y la URL no cambió, no hacer nada
+    if (file_exists($folder_path) && $download_url == $last_url) {
+        return;
+    }
+
+    // Validar si shell_exec está habilitado
+    if (!file_exists($folder_path) && !function_exists('shell_exec')) {
+        echo "⚠️ shell_exec no está habilitado. Debes crear manualmente la carpeta <code>$folder_name</code> en <code>$base_dir</code> y descargar el archivo ZIP desde <a href='$default_url' target='_blank'>$default_url</a>";
+        error_log("shell_exec no está habilitado.");
+        return;
+    }
+
+    // Crear la carpeta
+    if (!file_exists($folder_path)) {
+        mkdir($folder_path, 0755, true);
+    }
+
+    // Descargar el ZIP con curl
+    shell_exec("curl -L \"$download_url\" -o \"$zip_file\"");
+
+    // Descomprimirlo dentro de la misma carpeta
+    shell_exec("unzip -o \"$zip_file\" -d \"$folder_path\"");
+
+    // Guardar la última URL usada
+    update_option('google_api_download_last_url', $download_url);
+
+    shell_exec("rm \"$zip_file\"");
+}
+
 
 /**
  * Función que se ejecuta al activar el plugin o en plugins_loaded.
@@ -126,6 +164,7 @@ function download_wp_cli($custom_url = null){
  */
 function stg_activate_meta_keys() {
     download_wp_cli();
+    download_google_api_client();
     // Usamos una opción para controlar que esta lógica solo se ejecute una vez.
     if ( get_option( 'stg_meta_keys_added' ) ) {
         return;

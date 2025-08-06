@@ -14,13 +14,12 @@ function wp_store_google_sheet() {
 }
 
 function save_google_sheet($datos) {
-    require_once dirname(ABSPATH).'/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
-
     if (empty($datos) || !isset($datos['values']) || !isset($datos['id_sheet']) || !isset($datos['sheet'])) {
         return new WP_REST_Response(['error' => 'Faltan datos necesarios'], 400);
     }
 
     try {
+        require_once dirname(ABSPATH).'/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/vendor/autoload.php';
         $client = new Google_Client();
         $client->setAuthConfig(dirname(ABSPATH).'/google_api_php_client/google-api-php-client-v2.18.3-PHP8.0/credentials/effortless-lock-294114-ae7e961598ae.json');
         $client->addScope(Google_Service_Sheets::SPREADSHEETS);

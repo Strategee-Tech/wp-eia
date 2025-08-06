@@ -79,7 +79,7 @@ $wp_cli_download_url = get_option('wp_cli_download_url');
             <input type="text" name="wp_cli_download_url" id="wp_cli_download_url" class="regular-text" value="<?php echo esc_attr($wp_cli_download_url); ?>" />
         </div>
 
-        <div class="form-field">
+        <div class="form-field" style="margin-top: 20px;">
             <label for="gemini_api_key"><strong>API Key Gemini</strong></label><br>
             <input type="text" name="gemini_api_key" id="gemini_api_key" class="regular-text" value="<?php echo esc_attr($api_key); ?>" />
         </div>

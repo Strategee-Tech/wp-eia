@@ -82,15 +82,17 @@ function stg_set_attachment_excluded( $attachment_id, $status ) {
 
 function download_wp_cli(){
     $default_url = 'https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar';
+    $dir         = ABSPATH . 'wp-content/wp-cli'; // o cualquier ruta dentro del proyecto
+    $filename    = 'wp'; // nuevo nombre del archivo (sin .phar)
+    $filepath    = "{$dir}/{$filename}";
 
-    if (!function_exists('shell_exec')) {
-        echo "⚠️ shell_exec no está habilitado en este servidor. Sube el siguiente archivo: <a href='$default_url' target='_blank'>$default_url</a> renombrado como 'wp' a la ruta <code>wp-content/wp-cli/</code> con permisos de ejecución 755.";
-        error_log("shell_exec no está habilitado en este servidor. Sube el siguiente archivo: [$default_url] reenombrado como 'wp' a la siguiente ruta: wp-content/wp-cli/ con permisos de ejecución 755");
-        return;
-    }   
-    $dir      = ABSPATH . 'wp-content/wp-cli'; // o cualquier ruta dentro del proyecto
-    $filename = 'wp'; // nuevo nombre del archivo (sin .phar)
-    $filepath = "{$dir}/{$filename}";
+    if (!file_exists($filepath)) {
+        if (!function_exists('shell_exec')) {
+            echo "⚠️ shell_exec no está habilitado en este servidor. Sube el siguiente archivo: <a href='$default_url' target='_blank'>$default_url</a> renombrado como 'wp' a la ruta <code>wp-content/wp-cli/</code> con permisos de ejecución 755.";
+            error_log("shell_exec no está habilitado en este servidor. Sube el siguiente archivo: [$default_url] reenombrado como 'wp' a la siguiente ruta: wp-content/wp-cli/ con permisos de ejecución 755");
+            return;
+        }   
+    }
 
     //Validar y crear la opción si no existe
     $download_url = get_option('wp_cli_download_url');

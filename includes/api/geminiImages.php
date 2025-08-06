@@ -53,7 +53,7 @@ function imageUrlToBase64(string $imageUrl): string {
 }
 
 function generateImageMetadata(string $imageUrl): array {
-    $prompt = 'Como experto en SEO y marketing digital especializado en contenido educativo para sitios web universitarios, analiza detalladamente la siguiente imagen. Genera un objeto JSON válido, sin texto adicional, que incluya las siguientes propiedades, optimizadas para el contexto de la Universidad EIA:
+    $promptV1 = 'Como experto en SEO y marketing digital especializado en contenido educativo para sitios web universitarios, analiza detalladamente la siguiente imagen. Genera un objeto JSON válido, sin texto adicional, que incluya las siguientes propiedades, optimizadas para el contexto de la Universidad EIA:
 
     - **title**: Un título corto, atractivo y descriptivo (máx. 60 caracteres) para uso en la meta-etiqueta <title> o como encabezado H1/H2, que refleje el contenido de la imagen y sea relevante para la Universidad EIA. Incorpora palabras clave relevantes para educación superior o áreas de estudio si aplica.
     - **description**: Una meta-descripción detallada y persuasiva (máx. 160 caracteres) que resuma el contenido visual de la imagen, invite a la interacción y esté optimizada para aparecer en resultados de búsqueda, destacando aspectos únicos de la Universidad EIA o el ambiente académico.

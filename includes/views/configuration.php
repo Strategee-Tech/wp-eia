@@ -88,7 +88,7 @@ $google_api_download_url = get_option('google_api_download_url');
         </div>
 
         <div class="form-field" style="margin-top: 20px;">
-            <label for="google_api_download_url"><strong>Url del archivo de Google Api Client</strong></label><br>
+            <label for="google_api_download_url"><strong>Url del archivo de Google Api Client [<a target="_blank" href="https://github.com/googleapis/google-api-php-client/releases">Ver repositorio</a>]</strong></label><br>
             <input type="text" name="google_api_download_url" id="google_api_download_url" class="regular-text" value="<?php echo esc_attr($google_api_download_url); ?>" />
         </div>
 
@@ -101,7 +101,7 @@ $google_api_download_url = get_option('google_api_download_url');
         </div>
 
         <div class="form-field" style="margin-top: 20px;">
-            <label for="wp_cli_download_url"><strong>Url WP-CLI</strong></label><br>
+            <label for="wp_cli_download_url"><strong>Url WP-CLI [<a target="_blank" href="https://wp-cli.org/es/#instalaci%C3%B3n">Ver repositorio</a>]</strong></label><br>
             <input type="text" name="wp_cli_download_url" id="wp_cli_download_url" class="regular-text" value="<?php echo esc_attr($wp_cli_download_url); ?>" />
         </div>
 

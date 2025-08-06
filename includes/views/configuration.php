@@ -9,6 +9,7 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     update_option('name_sheet_images', sanitize_text_field($_POST['name_sheet_images']));
     update_option('name_sheet_files', sanitize_text_field($_POST['name_sheet_files']));
     update_option('name_sheet_deleteds', sanitize_text_field($_POST['name_sheet_deleteds']));
+    update_option('wp_cli_download_url', sanitize_text_field($_POST['wp_cli_download_url']));
     echo '<div class="notice notice-success is-dismissible"><p>¡Configuración guardada!</p></div>';
 }
 $api_key   = get_option('gemini_api_key', '');
@@ -20,6 +21,7 @@ $google_sheet_id     = get_option('google_sheet_id', '');
 $name_sheet_images   = get_option('name_sheet_images', '');
 $name_sheet_files    = get_option('name_sheet_files', '');
 $name_sheet_deleteds = get_option('name_sheet_deleteds', '');
+$wp_cli_download_url = get_option('wp_cli_download_url');
 
 ?>
 
@@ -61,12 +63,21 @@ $name_sheet_deleteds = get_option('name_sheet_deleteds', '');
             <input type="text" name="name_sheet_files" id="name_sheet_files" class="regular-text" value="<?php echo esc_attr($name_sheet_files); ?>" />
         </div>
 
+        <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>
+
         <div class="form-field" style="margin-top: 20px;">
             <label for="name_sheet_deleteds"><strong>Nombre de la hoja para los archivos eliminados</strong></label><br>
             <input type="text" name="name_sheet_deleteds" id="name_sheet_deleteds" class="regular-text" value="<?php echo esc_attr($name_sheet_deleteds); ?>" />
         </div>
 
-        <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>
+        <div class="form-field" style="margin-top: 20px;">
+            <label><strong>Modifica la url de WP-CLI solo si ha cambiado</strong></label><br>
+        </div>
+
+        <div class="form-field" style="margin-top: 20px;">
+            <label for="wp_cli_download_url"><strong>Url WP-CLI</strong></label><br>
+            <input type="text" name="wp_cli_download_url" id="wp_cli_download_url" class="regular-text" value="<?php echo esc_attr($wp_cli_download_url); ?>" />
+        </div>
 
         <div class="form-field">
             <label for="gemini_api_key"><strong>API Key Gemini</strong></label><br>

@@ -69,8 +69,8 @@ function slug_unico($slug_deseado, $id_actual = 0) {
 }
 
 function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
-    $wp_cli_path = '/usr/local/bin/wp'; // Ruta a WP-CLI
     $wp_path     = ABSPATH; // Ruta a WP  
+    $wp_cli_path = ABSPATH . 'wp-content/wp-cli/wp'; // Ruta a WP-CLI
 
     // Escapar parámetros para seguridad
     $old_esc     = escapeshellarg($old_path);

@@ -81,7 +81,23 @@ function stg_set_attachment_excluded( $attachment_id, $status ) {
 }
 
 function download_wp_cli(){
-    $dir = ABSPATH . 'wp-content/wp-cli'; // o cualquier ruta dentro del proyecto
+    $default_url = 'https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar';
+
+    if (!function_exists('shell_exec')) {
+        error_log("shell_exec no está habilitado en este servidor. Sube el siguiente archivo: [$default_url] reenombrado como 'wp' a la siguiente ruta: wp-content/wp-cli/ con permisos de ejecución 755");
+        return;
+    }   
+    $dir      = ABSPATH . 'wp-content/wp-cli'; // o cualquier ruta dentro del proyecto
+    $filename = 'wp'; // nuevo nombre del archivo (sin .phar)
+    $filepath = "{$dir}/{$filename}";
+
+    //Validar y crear la opción si no existe
+    $download_url = get_option('wp_cli_download_url');
+
+    if ($download_url == false) {
+        add_option('wp_cli_download_url', $default_url);
+        $download_url = $default_url;
+    }
 
     // Crear la carpeta si no existe
     if (!file_exists($dir)) {
@@ -89,10 +105,13 @@ function download_wp_cli(){
     }
 
     // Descargar wp-cli.phar
-    shell_exec("curl -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o {$dir}/wp-cli.phar");
+    shell_exec("curl -L {$download_url} -o {$filepath}");
+
+    // Hacerlo ejecutable (0755 = rwxr-xr-x)
+    chmod($filepath, 0755);
 
     // Verificar que funciona
-    $info = shell_exec("php {$dir}/wp-cli.phar --info");
+    $info = shell_exec("php {$filepath} --info");
     error_log("WP-CLI info: $info");
 }
 
@@ -101,6 +120,7 @@ function download_wp_cli(){
  * Asegura que todos los adjuntos existentes tengan las meta_keys definidas.
  */
 function stg_activate_meta_keys() {
+    download_wp_cli();
     // Usamos una opción para controlar que esta lógica solo se ejecute una vez.
     if ( get_option( 'stg_meta_keys_added' ) ) {
         return;

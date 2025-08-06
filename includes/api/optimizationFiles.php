@@ -82,6 +82,7 @@ function optimization($request) {
 			$folder        = dirname($relative_path);                               // /2025/06
 			$new_url       = trailingslashit($upload_dir['baseurl']) . $relative_path;
 			$old_rel_path  = '/wp-content/uploads/'.$folder.'/'.$info['basename'];
+			$new_rel_path  = $folder.'/'.$new_filename;
 
 			$params['post_name'] = $params['slug'];
 			$params['guid']      = esc_url_raw($new_url);      
@@ -97,7 +98,7 @@ function optimization($request) {
 
 	    	update_urls(
 			    $relative_path,
-			    $new_rel_path,
+			    $new_rel_path,  
 			    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
 			); 
 

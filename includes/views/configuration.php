@@ -61,6 +61,8 @@ $google_api_download_url = get_option('google_api_download_url');
             <input type="text" name="pass_auth" id="pass_auth" class="regular-text" value="<?php echo esc_attr($pass_auth); ?>" />
         </div>
 
+        <hr>
+
         <div class="form-field" style="margin-top: 20px;">
             <label><strong>Completa la siguiente información si deseas guardar el seguimiento de optimización y eliminación de archivos en una hoja de Google Drive</strong></label><br>
         </div>
@@ -85,12 +87,14 @@ $google_api_download_url = get_option('google_api_download_url');
             <input type="text" name="google_api_download_url" id="google_api_download_url" class="regular-text" value="<?php echo esc_attr($google_api_download_url); ?>" />
         </div>
 
-        <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>
-
         <div class="form-field" style="margin-top: 20px;">
             <label for="name_sheet_deleteds"><strong>Nombre de la hoja para los archivos eliminados</strong></label><br>
             <input type="text" name="name_sheet_deleteds" id="name_sheet_deleteds" class="regular-text" value="<?php echo esc_attr($name_sheet_deleteds); ?>" />
         </div>
+
+        <p style="color: red;margin-top: 20px;">Nota: En caso de usar la funcionalidad de Google Drive, se debe compartir la hoja del drive al siguiente correo electrónico: <strong>automation-services@effortless-lock-294114.iam.gserviceaccount.com</strong> y establecer permisos de "Editor"</p>
+
+        <hr>
 
         <div class="form-field" style="margin-top: 20px;">
             <label><strong>Modifica la url de WP-CLI solo si ha cambiado</strong></label><br>
@@ -100,6 +104,8 @@ $google_api_download_url = get_option('google_api_download_url');
             <label for="wp_cli_download_url"><strong>Url WP-CLI</strong></label><br>
             <input type="text" name="wp_cli_download_url" id="wp_cli_download_url" class="regular-text" value="<?php echo esc_attr($wp_cli_download_url); ?>" />
         </div>
+
+        <hr>
 
         <div class="form-field" style="margin-top: 20px;">
             <label for="gemini_api_key"><strong>API Key Gemini</strong></label><br>

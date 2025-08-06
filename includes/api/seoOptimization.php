@@ -179,6 +179,7 @@ function optimization_files($request) {
 				    'sheet'    => $sheet.'!A1',
 				    'values'   => [[
 				        date('Y-m-d H:i:s'),
+				        $old_url,
 				        $new_url,
 				        number_format($file_size_bytes_before),
 				        number_format($file_size_bytes_after),

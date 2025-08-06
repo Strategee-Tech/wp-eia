@@ -86,13 +86,17 @@ function download_wp_cli(){
     $filename    = 'wp'; // nuevo nombre del archivo (sin .phar)
     $filepath    = "{$dir}/{$filename}";
 
-    if (!file_exists($filepath)) {
-        if (!function_exists('shell_exec')) {
-            echo "⚠️ shell_exec no está habilitado en este servidor. Sube el siguiente archivo: <a href='$default_url' target='_blank'>$default_url</a> renombrado como 'wp' a la ruta <code>wp-content/wp-cli/</code> con permisos de ejecución 755.";
-            error_log("shell_exec no está habilitado en este servidor. Sube el siguiente archivo: [$default_url] reenombrado como 'wp' a la siguiente ruta: wp-content/wp-cli/ con permisos de ejecución 755");
-            return;
-        }   
+    // Si el archivo ya existe, no hacemos nada
+    if (file_exists($filepath)) {
+        return;
     }
+
+    // Si shell_exec no está disponible y no existe el archivo, mostrar advertencia
+    if (!function_exists('shell_exec')) {
+        echo "⚠️ shell_exec no está habilitado en este servidor. Sube el siguiente archivo: <a href='$default_url' target='_blank'>$default_url</a> renombrado como 'wp' a la ruta <code>wp-content/wp-cli/</code> con permisos de ejecución 755.";
+        error_log("shell_exec no está habilitado en este servidor. Sube el siguiente archivo: [$default_url] reenombrado como 'wp' a la siguiente ruta: wp-content/wp-cli/ con permisos de ejecución 755");
+        return;
+    }   
 
     //Validar y crear la opción si no existe
     $download_url = get_option('wp_cli_download_url');
@@ -128,7 +132,6 @@ function stg_activate_meta_keys() {
     if ( get_option( 'stg_meta_keys_added' ) ) {
         return;
     }
-
 
     $meta_keys  = unserialize( STG_ATTACHMENT_META_KEYS );
     $batch_size = 30; // Ajusta el tamaño del lote
@@ -181,7 +184,6 @@ add_action( 'plugins_loaded', 'stg_activate_meta_keys' );
  */
 function stg_deactivate_meta_keys() {
     delete_option( 'stg_meta_keys_added' );
-    download_wp_cli();
 }
 register_deactivation_hook( __FILE__, 'stg_deactivate_meta_keys' );
 

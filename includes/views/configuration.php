@@ -10,6 +10,15 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
     update_option('name_sheet_files', sanitize_text_field($_POST['name_sheet_files']));
     update_option('name_sheet_deleteds', sanitize_text_field($_POST['name_sheet_deleteds']));
     update_option('wp_cli_download_url', sanitize_text_field($_POST['wp_cli_download_url']));
+
+    // Ejecutar la descarga de WP-CLI si se guardó una URL válida
+    $wp_cli_download_url = get_option('wp_cli_download_url');
+    if (!empty($wp_cli_download_url) && filter_var($wp_cli_download_url, FILTER_VALIDATE_URL)) {
+        if (function_exists('download_wp_cli')) {
+            download_wp_cli(); // llamada directa
+        }
+    }
+
     echo '<div class="notice notice-success is-dismissible"><p>¡Configuración guardada!</p></div>';
 }
 $api_key   = get_option('gemini_api_key', '');

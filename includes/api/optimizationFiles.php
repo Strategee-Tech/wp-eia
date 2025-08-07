@@ -81,7 +81,7 @@ function optimization($request) {
 			$relative_path = str_replace(trailingslashit($upload_dir['basedir']), '', $new_path);
 			$folder        = dirname($relative_path);                               // /2025/06
 			$new_url       = trailingslashit($upload_dir['baseurl']) . $relative_path;
-			$old_rel_path  = '/wp-content/uploads/'.$folder.'/'.$info['basename'];
+			$old_rel_path  = $folder.'/'.$info['basename'];
 			$new_rel_path  = $folder.'/'.$new_filename;
 
 			$params['post_name'] = $params['slug'];
@@ -89,7 +89,7 @@ function optimization($request) {
 			actualizar_post_postmeta($params, $wpdb, true);
 
 			// Actualizar derivados del metadata
-    		update_post_meta($post->ID, '_wp_attached_file', $relative_path);
+    		update_post_meta($post->ID, '_wp_attached_file', $new_rel_path);
 
     		// Regenerar metadatos
 	    	if($regenerate_metadata != false){
@@ -97,7 +97,7 @@ function optimization($request) {
 	    	}
 
 	    	update_urls(
-			    $relative_path,
+			    $old_rel_path,
 			    $new_rel_path,  
 			    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
 			); 

@@ -79,7 +79,7 @@ function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
 
     // Construir el comando dinámicamente
     // $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=$columns_esc --precise --allow-root --path=$wp_path_esc";
-    $command = "$wp_cli_path search-replace $old_esc $new_esc --all-tables-with-prefix --precise --allow-root --path=$wp_path_esc";
+    $command = "$wp_cli_path search-replace $old_esc $new_esc --all-tables-with-prefix --precise --recurse-objects --allow-root --path=$wp_path_esc";
     
     if (!empty($columns)) {
         $cols = escapeshellarg(implode(',', $columns));

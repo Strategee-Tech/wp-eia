@@ -100,6 +100,7 @@ function optimization($request) {
 			    $old_rel_path,
 			    $new_rel_path,  
 			    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
+				$post->ID
 			); 
 
 			wp_cache_flush();

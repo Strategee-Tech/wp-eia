@@ -68,7 +68,7 @@ function slug_unico($slug_deseado, $id_actual = 0) {
     return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }
 
-function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
+function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_run = false) {
     $wp_path     = ABSPATH; // Ruta a WP  
     $wp_cli_path = ABSPATH . 'wp-content/wp-cli/wp'; // Ruta a WP-CLI
 
@@ -91,13 +91,20 @@ function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
     }
 
     global $wpdb; 
-    
-    $wpdb->query("
-        UPDATE {$wpdb->postmeta}
-        SET meta_value = REPLACE(meta_value, '{$old_path}', '{$new_path}')
+
+    $old = str_replace('/', '\\/', $old_path);
+    $new = str_replace('/', '\\/', $new_path);
+
+    $sql = $wpdb->prepare(
+        "UPDATE {$wpdb->postmeta}
+        SET meta_value = REPLACE(meta_value, %s, %s)
         WHERE meta_key = '_elementor_data'
-          AND meta_value LIKE '%{$old_path}%'
-    ");
+        AND meta_value LIKE %s",
+        $old,   // valor actual que quieres reemplazar
+        $new,   // nuevo valor
+        '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
+    );
+    $rows_affected = $wpdb->query($sql); 
 
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 

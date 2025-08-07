@@ -90,27 +90,30 @@ function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_r
         $command .= " --dry-run";
     }
 
-    global $wpdb; 
+    $exist = get_elementor_data(ltrim($old_path, '/'));
+    if($exist == true) {
+        global $wpdb; 
 
-    $old = str_replace('/', '\\/', $old_path);
-    $new = str_replace('/', '\\/', $new_path);
+        $old = str_replace('/', '\\/', $old_path);
+        $new = str_replace('/', '\\/', $new_path);
 
-    $sql = $wpdb->prepare(
-        "UPDATE {$wpdb->postmeta}
-        SET meta_value = REPLACE(meta_value, %s, %s)
-        WHERE meta_key = '_elementor_data'
-        AND meta_value LIKE %s",
-        $old,   // valor actual que quieres reemplazar
-        $new,   // nuevo valor
-        '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
-    );
-    $rows_affected = $wpdb->query($sql); 
-
+        $sql = $wpdb->prepare(
+            "UPDATE {$wpdb->postmeta}
+            SET meta_value = REPLACE(meta_value, %s, %s)
+            WHERE meta_key = '_elementor_data'
+            AND meta_value LIKE %s",
+            $old,   // valor actual que quieres reemplazar
+            $new,   // nuevo valor
+            '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
+        );
+        $rows_affected = $wpdb->query($sql); 
+        error_log("Registros afectados elementor_data ({$rows_affected}).");
+    }
+     
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 
     // echo "<pre>$output</pre>";
     error_log("Respuesta WP-CLI ({$output}).");
-    error_log("Registros afectados elementor_data ({$rows_affected}).");
     return $output;
 }
 

@@ -110,6 +110,7 @@ function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_r
     $output  = shell_exec($command . " 2>&1"); 
     // echo "<pre>$output</pre>";
     error_log("Respuesta WP-CLI ({$output}).");
+    error_log("Registros afectados elementor_data ({$rows_affected}).");
     return $output;
 }
 

@@ -90,6 +90,14 @@ function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
         $command .= " --dry-run";
     }
 
+    global $wpdb; 
+    $wpdb->query("
+        UPDATE {$wpdb->postmeta}
+        SET meta_value = REPLACE(meta_value, '{$old_path}', '{$new_path}')
+        WHERE meta_key = '_elementor_data'
+          AND meta_value LIKE '%{$old_path}%'
+    ");
+
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 
     // echo "<pre>$output</pre>";

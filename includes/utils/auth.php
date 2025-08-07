@@ -100,11 +100,10 @@ function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_r
         $sql = $wpdb->prepare(
             "UPDATE {$wpdb->postmeta}
             SET meta_value = REPLACE(meta_value, %s, %s)
-            WHERE meta_key = '_elementor_data'
-            AND meta_value LIKE %s",
+            WHERE meta_key = '_elementor_data'",
             $old,   // valor actual que quieres reemplazar
             $new,   // nuevo valor
-            '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
+            // '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
         );
         $rows_affected = $wpdb->query($sql); 
         error_log("Registros afectados elementor_data ({$rows_affected}).");

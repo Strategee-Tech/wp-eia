@@ -91,6 +91,7 @@ function update_urls($old_path, $new_path, $columns = [], $dry_run = false) {
     }
 
     global $wpdb; 
+    
     $wpdb->query("
         UPDATE {$wpdb->postmeta}
         SET meta_value = REPLACE(meta_value, '{$old_path}', '{$new_path}')

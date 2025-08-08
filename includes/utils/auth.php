@@ -71,7 +71,7 @@ function slug_unico($slug_deseado, $id_actual = 0) {
 function update_urls($old_path, $new_path, $attachment_id) {
     $wp_path         = ABSPATH; // Ruta a WP  
     $wp_cli_path     = ABSPATH . 'wp-content/wp-cli/wp'; // Ruta a WP-CLI
-    $command_wp_post = "$wp_cli_path search-replace $old_path $new_path wp_posts --include-columns=post_content --precise --dry-run --allow-root --path=$wp_path";
+    $command_wp_post = "$wp_cli_path search-replace $old_path $new_path wp_posts --include-columns=post_content --precise --allow-root --path=$wp_path";
     $output_wp_post  = shell_exec($command_wp_post . " 2>&1"); 
     error_log("Respuesta wp_posts WP-CLI ({$output_wp_post}).");
 

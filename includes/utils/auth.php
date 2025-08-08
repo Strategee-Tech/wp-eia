@@ -85,18 +85,20 @@ function update_urls($old_path, $new_path, $attachment_id) {
     $output       = shell_exec($command . " 2>&1");  
     error_log("Respuesta WP-CLI ({$output}).");
 
-    $exist = get_elementor_data(ltrim($old_path, '/'));
+    $old_serialized = encode_to_json_unicode($old_path);
+    $cleaned        = str_replace('\/', '/', $raw);
+    $cleaned        = ltrim($cleaned, '/');
+ 
+    $exist = get_elementor_data($cleaned);
     if($exist == true) {
         global $wpdb; 
-
-        $old = str_replace('/', '\\/', $old_path);
-        $new = str_replace('/', '\\/', $new_path);
-
+ 
+        $new = str_replace('/', '\\/', $new_path); 
         $sql = $wpdb->prepare(
             "UPDATE {$wpdb->postmeta}
             SET meta_value = REPLACE(meta_value, %s, %s)
             WHERE meta_key = '_elementor_data'",
-            $old,   // valor actual que quieres reemplazar
+            $old_serialized,   // valor actual que quieres reemplazar
             $new,   // nuevo valor
             // '%"id":' . $attachment_id . '%' // condición para asegurar que coincide con ese ID
         );
@@ -104,6 +106,15 @@ function update_urls($old_path, $new_path, $attachment_id) {
         error_log("Registros afectados elementor_data ({$rows_affected}).");
     } 
 }
+
+// 1. Convierte el carácter Unicode real a su representación \uXXXX
+function encode_to_json_unicode($string) {
+    // json_encode convierte automáticamente los caracteres especiales en \uXXXX
+    $encoded = json_encode($string);
+    // json_encode encierra el string en comillas, las quitamos
+    return substr($encoded, 1, -1);
+}
+
 
 function regenerate_metadata($attachment_id, $fileType = 'image'){
     try {

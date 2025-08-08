@@ -108,14 +108,6 @@ function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_r
         $rows_affected = $wpdb->query($sql); 
         error_log("Registros afectados elementor_data ({$rows_affected}).");
     }
-
-    $command = <<<CMD
-    wp db query "UPDATE wp_posts SET post_content = REPLACE(post_content, '$old_url', '$new_url') WHERE post_content LIKE '%$old_url%';"
-    CMD;
-
-    $output = shell_exec($command);
-    error_log("Respuesta wp_posts WP-CLI ({$output}).");
-     
     // Ejecutar WP-CLI
     $output  = shell_exec($command . " 2>&1"); 
     // echo "<pre>$output</pre>";

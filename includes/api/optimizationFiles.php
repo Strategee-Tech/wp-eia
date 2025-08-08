@@ -73,7 +73,7 @@ function optimization($request) {
 			$temp_path 		       = $dir . '/' . uniqid('-compressed', true) . '.' . $ext;
 
 			//compresion
-			$regenerate_metadata   = init_compress_file($ext, $ext_multimedia, $ext_documentos, $original_path, $temp_path, $new_path);
+			//$regenerate_metadata   = init_compress_file($ext, $ext_multimedia, $ext_documentos, $original_path, $temp_path, $new_path);
 			$file_size_bytes_after = filesize($new_path);
 
 			// Obtener ruta relativa y URL pública
@@ -86,14 +86,14 @@ function optimization($request) {
 
 			$params['post_name'] = $params['slug'];
 			$params['guid']      = esc_url_raw($new_url);      
-			actualizar_post_postmeta($params, $wpdb, true);
+			//actualizar_post_postmeta($params, $wpdb, true);
 
 			// Actualizar derivados del metadata
-    		update_post_meta($post->ID, '_wp_attached_file', $new_rel_path);
+    		//update_post_meta($post->ID, '_wp_attached_file', $new_rel_path);
 
     		// Regenerar metadatos
 	    	if($regenerate_metadata != false){
-	    		regenerate_metadata($post->ID, $regenerate_metadata);
+	    		//regenerate_metadata($post->ID, $regenerate_metadata);
 	    	}
 
 	    	update_urls(

@@ -163,7 +163,6 @@ function optimization_files($request) {
 			  		update_urls(
 					    $old_miniature_rel_path,
 					    $news_mins_to_replace[$i],
-					    ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'],
 					    $post->ID
 					); 
 		    	}

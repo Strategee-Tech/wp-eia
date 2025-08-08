@@ -68,7 +68,7 @@ function slug_unico($slug_deseado, $id_actual = 0) {
     return wp_unique_post_slug($slug_deseado, $id_actual, 'inherit', 'attachment', 0);
 }
 
-function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_run = false) {
+function update_urls($old_path, $new_path, $attachment_id) {
     $wp_path     = ABSPATH; // Ruta a WP  
     $wp_cli_path = ABSPATH . 'wp-content/wp-cli/wp'; // Ruta a WP-CLI
 
@@ -77,18 +77,19 @@ function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_r
     $new_esc     = escapeshellarg($new_path);
     $wp_path_esc = escapeshellarg($wp_path); 
 
-    // Construir el comando dinámicamente
-    // $command = "$wp_cli_path search-replace $old_esc $new_esc $table --include-columns=$columns_esc --precise --allow-root --path=$wp_path_esc";
-    $command = "$wp_cli_path search-replace $old_esc $new_esc --all-tables-with-prefix --precise --recurse-objects --allow-root --path=$wp_path_esc";
-    
-    if (!empty($columns)) {
-        $cols = escapeshellarg(implode(',', $columns));
-        $command .= " --include-columns=$cols";
-    }
+    $command_wp_post = "$wp_cli_path search-replace $old_esc $new_esc wp_posts --include-columns=post_content --precise --allow-root --path=$wp_path_esc";
+    $output_wp_post  = shell_exec($command_wp_post . " 2>&1"); 
+    error_log("Respuesta wp_posts WP-CLI ({$output_wp_post}).");
 
-    if ($dry_run) {
-        $command .= " --dry-run";
-    }
+    $command_wp_postmeta = "$wp_cli_path search-replace $old_esc $new_esc wp_postmeta --include-columns=meta_value --precise --recurse-objects --allow-root --path=$wp_path_esc";
+    $output_wp_postmeta  = shell_exec($command_wp_postmeta . " 2>&1"); 
+    error_log("Respuesta wp_postmeta WP-CLI ({$output_wp_postmeta}).");
+
+    $columns      = ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'];
+    $columns_list = implode(',', $columns);
+    $command      = "$wp_cli_path search-replace $old_esc $new_esc --include-columns=$columns_list --all-tables-with-prefix --precise --recurse-objects --allow-root --path=$wp_path_esc";
+    $output       = shell_exec($command . " 2>&1");  
+    error_log("Respuesta WP-CLI ({$output}).");
 
     $exist = get_elementor_data(ltrim($old_path, '/'));
     if($exist == true) {
@@ -107,12 +108,7 @@ function update_urls($old_path, $new_path, $columns = [], $attachment_id, $dry_r
         );
         $rows_affected = $wpdb->query($sql); 
         error_log("Registros afectados elementor_data ({$rows_affected}).");
-    }
-    // Ejecutar WP-CLI
-    $output  = shell_exec($command . " 2>&1"); 
-    // echo "<pre>$output</pre>";
-    error_log("Respuesta WP-CLI ({$output}).");
-    return $output;
+    } 
 }
 
 function regenerate_metadata($attachment_id, $fileType = 'image'){

@@ -86,14 +86,15 @@ function update_urls($old_path, $new_path, $attachment_id) {
     // error_log("Respuesta WP-CLI ({$output}).");
 
     $old_serialized = encode_to_json_unicode($old_path);
-    $cleaned        = str_replace('\/', '/', $raw);
+    $cleaned        = str_replace('\/', '/', $old_serialized);
     $cleaned        = ltrim($cleaned, '/');
  
     $exist = get_elementor_data($cleaned);
 
 
     echo "<pre>";
-    print_r($exist);
+    var_dump($exist);
+    print_r($cleaned);
     die(); 
 
     if($exist == true) {

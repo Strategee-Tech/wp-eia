@@ -72,24 +72,30 @@ function update_urls($old_path, $new_path, $attachment_id) {
     $wp_path         = ABSPATH; // Ruta a WP  
     $wp_cli_path     = ABSPATH . 'wp-content/wp-cli/wp'; // Ruta a WP-CLI
     $command_wp_post = "$wp_cli_path search-replace $old_path $new_path wp_posts --include-columns=post_content --precise --allow-root --path=$wp_path";
-    $output_wp_post  = shell_exec($command_wp_post . " 2>&1"); 
-    error_log("Respuesta wp_posts WP-CLI ({$output_wp_post}).");
+    // $output_wp_post  = shell_exec($command_wp_post . " 2>&1"); 
+    // error_log("Respuesta wp_posts WP-CLI ({$output_wp_post}).");
 
     $command_wp_postmeta = "$wp_cli_path search-replace $old_path $new_path wp_postmeta --include-columns=meta_value --precise --recurse-objects --allow-root --path=$wp_path";
-    $output_wp_postmeta  = shell_exec($command_wp_postmeta . " 2>&1"); 
-    error_log("Respuesta wp_postmeta WP-CLI ({$output_wp_postmeta}).");
+    // $output_wp_postmeta  = shell_exec($command_wp_postmeta . " 2>&1"); 
+    // error_log("Respuesta wp_postmeta WP-CLI ({$output_wp_postmeta}).");
 
     $columns      = ['post_content', 'meta_value', 'open_graph_image', 'twitter_image', 'open_graph_image_meta', 'url', 'action_data'];
     $columns_list = implode(',', $columns);
     $command      = "$wp_cli_path search-replace $old_path $new_path --include-columns=$columns_list --all-tables-with-prefix --precise --recurse-objects --allow-root --path=$wp_path";
-    $output       = shell_exec($command . " 2>&1");  
-    error_log("Respuesta WP-CLI ({$output}).");
+    // $output       = shell_exec($command . " 2>&1");  
+    // error_log("Respuesta WP-CLI ({$output}).");
 
     $old_serialized = encode_to_json_unicode($old_path);
     $cleaned        = str_replace('\/', '/', $raw);
     $cleaned        = ltrim($cleaned, '/');
  
     $exist = get_elementor_data($cleaned);
+
+
+    echo "<pre>";
+    print_r($exist);
+    die(); 
+
     if($exist == true) {
         global $wpdb; 
  

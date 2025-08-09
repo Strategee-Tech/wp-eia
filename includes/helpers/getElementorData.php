@@ -1,9 +1,13 @@
 <?php
 function get_elementor_data($path) {
     global $wpdb;
+    
+    // Convierte el path a JSON-safe (unicode escapado) para buscar dentro del JSON
+    $json_encoded = json_encode($path, JSON_UNESCAPED_SLASHES);
+    $json_encoded = trim($json_encoded, '"'); // quitar comillas si las tiene
 
     // Escapar las barras para el REGEXP en MySQL
-    $pattern = str_replace('/', '\\\\/', $path);
+    $pattern      = str_replace('/', '\\\\/', $json_encoded); // escapamos slashe
 
     // Construir el query con prepare
     $sql = $wpdb->prepare("
@@ -26,4 +30,11 @@ function get_elementor_data($path) {
     return $result ? true : false;
 }
 
+function json_escape_regex($input) {
+    $json = json_encode($input, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    // Quitamos las comillas alrededor
+    $json = trim($json, '"');
+    // Escapar para usar en REGEXP
+    return str_replace('/', '\\\\/', $json);
+}
 

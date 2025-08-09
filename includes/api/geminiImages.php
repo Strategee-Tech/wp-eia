@@ -148,9 +148,15 @@ function generateImageMetadata(string $imageUrl): array {
     $data = json_decode($response, true);
     error_log('Respuesta Gemini Curl: ' . print_r($response, true));
     error_log('Respuesta Gemini Decode: ' . print_r($data, true));
-    if (json_last_error() === JSON_ERROR_NONE) {
+    if (json_last_error() === JSON_ERROR_NONE) { 
         if(isset($data['candidates'][0])){
-            return $data['candidates'][0]['content']['parts'][0]['text'];
+            $result = json_decode($data['candidates'][0]['content']['parts'][0]['text'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $result;
+            } else {
+                error_log("Datos del JSON candidates decodificados: " . print_r($result, true));
+                return array();
+            }
         } else {
             error_log("Datos del JSON decodificados: " . print_r($data, true));
             return array();

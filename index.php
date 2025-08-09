@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: STG Optimizer
+Plugin Name: STG-Optimizer
 Plugin URI:  https://www.strategee.us/eia-plugin
 Description: Un plugin para optimizar y comprimir todo tipo de archivos.
 Version:     1.0.8
 Author:      StrategeeGroup
 Author URI:  https://www.strategee.us
 GitHub Plugin URI: https://github.com/VictorZRC/wp-eia
-Text Domain: STG Optimizer
+Text Domain: STG-Optimizer
 */
 
 if ( ! defined( 'ABSPATH' ) ) {

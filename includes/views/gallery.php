@@ -239,6 +239,7 @@ function getIconAlt($alt){
                 <th style="width: 50px; text-align: center;">Ext.</th>
                 <th style="width: 100px; text-align: center;">Tamaño (px)</th>
                 <th style="width: 100px; text-align: center;">Peso (KB)</th>
+                <th>Url</th>
                 <th>slug</th>
                 <th style="width: 60px; text-align: center;">Alt</th>
                 <th style="width: 125px; text-align: center;">Estado</th>
@@ -284,7 +285,13 @@ function getIconAlt($alt){
                             <?php echo esc_html( number_format(($image['file_filesize'] / 1024), 0) );?>KB
                         </td>
 
-                        <td><?php echo esc_html( $image['file_path_relative'] ); ?></td>
+                        <td>
+                            <?php $short_path = strstr($image['attachment_url'], '/uploads'); ?>
+                            <a href="<?php echo esc_url($image['attachment_url']) ?>" target="_blank"><?php echo esc_url($short_path) ?></a>                                
+
+                        </td>
+                        <td><?php echo esc_attr( $image['post_name'] ); ?></td>
+
 
                         <td style="text-align: center;">
                             <span

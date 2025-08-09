@@ -67,7 +67,7 @@ function optimization_files($request) {
 			        date('Y-m-d H:i:s'),
 			        $old_url,
 			        '',
-			        number_format($file_size_bytes_before),
+			        '',
 			        '',
 			        isset($params['alt_text']) ? $params['alt_text'] : '',
 			        '',

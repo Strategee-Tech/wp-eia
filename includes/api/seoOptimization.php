@@ -36,6 +36,7 @@ function optimization_files($request) {
     if (!file_exists($original_path)) {
         return new WP_REST_Response( array( 'error' => 'Archivo no encontrado.' ), 404 );
     }
+    $file_size_bytes_before = filesize($original_path) / 1024;
     
     try {
     	$info      = pathinfo($original_path);
@@ -55,8 +56,9 @@ function optimization_files($request) {
     	if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
 			return new WP_REST_Response([
-				'status'        => 'success',
-				'message'       => 'Se ha actualizado la información.',
+				'status'  => 'success',
+				'message' => 'Se ha actualizado la información.',
+				'size'    => number_format($file_size_bytes_before)
 			], 200);
 		} else {
 
@@ -109,8 +111,6 @@ function optimization_files($request) {
 
 		    $new_filename = $params['slug'] . $ext;
 			$new_path 	  = $info['dirname'] . '/' . $new_filename;
-
-			$file_size_bytes_before = filesize($original_path) / 1024;
 
 		 	// Eliminar el archivo original
 		 	if(file_exists($original_path)){

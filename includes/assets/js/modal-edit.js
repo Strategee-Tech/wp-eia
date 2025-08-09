@@ -168,9 +168,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Asumiendo el orden de las columnas: Alt y Title
                 row.children[2].textContent = updatedData.title; // Columna 'Alt'
                 row.children[6].textContent = updatedData.slug;   // Columna 'Title'
-                row.children[7].children[0].classList.remove('dashicons-no-alt');   // Columna 'Title'
-                row.children[7].children[0].classList.add('dashicons-yes');   // Columna 'Title'
-                row.children[7].children[0].classList.add('color-green');
+                row.children[5].textContent = result.size+'KB';   // Columna 'Peso'
+                if(updatedData.alt == ""){
+                    row.children[7].children[0].classList.remove('dashicons-yes'); 
+                    row.children[7].children[0].classList.add('dashicons-no-alt'); 
+                    row.children[7].children[0].classList.add('color-red');
+                } else {
+                    row.children[7].children[0].classList.remove('dashicons-no-alt'); 
+                    row.children[7].children[0].classList.add('dashicons-yes');
+                    row.children[7].children[0].classList.add('color-green');
+                }
             }
 
             // Opcional: Cerrar el modal después de un breve retraso
@@ -179,7 +186,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusMessage.textContent = '';
             }, 1000);
             isLoading = false;
-            location.reload();
         } catch (error) {
             console.error('Error al guardar metadatos:', error);
             statusMessage.textContent = `Error: ${error.message}`;

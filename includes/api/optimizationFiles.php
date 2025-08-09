@@ -36,6 +36,7 @@ function optimization($request) {
 	if (!file_exists($original_path)) {
 		return new WP_REST_Response(['error' => 'Archivo no encontrado.'], 404);
 	}
+	$file_size_bytes_before = filesize($original_path);
 
 	try {
 		$info = pathinfo($original_path);
@@ -52,8 +53,9 @@ function optimization($request) {
 		if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
 			return new WP_REST_Response([
-				'status'        => 'success',
-				'message'       => 'Se ha actualizado la información.',
+				'status'  => 'success',
+				'message' => 'Se ha actualizado la información.',
+				'size'    => number_format($file_size_bytes_before),
 			], 200);
 
 		} else {
@@ -65,7 +67,6 @@ function optimization($request) {
 			$new_filename = $params['slug'] . '.' . $ext;
 			$new_path     = $dir . '/' . $new_filename;
 			$old_url      = $post->guid;
-			$file_size_bytes_before = filesize($original_path);
 
 			// Ruta completa a ffmpeg
 			$ext_multimedia        = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'mp3', 'wav', 'm4a', 'aac', 'ogg', 'mpeg'];

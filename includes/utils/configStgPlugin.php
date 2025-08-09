@@ -135,7 +135,8 @@ function download_google_api_client($custom_url = null){
     }
 
     if (is_dir($folder_path)) {
-        shell_exec("rm -rf " . $folder_path . '/*');
+        shell_exec("rm -rf " . escapeshellarg($folder_path));
+        shell_exec("find " . escapeshellarg($folder_path) . " -mindepth 1 -delete");
     }
 
     // Validar si shell_exec está habilitado

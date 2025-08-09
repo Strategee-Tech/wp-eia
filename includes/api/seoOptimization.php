@@ -58,7 +58,7 @@ function optimization_files($request) {
 			return new WP_REST_Response([
 				'status'  => 'success',
 				'message' => 'Se ha actualizado la información.',
-				'size'    => number_format($file_size_bytes_before)
+				'size'    => number_format($file_size_bytes_before, 2)
 			], 200);
 		} else {
 
@@ -200,7 +200,7 @@ function optimization_files($request) {
         		'status'        => 'success', 
         		'message'       => 'Se han actualizado los datos de SEO y se ha optimizado el archivo.',
         		'new_url'       => $new_url,
-        		'size'          => number_format($file_size_bytes_after),
+        		'size'          => number_format($file_size_bytes_after, 2),
         		'new_name_file' => $new_filename,
         		'dimensions'    => $dimensions,
         	], 200);

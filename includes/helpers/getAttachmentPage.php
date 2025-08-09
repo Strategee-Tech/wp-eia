@@ -256,7 +256,16 @@ function getAttachmentPage( $page = 1, $per_page = 20, $folder = null, $mime_typ
                 }
             }
         }
-    
+
+        $sort_direction = 'desc';
+
+        usort($attachments_in_folder, function($a, $b) use ($sort_direction) {
+            $a_size = $a['file_filesize'] ?? 0;
+            $b_size = $b['file_filesize'] ?? 0;
+
+            return ($sort_direction === 'desc') ? ($b_size <=> $a_size) : ($a_size <=> $b_size);
+        });
+
         // --- 3. Calculate pagination data for return ---
         $current_page_count = count( $attachments_in_folder );
 

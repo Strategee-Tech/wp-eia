@@ -55,7 +55,7 @@ function optimization($request) {
 			return new WP_REST_Response([
 				'status'  => 'success',
 				'message' => 'Se ha actualizado la información.',
-				'size'    => number_format($file_size_bytes_before),
+				'size'    => number_format($file_size_bytes_before, 2),
 			], 200);
 
 		} else {
@@ -139,7 +139,7 @@ function optimization($request) {
 				'new_url'       => $new_url,
 				'new_path'      => $new_path,
 				'relative_path' => $relative_path,
-				'size'          => number_format($file_size_bytes_after),
+				'size'          => number_format($file_size_bytes_after, 2),
 			], 200);
 		} 
 	} catch (\Throwable $th) {

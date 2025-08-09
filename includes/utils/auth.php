@@ -105,6 +105,7 @@ function update_urls($old_path, $new_path, $attachment_id) {
         $rows_affected = $wpdb->query($sql); 
         error_log("Registros afectados elementor_data ({$rows_affected}).");
     } 
+    error_log("Reemplazos de url ejecutados.");
 }
 
 // 1. Convierte el carácter Unicode real a su representación \uXXXX

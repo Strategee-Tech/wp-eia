@@ -150,11 +150,15 @@ function generateImageMetadata(string $imageUrl): array {
     error_log('Respuesta Gemini Decode: ' . print_r($data, true));
     if (json_last_error() === JSON_ERROR_NONE) { 
         if(isset($data['candidates'][0])){
-            $result = json_decode($data['candidates'][0]['content']['parts'][0]['text'], true);
+            // Elimina el envoltorio ```json ... ``` si existe
+            $text_clean = trim($text);
+            $text_clean = preg_replace('/^```json\s*|\s*```$/', '', $text_clean); 
+            $result     = json_decode($text_clean, true);
             if (json_last_error() === JSON_ERROR_NONE) {
                 return $result;
             } else {
-                error_log("Datos del JSON candidates decodificados: " . print_r($result, true));
+                error_log("Error al decodificar JSON interno (text): " . json_last_error_msg());
+                error_log("Contenido original de 'text': " . $text);
                 return array();
             }
         } else {

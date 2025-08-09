@@ -52,13 +52,37 @@ function optimization_files($request) {
 		    ], 500);
 		} 
 
+		$sheet_id = get_option('google_sheet_id');
+		$sheet    = get_option('name_sheet_images');
+    	$old_url  = $post->guid;
+
 		global $wpdb;
     	if($params['fast_edit'] == 1) {
 			actualizar_post_postmeta($params, $wpdb);
+
+			$datos_drive = array(
+			    'id_sheet' => $sheet_id,
+			    'sheet'    => $sheet.'!A1',
+			    'values'   => [[
+			        date('Y-m-d H:i:s'),
+			        $old_url,
+			        '',
+			        number_format($file_size_bytes_before),
+			        '',
+			        isset($params['alt_text']) ? $params['alt_text'] : '',
+			        '',
+			        isset($params['title']) ? $params['title'] : '',
+			        isset($params['description']) ? $params['description'] : '',
+			        '',
+			        '',
+			        (isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
+			    ]]
+			);
+			save_google_sheet($datos_drive); // Llamada directa
+
 			return new WP_REST_Response([
 				'status'  => 'success',
 				'message' => 'Se ha actualizado la información.',
-				'size'    => number_format($file_size_bytes_before, 2)
 			], 200);
 		} else {
 
@@ -78,7 +102,6 @@ function optimization_files($request) {
 			$mins_to_replace = array_merge([$relative_path], $old_min_urls);
 	    	$ext             = '.webp';
 	    	$mimeType        = 'image/webp';
-	    	$old_url         = $post->guid;
 	    	
 	    	// Crear archivo temporal WebP en la misma carpeta
 	    	$temp_img = $info['dirname'] . '/' . $info['filename'] . '-opt'.$ext;
@@ -171,30 +194,25 @@ function optimization_files($request) {
 			wp_cache_flush();
 			clean_post_cache($post->ID);
 
-			$sheet_id = get_option('google_sheet_id');
-			$sheet    = get_option('name_sheet_images');
-
-			if(!empty($sheet_id) && !empty($sheet)) {
-				$datos_drive = array(
-				    'id_sheet' => $sheet_id,
-				    'sheet'    => $sheet.'!A1',
-				    'values'   => [[
-				        date('Y-m-d H:i:s'),
-				        $old_url,
-				        $new_url,
-				        number_format($file_size_bytes_before),
-				        number_format($file_size_bytes_after),
-				        isset($params['alt_text']) ? $params['alt_text'] : '',
-				        isset($params['slug']) ? $params['slug'] : '',
-				        isset($params['title']) ? $params['title'] : '',
-				        isset($params['description']) ? $params['description'] : '',
-				        $mimeType,
-				        $dimensions,
-				        (isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
-				    ]]
-				);
-				$respuesta = save_google_sheet($datos_drive); // Llamada directa
-			}
+			$datos_drive = array(
+			    'id_sheet' => $sheet_id,
+			    'sheet'    => $sheet.'!A1',
+			    'values'   => [[
+			        date('Y-m-d H:i:s'),
+			        $old_url,
+			        $new_url,
+			        number_format($file_size_bytes_before),
+			        number_format($file_size_bytes_after),
+			        isset($params['alt_text']) ? $params['alt_text'] : '',
+			        isset($params['slug']) ? $params['slug'] : '',
+			        isset($params['title']) ? $params['title'] : '',
+			        isset($params['description']) ? $params['description'] : '',
+			        $mimeType,
+			        $dimensions,
+			        (isset($params['ia']) && $params['ia'] == true) ? 'Si' : 'No',
+			    ]]
+			);
+			$respuesta = save_google_sheet($datos_drive); // Llamada directa
 
 	        return new WP_REST_Response([
         		'status'        => 'success', 

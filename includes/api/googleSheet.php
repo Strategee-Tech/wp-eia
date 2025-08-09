@@ -18,6 +18,10 @@ function save_google_sheet($datos) {
         return new WP_REST_Response(['error' => 'Faltan datos necesarios'], 400);
     }
 
+    if(empty($datos['id_sheet']) || empty($datos['sheet'])) {
+        return new WP_REST_Response(['error' => 'Faltan datos necesarios'], 400);
+    }
+
     try {
         $ruta_google_api = trailingslashit(ABSPATH . 'wp-content/google_api_php_client');
         $autoload_path   = $ruta_google_api . 'vendor/autoload.php';

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: stg-optimizer
+Plugin Name: STG Optimizer
 Plugin URI:  https://www.strategee.us/eia-plugin
 Description: Un plugin para optimizar y comprimir todo tipo de archivos.
 Version:     1.0.8
@@ -35,7 +35,6 @@ require_once WP_EIA_PLUGIN_DIR . 'includes/api/optimizationFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/deleteFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/scanFiles.php';
 require_once WP_EIA_PLUGIN_DIR . 'includes/api/geminiImages.php';
-
 
 //Funcion para buscar postmeta ElementorCss
 require_once WP_EIA_PLUGIN_DIR . 'includes/helpers/getElementorCss.php';

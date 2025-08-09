@@ -27,6 +27,14 @@ function optimization_files($request) {
 		return new WP_REST_Response(array('status' => 'error', 'message' => 'El parámetro post_id es obligatorio.'), 400);
 	}
 
+	if(!strlen(trim($params['title']))) {
+		return new WP_REST_Response(array('status' => 'error', 'message' => 'El título es obligatorio.'), 400);
+	}
+
+	if(!strlen(trim($params['slug']))) {
+		return new WP_REST_Response(array('status' => 'error', 'message' => 'El Slug es obligatorio.'), 400);
+	}
+
 	$post = get_post($params['post_id']);
 	if (!$post || $post->post_type !== 'attachment') {
 		return new WP_REST_Response(array('status' => 'error', 'message' => 'El post no existe o no es un attachment.'), 404);

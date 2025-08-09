@@ -146,15 +146,19 @@ function generateImageMetadata(string $imageUrl): array {
         throw new Exception("Error de la API: " . ($errorData['error']['message'] ?? 'Error desconocido') . " (Código HTTP: " . $httpCode . ")");
     }
     $data = json_decode($response, true);
-    error_log('Respuesta Gemini: ' . print_r($response, true));
-    error_log('Respuesta Gemini: ' . print_r($data, true));
-
-    // Accede a la parte de texto dentro de 'candidates'
-    $result = json_decode($data['candidates'][0]['content']['parts'][0]['text'], true);
-    if($result == null) {
+    error_log('Respuesta Gemini Curl: ' . print_r($response, true));
+    error_log('Respuesta Gemini Decode: ' . print_r($data, true));
+    if (json_last_error() === JSON_ERROR_NONE) {
+        if(isset($data['candidates'][0])){
+            return $data['candidates'][0]['content']['parts'][0]['text'];
+        } else {
+            error_log("Datos del JSON decodificados: " . print_r($data, true));
+            return array();
+        }
+    } else {
+        error_log("Error al decodificar JSON: " . json_last_error_msg());
         return array();
     }
-    return $result;
 }
 
 ?>

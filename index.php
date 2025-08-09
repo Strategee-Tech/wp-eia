@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: STG-Optimizer
+Plugin Name: stg-optimizer
 Plugin URI:  https://www.strategee.us/eia-plugin
 Description: Un plugin para optimizar y comprimir todo tipo de archivos.
 Version:     1.0.8
 Author:      StrategeeGroup
 Author URI:  https://www.strategee.us
 GitHub Plugin URI: https://github.com/VictorZRC/wp-eia
-Text Domain: STG-Optimizer
+Text Domain: stg-optimizer
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,6 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
 if ( ! defined( 'WP_EIA_PLUGIN_URL' ) ) {
     define( 'WP_EIA_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) . 'wp-eia/' );
 }
-
 
 // Configuración inicial de Stg Optimizer Plugin
 require_once WP_EIA_PLUGIN_DIR . 'includes/utils/configStgPlugin.php';

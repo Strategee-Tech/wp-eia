@@ -129,8 +129,8 @@ function download_google_api_client($custom_url = null){
     $zip_file      = $folder_path . '/google-api-php-client.zip';
     $autoload_path = $folder_path . '/vendor/autoload.php';
 
-    // Si la URL no cambió, no hacer nada
-    if ($download_url == $last_url) {
+    // Si el archivo existe y la URL no cambió, no hacer nada
+    if (file_exists($autoload_path) && $download_url == $last_url) {
         return;
     }
 

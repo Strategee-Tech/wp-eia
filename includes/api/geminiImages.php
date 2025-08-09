@@ -149,6 +149,7 @@ function generateImageMetadata(string $imageUrl): array {
     error_log('Respuesta Gemini Curl: ' . print_r($response, true));
     error_log('Respuesta Gemini Decode: ' . print_r($data, true));
     if (json_last_error() === JSON_ERROR_NONE) { 
+        $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
         if(isset($data['candidates'][0])){
             // Elimina el envoltorio ```json ... ``` si existe
             $text_clean = trim($text);

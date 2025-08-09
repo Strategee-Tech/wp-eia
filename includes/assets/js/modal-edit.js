@@ -179,14 +179,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusMessage.textContent = '';
             }, 1000);
             isLoading = false;
-
+            location.reload();
         } catch (error) {
             console.error('Error al guardar metadatos:', error);
             statusMessage.textContent = `Error: ${error.message}`;
             statusMessage.style.color = 'red';
         } finally {
             saveBtn.disabled = false; // Habilita el botón de nuevo
-            location.reload();
         }
     });
 

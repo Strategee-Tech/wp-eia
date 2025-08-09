@@ -240,7 +240,7 @@ function getIconAlt($alt){
                 <th style="width: 100px; text-align: center;">Tamaño (px)</th>
                 <th style="width: 100px; text-align: center;">Peso (KB)</th>
                 <th>Url</th>
-                <th>slug</th>
+                <th>Slug</th>
                 <th style="width: 60px; text-align: center;">Alt</th>
                 <th style="width: 125px; text-align: center;">Estado</th>
             </tr>

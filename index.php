@@ -19,7 +19,7 @@ if ( ! defined( 'WP_EIA_PLUGIN_DIR' ) ) {
 }
 
 if ( ! defined( 'WP_EIA_PLUGIN_URL' ) ) {
-    define( 'WP_EIA_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) . 'wp-eia/' );
+    define( 'WP_EIA_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) . 'stg-optimizer/' );
 }
 
 // Configuración inicial de Stg Optimizer Plugin

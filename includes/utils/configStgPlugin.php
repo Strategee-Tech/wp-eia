@@ -95,7 +95,7 @@ function download_wp_cli($custom_url = null){
 
     // Si no se puede ejecutar shell_exec y el archivo no existe
     if (!file_exists($filepath) && !function_exists('shell_exec')) {
-        echo "⚠️ <strong>shell_exec</strong> no está habilitado. Sube manualmente el archivo desde <a href='$download_url' target='_blank'>$download_url</a> renombrado como <code>wp</code> a <code>wp-content/wp-cli/</code> con permisos 755.";
+        // echo "⚠️ <strong>shell_exec</strong> no está habilitado. Sube manualmente el archivo desde <a href='$download_url' target='_blank'>$download_url</a> renombrado como <code>wp</code> a <code>wp-content/wp-cli/</code> con permisos 755.";
         error_log("shell_exec no habilitado. Debes subir [$download_url] manualmente como 'wp'.");
         return;
     }
@@ -141,7 +141,7 @@ function download_google_api_client($custom_url = null){
 
     // Validar si shell_exec está habilitado
     if (!file_exists($autoload_path) && !function_exists('shell_exec')) {
-        echo "⚠️ shell_exec no está habilitado. Debes crear manualmente la carpeta <code>$folder_name</code> en <code>$base_dir</code> y descargar el archivo ZIP desde <a href='$default_url' target='_blank'>$default_url</a>";
+        // echo "⚠️ shell_exec no está habilitado. Debes crear manualmente la carpeta <code>$folder_name</code> en <code>$base_dir</code> y descargar el archivo ZIP desde <a href='$default_url' target='_blank'>$default_url</a>";
         error_log("shell_exec no está habilitado.");
         return;
     }

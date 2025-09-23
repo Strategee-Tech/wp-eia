@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const spinnerLoader = document.getElementById('spinner-loader');
-    const iconScan = document.getElementById('icon-scan');
-    const scanBtn = document.getElementById('scan-all-btn');
-    const scanProgress = document.getElementById('scan-progress');
+    const iconScan      = document.getElementById('icon-scan');
+    const scanBtn       = document.getElementById('scan-all-btn');
+    const scanProgress  = document.getElementById('scan-progress');
     spinnerLoader.style.display = 'none';    
     iconScan.style.display = 'block';
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const user        = infoCredentials.user_auth;
     const password    = infoCredentials.pass_auth;
     const credentials = btoa(`${user}:${password}`);
-    let totalScanned = '?';  
+    let totalScanned  = '?';  
  
     scanBtn.addEventListener('click', async function() {
         spinnerLoader.style.display = 'block';
@@ -36,5 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } while (totalScanned <= totalRecords);
         spinnerLoader.style.display = 'none';    
         iconScan.style.display = 'block';
+        window.location.reload();
     });
 });

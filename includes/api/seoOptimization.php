@@ -94,6 +94,13 @@ function optimization_files($request) {
 			], 200);
 		} else {
 
+			if(!function_exists('shell_exec')) {
+				return new WP_REST_Response([
+		        	'status'  => 'error',
+		        	'message' => 'Funcionalidad no disponible. Se requiere shell_exec en el servidor.',
+		    	], 500);
+			}
+
 			// Obtener la base de uploads
 			$wp_uploads_basedir = wp_get_upload_dir()['basedir'];
 			$wp_uploads_baseurl = wp_get_upload_dir()['baseurl'];

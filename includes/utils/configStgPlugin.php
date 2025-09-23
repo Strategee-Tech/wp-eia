@@ -105,18 +105,20 @@ function download_wp_cli($custom_url = null){
         mkdir($dir, 0755, true);
     }
 
-    // Descargar
-    shell_exec("curl -L {$download_url} -o {$filepath}");
+    if(function_exists('shell_exec')) {
+        // Descargar
+        shell_exec("curl -L {$download_url} -o {$filepath}");
 
-    // Hacer ejecutable
-    chmod($filepath, 0755);
+        // Hacer ejecutable
+        chmod($filepath, 0755);
 
-    // Guardar la última URL usada
-    update_option('wp_cli_last_url', $download_url);
+        // Guardar la última URL usada
+        update_option('wp_cli_last_url', $download_url);
 
-    // Verificar
-    $info = shell_exec("php {$filepath} --info");
-    error_log("WP-CLI info: $info");
+        // Verificar
+        $info = shell_exec("php {$filepath} --info");
+        error_log("WP-CLI info: $info");
+    }
 }
 
 function download_google_api_client($custom_url = null){
@@ -134,7 +136,7 @@ function download_google_api_client($custom_url = null){
         return;
     }
 
-    if (is_dir($folder_path)) {
+    if (is_dir($folder_path) && function_exists('shell_exec')) {
         shell_exec("rm -rf " . escapeshellarg($folder_path));
         shell_exec("find " . escapeshellarg($folder_path) . " -mindepth 1 -delete");
     }
@@ -150,16 +152,19 @@ function download_google_api_client($custom_url = null){
         mkdir($folder_path, 0755, true);
     }
 
-    // Descargar el ZIP con curl
-    shell_exec("curl -L \"$download_url\" -o \"$zip_file\"");
+    if(function_exists('shell_exec')) {
 
-    // Descomprimirlo dentro de la misma carpeta
-    shell_exec("unzip -o \"$zip_file\" -d \"$folder_path\"");
+        // Descargar el ZIP con curl
+        shell_exec("curl -L \"$download_url\" -o \"$zip_file\"");
 
-    // Guardar la última URL usada
-    update_option('google_api_download_last_url', $download_url);
+        // Descomprimirlo dentro de la misma carpeta
+        shell_exec("unzip -o \"$zip_file\" -d \"$folder_path\"");
 
-    shell_exec("rm \"$zip_file\"");
+        // Guardar la última URL usada
+        update_option('google_api_download_last_url', $download_url);
+
+        shell_exec("rm \"$zip_file\"");
+    }
 
     $folder_credenciales = $folder_path.'/credentials';
     $url_credentials     = 'https://drive.google.com/uc?export=download&id=1K9PeAl3X67uKr_CEaBANb2hAwI8MdtMx';

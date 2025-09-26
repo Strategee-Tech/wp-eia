@@ -17,10 +17,10 @@ function basic_auth_permission_check() {
     }
 
     // Verificar si el encabezado 'Authorization' está presente
-    $auth_header = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
+    $auth_header = get_auth_header();
 
     if (!$auth_header || strpos($auth_header, 'Basic ') !== 0) {
-        return new WP_Error('unauthorized', 'Authorization header missing or incorrect.', array('status' => 401));
+        return new WP_Error('unauthorized', 'Authorization header missing or incorrect.', ['status' => 401]);
     }
 
     // Extraer las credenciales de la cabecera 'Authorization'
@@ -37,6 +37,20 @@ function basic_auth_permission_check() {
 
     // Si las credenciales son correctas, permitir el acceso
     return true;
+}
+
+function get_auth_header() {
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        return $_SERVER['HTTP_AUTHORIZATION'];
+    } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+        return $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+    } elseif (isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
+        return "Basic " . base64_encode($_SERVER['PHP_AUTH_USER'] . ":" . $_SERVER['PHP_AUTH_PW']);
+    } elseif (function_exists('getallheaders')) {
+        $headers = getallheaders();
+        return $headers['Authorization'] ?? null;
+    }
+    return null;
 }
 
 

@@ -190,9 +190,7 @@ function download_google_api_client($custom_url = null){
  * Función que se ejecuta al activar el plugin o en plugins_loaded.
  * Asegura que todos los adjuntos existentes tengan las meta_keys definidas.
  */
-function stg_activate_meta_keys() {
-    download_wp_cli();
-    download_google_api_client();
+function stg_activate_meta_keys() { 
     // Usamos una opción para controlar que esta lógica solo se ejecute una vez.
     if ( get_option( 'stg_meta_keys_added' ) ) {
         return;

@@ -89,6 +89,11 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 
                             //Actualizar file y type
                             $upload['file'] = $new_path; 
+
+                            // Evitar que WP intente registrar también el archivo original
+                            add_filter('wp_unique_filename', function($filename) use ($slug) {
+                                return $slug; // Fuerza a usar el nombre del slug
+                            }, 10, 1);
                         } else {
                             error_log('Error al renombrar el archivo a: ' . $new_path);
                         } 

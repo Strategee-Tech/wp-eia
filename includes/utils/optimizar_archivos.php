@@ -73,6 +73,11 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 
                         $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
 
+                        // Evitar que WP intente registrar también el archivo original
+                        add_filter('wp_unique_filename', function($filename) use ($slug) {
+                            return $slug; // Fuerza a usar el nombre del slug
+                        }, 10, 1);
+
                         //Ruta actual del archivo
                         $current_path = $upload['file']; // Ej: /var/www/.../uploads/2025/07/original.webp
 
@@ -89,14 +94,12 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 
                             //Actualizar file y type
                             $upload['file'] = $new_path; 
-
-                            // Evitar que WP intente registrar también el archivo original
-                            add_filter('wp_unique_filename', function($filename) use ($slug) {
-                                return $slug; // Fuerza a usar el nombre del slug
-                            }, 10, 1);
                         } else {
                             error_log('Error al renombrar el archivo a: ' . $new_path);
                         } 
+
+                        // ✅ Aquí limpiamos el filtro para que no afecte la siguiente subida
+                        remove_all_filters('wp_unique_filename');
 
                         $gemini_data = [
                             'alt_temp'         => $geminiData['0']['alt'],
@@ -133,22 +136,20 @@ function update_attachment_with_gemini_data($attachment_id) {
 
     $mime = get_post_mime_type($attachment_id);
     if (strpos($mime, 'image/') !== 0) return;
-
-    $current_file_path = get_attached_file($attachment_id);
-    if (!$current_file_path || !file_exists($current_file_path)) {
-        //error_log("Archivo adjunto no encontrado en: " . $current_file_path);
-        return;
-    }
+ 
     $url         = wp_get_attachment_url($attachment_id);
     $unique_key  = 'gemini_' . md5($url);
     $gemini_data = get_transient($unique_key); 
 
     if ($gemini_data) {
+        $slug = sanitize_title($gemini_data['slug_temp']);
 
         $update_post_args = [
             'ID'           => $attachment_id,
             'post_title'   => $gemini_data['title_temp'],
             'post_content' => $gemini_data['description_temp'],
+            'post_name'    => $slug,   // 👉 Slug del attachment
+            'guid'         => $url,    // 👉 URL final como GUID
         ]; 
         wp_update_post($update_post_args);
         update_post_meta($attachment_id, '_wp_attachment_image_alt', $gemini_data['alt_temp']);

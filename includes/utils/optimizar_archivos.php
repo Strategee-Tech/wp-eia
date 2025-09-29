@@ -83,11 +83,18 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 
                     //Renombrar el archivo en el servidor
                     if (rename($current_path, $new_path)) {
+                        $old_url = $upload['url']; // antes de cambiar
                         //Construir nueva URL
                         $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
 
                         //Actualizar file y type
                         $upload['file'] = $new_path; 
+
+                        // 🧹 Borrar el attachment "basura"
+                        $old_attachment_id = attachment_url_to_postid($old_url);
+                        if ($old_attachment_id) {
+                            wp_delete_attachment($old_attachment_id, true);
+                        }
                     } else {
                         error_log('Error al renombrar el archivo a: ' . $new_path);
                     } 

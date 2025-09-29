@@ -60,68 +60,51 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
         $upload['url']  = str_replace(basename($original_path), basename($optimized_path), $upload['url']);
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
 
-        if($forced_mime == 'image/webp') {
-            $max_attempts = 5;
-            $attempt      = 0;
-            $success      = false;
+        if($forced_mime == 'image/webp') {  
+            $geminiData = getInfoGemini($upload['url']);
+            if (is_array($geminiData) && isset($geminiData[0])) { 
+                if(!empty($geminiData[0])) { 
 
-            do {
-                $attempt++;
-                $geminiData = getInfoGemini($upload['url']);
-                if (is_array($geminiData) && isset($geminiData[0])) { 
-                    if(!empty($geminiData[0])) { 
+                    $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
 
-                        $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
+                    // Evitar que WP intente registrar también el archivo original
+                    add_filter('wp_unique_filename', function($filename) use ($slug) {
+                        return $slug; // Fuerza a usar el nombre del slug
+                    }, 10, 1);
 
-                        // Evitar que WP intente registrar también el archivo original
-                        add_filter('wp_unique_filename', function($filename) use ($slug) {
-                            return $slug; // Fuerza a usar el nombre del slug
-                        }, 10, 1);
+                    //Ruta actual del archivo
+                    $current_path = $upload['file']; // Ej: /var/www/.../uploads/2025/07/original.webp
 
-                        //Ruta actual del archivo
-                        $current_path = $upload['file']; // Ej: /var/www/.../uploads/2025/07/original.webp
+                    //Directorio actual (donde está el archivo)
+                    $dir = dirname($current_path); // Ej: /var/www/.../uploads/2025/07
 
-                        //Directorio actual (donde está el archivo)
-                        $dir = dirname($current_path); // Ej: /var/www/.../uploads/2025/07
+                    //Nueva ruta física
+                    $new_path = $dir . '/' . $slug;
 
-                        //Nueva ruta física
-                        $new_path = $dir . '/' . $slug;
+                    //Renombrar el archivo en el servidor
+                    if (rename($current_path, $new_path)) {
+                        //Construir nueva URL
+                        $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
 
-                        //Renombrar el archivo en el servidor
-                        if (rename($current_path, $new_path)) {
-                            //Construir nueva URL
-                            $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
+                        //Actualizar file y type
+                        $upload['file'] = $new_path; 
+                    } else {
+                        error_log('Error al renombrar el archivo a: ' . $new_path);
+                    } 
 
-                            //Actualizar file y type
-                            $upload['file'] = $new_path; 
-                        } else {
-                            error_log('Error al renombrar el archivo a: ' . $new_path);
-                        } 
+                    // ✅ Aquí limpiamos el filtro para que no afecte la siguiente subida
+                    remove_all_filters('wp_unique_filename');
 
-                        // ✅ Aquí limpiamos el filtro para que no afecte la siguiente subida
-                        remove_all_filters('wp_unique_filename');
-
-                        $gemini_data = [
-                            'alt_temp'         => $geminiData['0']['alt'],
-                            'slug_temp'        => $geminiData['0']['slug'],
-                            'description_temp' => $geminiData['0']['description'],
-                            'title_temp'       => $geminiData['0']['title'],
-                        ]; 
-                        $unique_key = 'gemini_' . md5($upload['url']); 
-                        set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
-                        $success = true;
-                    }
-                } 
-
-                if (!$success && $attempt < $max_attempts) {
-                    sleep(1); // Pausa opcional de 1 segundo antes de reintentar
+                    $gemini_data = [
+                        'alt_temp'         => $geminiData['0']['alt'],
+                        'slug_temp'        => $geminiData['0']['slug'],
+                        'description_temp' => $geminiData['0']['description'],
+                        'title_temp'       => $geminiData['0']['title'],
+                    ]; 
+                    $unique_key = 'gemini_' . md5($upload['url']); 
+                    set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
                 }
-
-            } while (!$success && $attempt < $max_attempts);
-
-            if (!$success) {
-                error_log('Gemini API no devolvió datos válidos después de ' . $max_attempts . ' intentos.');
-            }
+            }  
         }  
         @unlink($original_path);
     }

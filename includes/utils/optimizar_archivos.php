@@ -56,6 +56,7 @@ function compress_images($upload) {
 
 function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path, $forced_mime = null) {
     if (file_exists($optimized_path)) {
+        $old_url = $upload['url']; // antes de cambiar
         $upload['file'] = $optimized_path;
         $upload['url']  = str_replace(basename($original_path), basename($optimized_path), $upload['url']);
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
@@ -83,18 +84,10 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
 
                     //Renombrar el archivo en el servidor
                     if (rename($current_path, $new_path)) {
-                        $old_url = $upload['url']; // antes de cambiar
                         //Construir nueva URL
                         $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
-
                         //Actualizar file y type
                         $upload['file'] = $new_path; 
-
-                        // 🧹 Borrar el attachment "basura"
-                        $old_attachment_id = attachment_url_to_postid($old_url);
-                        if ($old_attachment_id) {
-                            wp_delete_attachment($old_attachment_id, true);
-                        }
                     } else {
                         error_log('Error al renombrar el archivo a: ' . $new_path);
                     } 
@@ -113,6 +106,13 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
                 }
             }  
         }  
+
+        // 🧹 Borrar el attachment "basura"
+        $old_attachment_id = attachment_url_to_postid($old_url);
+        if ($old_attachment_id) {
+            wp_delete_attachment($old_attachment_id, true);
+        }
+                        
         @unlink($original_path);
     }
     return $upload;

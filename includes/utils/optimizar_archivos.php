@@ -2,113 +2,110 @@
 
 require_once dirname(__DIR__) . '/utils/auth.php';
 
+// El hook wp_handle_upload se ejecuta antes de que WordPress cree el registro de attachment.
 add_filter('wp_handle_upload', 'compress_images');
  
 function compress_images($upload) {
     set_time_limit(3600);
- 
+
     $original_path = $upload['file']; 
     $mime          = mime_content_type($original_path);
     $info          = pathinfo($original_path);
     
     $mime_multimedia = [
         // Video
-        'video/mp4',
-        'video/quicktime',
-        'video/x-msvideo',
-        'video/x-matroska',
-        'video/webm',
-        'video/ogg',     // Para .ogv (Ogg Video)
+        'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska', 
+        'video/webm', 'video/ogg', // Para .ogv (Ogg Video)
 
         // Audio
-        'audio/mpeg',    // .mp3
-        'audio/wav',     // .wav
-        'audio/mp4',     // .m4a
-        'audio/aac',     // .aac
-        'audio/ogg',     // .ogg o .oga
+        'audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/aac', 'audio/ogg',
     ];
-    $ext      = $info['extension'];
+    $ext     = $info['extension'];
+    
+    // Ruta temporal por defecto (para multimedia y PDF)
     $opt_path = $info['dirname'] . '/' . $info['filename'] . '-opt.' . $ext;
     
     if (strpos($mime, 'image/') === 0) {
         $resultado = optimizar_archivos($original_path, ['type' => 'imagen']);
         if ($resultado) {
-            $opt_path = $info['dirname'] . '/' . $info['filename'] . '-opt.webp';
-            $upload   = reemplazar_archivo_optimizado($upload, $original_path, $opt_path, 'image/webp');
+            // RUTA TEMPORAL DE IMAGEN (SIEMPRE WEBP)
+            $temp_path = $info['dirname'] . '/' . $info['filename'] . '-opt.webp';
+            
+            // 1. OBTENEMOS Y RENOMBRAMOS EL ARCHIVO FÍSICO AQUÍ
+            // Usamos la URL temporal para la llamada a Gemini
+            $temp_url = trailingslashit(dirname($upload['url'])) . basename($temp_path); 
+            $geminiData = getInfoGemini($temp_url); 
+            
+            if (is_array($geminiData) && isset($geminiData[0]) && !empty($geminiData[0])) {
+                $final_filename = sanitize_file_name($geminiData[0]['slug']) . '.webp';
+                $final_path = $info['dirname'] . '/' . $final_filename;
+
+                // 🚨 RENOMBRADO CLAVE: Renombramos el archivo físico antes de que WP lo registre
+                if (rename($temp_path, $final_path)) {
+                    // 2. Guardamos los datos de Gemini, usando el NOMBRE DEL ARCHIVO FINAL como clave
+                    $unique_key = 'gemini_' . md5(basename($final_path)); 
+                    $gemini_data = [
+                        'alt_temp'           => $geminiData[0]['alt'],
+                        'slug_temp'          => $geminiData[0]['slug'],
+                        'description_temp'   => $geminiData[0]['description'],
+                        'title_temp'         => $geminiData[0]['title'],
+                        'original_slug_temp' => $info['filename'], 
+                    ];
+                    set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
+
+                    // 3. Modificamos el array $upload para que apunte al NOMBRE FINAL (file y url)
+                    // ESTO ES LO QUE ARREGLA EL 'No such file or directory'
+                    $upload = reemplazar_archivo_optimizado($upload, $original_path, $final_path, 'image/webp');
+                    
+                } else {
+                    error_log('Error al renombrar el archivo de ' . $temp_path . ' a ' . $final_path);
+                    // Si falla el rename, usamos el nombre temporal
+                    $upload = reemplazar_archivo_optimizado($upload, $original_path, $temp_path, 'image/webp');
+                }
+            } else {
+                // Si Gemini falla, usamos el nombre temporal
+                $upload = reemplazar_archivo_optimizado($upload, $original_path, $temp_path, 'image/webp');
+            }
         }
     }
+    
+    // -----------------------------------------------------------------
+    // LÓGICA DE MULTIMEDIA Y PDF (AQUÍ SE MANTIENE EL CÓDIGO ORIGINAL)
+    // -----------------------------------------------------------------
 
+    // Multimedia
     if (in_array($mime, $mime_multimedia)) {
         $resultado = optimizar_archivos($original_path, ['type' => 'multimedia']);
         if ($resultado) {
-            $upload   = reemplazar_archivo_optimizado($upload, $original_path, $opt_path);
+            $upload    = reemplazar_archivo_optimizado($upload, $original_path, $opt_path);
         }
     }
 
+    // PDF
     if ($mime === 'application/pdf') {
         $resultado = optimizar_archivos($original_path, ['type' => 'pdf']);
         if ($resultado) {
-            $upload   = reemplazar_archivo_optimizado($upload, $original_path, $opt_path);
+            $upload    = reemplazar_archivo_optimizado($upload, $original_path, $opt_path);
         }
     }
+    
     return $upload;
 }
 
 function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path, $forced_mime = null) {
     if (file_exists($optimized_path)) {
-        // Obtenemos la información del path original ANTES de hacer cambios
-        $original_info = pathinfo($original_path); 
-
+        // La ruta del archivo y URL se actualizan al nombre optimizado 
         $upload['file'] = $optimized_path;
         $upload['url']  = str_replace(basename($original_path), basename($optimized_path), $upload['url']);
         $upload['type'] = $forced_mime ?: mime_content_type($optimized_path);
 
-        if($forced_mime == 'image/webp') {  
-            $geminiData = getInfoGemini($upload['url']);
-            if (is_array($geminiData) && isset($geminiData[0]) && !empty($geminiData[0])) { 
-                
-                $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
-
-                // Usamos un filtro temporal para el nombre, como ya haces
-                add_filter('wp_unique_filename', function($filename) use ($slug) {
-                    return $slug;
-                }, 10, 1);
-
-                $current_path = $upload['file'];
-                $dir = dirname($current_path);
-                $new_path = $dir . '/' . $slug;
-
-                if (rename($current_path, $new_path)) {
-                    $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
-                    $upload['file'] = $new_path; 
-                } else {
-                    error_log('Error al renombrar el archivo a: ' . $new_path);
-                } 
-
-                remove_all_filters('wp_unique_filename');
-
-                $gemini_data = [
-                    'alt_temp'           => $geminiData['0']['alt'],
-                    'slug_temp'          => $geminiData['0']['slug'],
-                    'description_temp'   => $geminiData['0']['description'],
-                    'title_temp'         => $geminiData['0']['title'],
-                    // ✅ AÑADIMOS ESTO: Guardamos el nombre del archivo original (sin extensión)
-                    'original_slug_temp' => $original_info['filename'], 
-                ]; 
-                $unique_key = 'gemini_' . md5($upload['url']); 
-                set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
-            }
-        }  
-
-        // ❌ ELIMINAMOS EL BLOQUE DE BORRADO DE AQUÍ
-        // Ya no intentamos borrar el attachment en este punto.
-
-        // Borramos el archivo físico original, eso está bien
+        // Borramos el archivo físico original
         @unlink($original_path);
     }
     return $upload;
 }
 
+// El hook add_attachment se ejecuta después de que WordPress registra el attachment en la base de datos.
 add_action('add_attachment', 'update_attachment_with_gemini_data');
 
 function update_attachment_with_gemini_data($attachment_id) {
@@ -116,41 +113,39 @@ function update_attachment_with_gemini_data($attachment_id) {
     if (!$post || $post->post_type !== 'attachment') return;
 
     $mime = get_post_mime_type($attachment_id);
+    // Solo aplica la lógica de Gemini a las imágenes
     if (strpos($mime, 'image/') !== 0) return;
 
-    $url         = wp_get_attachment_url($attachment_id);
-    $unique_key  = 'gemini_' . md5($url);
+    $file_path = get_attached_file($attachment_id);
+    $url = wp_get_attachment_url($attachment_id);
+    
+    // Usamos el nombre del archivo (que ya es el SLUG FINAL si Gemini funcionó)
+    $unique_key  = 'gemini_' . md5(basename($file_path));
     $gemini_data = get_transient($unique_key); 
 
     if ($gemini_data) {
-        $slug = sanitize_title($gemini_data['slug_temp']);
-
+        // 1. ACTUALIZAR LOS METADATOS DEL ATTACHMENT
+        $new_slug = sanitize_title($gemini_data['slug_temp']); // Slug para el post
+        
         $update_post_args = [
-            'ID'           => $attachment_id,
-            'post_title'   => $gemini_data['title_temp'],
-            'post_content' => $gemini_data['description_temp'],
-            'post_name'    => $slug,
-            'guid'         => $url, 
+            'ID'             => $attachment_id,
+            'post_title'     => $gemini_data['title_temp'],
+            'post_content'   => $gemini_data['description_temp'],
+            'post_name'      => $new_slug,
+            'guid'           => $url, // Ya debe ser el URL final
         ]; 
         wp_update_post($update_post_args);
+
+        // 2. FORZAR LA GENERACIÓN CORRECTA DE METADATOS/MINIATURAS
+        // Esto corrige el error de "no se visualiza la imagen" y el Warning de 'No such file or directory'
+        $attach_data = wp_generate_attachment_metadata( $attachment_id, $file_path );
+        // Usamos la función nativa para guardar los metadatos generados.
+        wp_update_attachment_metadata( $attachment_id, $attach_data );
+
+        // 3. Actualizamos el alt text
         update_post_meta($attachment_id, '_wp_attachment_image_alt', $gemini_data['alt_temp']);
-        // stg_set_attachment_has_alt_text( $attachment_id, true ); // Asegúrate que esta función exista.
-
-        // ✅ LÓGICA DE BORRADO DEL ATTACHMENT BASURA
-        if (!empty($gemini_data['original_slug_temp'])) {
-            $junk_slug = $gemini_data['original_slug_temp'];
-            
-            // Buscamos un attachment que coincida con el slug original
-            $junk_attachment = get_page_by_path($junk_slug, OBJECT, 'attachment');
-
-            // Si lo encontramos y NO es el attachment que acabamos de procesar
-            if ($junk_attachment && $junk_attachment->ID !== $attachment_id) {
-                // Borramos el attachment basura de forma permanente
-                wp_delete_attachment($junk_attachment->ID, true);
-            }
-        }
         
-        // Luego bórralo para no dejar basura
+        // 4. BORRAR EL TRANSITORIO
         delete_transient($unique_key);
     } 
 }

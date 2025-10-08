@@ -74,7 +74,7 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
                         $slug_base = sanitize_title($geminiData[0]['slug']);
 
                         // Generar slug único (según la BD de WP)
-                        $slug_final = slug_unico($slug_base);
+                        $slug_final    = slug_unico($slug_base);
                         $slug_with_ext = $slug_final . '.webp';
 
                         // Ruta actual y directorio
@@ -85,7 +85,7 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
                         // Evitar sobreescribir si el archivo ya existe físicamente
                         $counter = 1;
                         while (file_exists($new_path)) {
-                            $slug_final = $slug_base . '-' . $counter;
+                            $slug_final    = $slug_base . '-' . $counter;
                             $slug_with_ext = $slug_final . '.webp';
                             $new_path = $dir . '/' . $slug_with_ext;
                             $counter++;
@@ -150,6 +150,7 @@ function update_attachment_with_gemini_data($attachment_id) {
         $update_post_args = [
             'ID'           => $attachment_id,
             'post_title'   => $gemini_data['title_temp'],
+            'post_name'    => $gemini_data['slug_temp'],
             'post_content' => $gemini_data['description_temp'],
         ]; 
         wp_update_post($update_post_args);

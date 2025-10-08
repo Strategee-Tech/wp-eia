@@ -71,34 +71,41 @@ function reemplazar_archivo_optimizado($upload, $original_path, $optimized_path,
                 if (is_array($geminiData) && isset($geminiData[0])) { 
                     if(!empty($geminiData[0])) { 
 
-                        $slug = sanitize_file_name($geminiData[0]['slug']) . '.webp';
+                        $slug_base = sanitize_title($geminiData[0]['slug']);
 
-                        //Ruta actual del archivo
-                        $current_path = $upload['file']; // Ej: /var/www/.../uploads/2025/07/original.webp
+                        // Generar slug único (según la BD de WP)
+                        $slug_final = slug_unico($slug_base);
+                        $slug_with_ext = $slug_final . '.webp';
 
-                        //Directorio actual (donde está el archivo)
-                        $dir = dirname($current_path); // Ej: /var/www/.../uploads/2025/07
+                        // Ruta actual y directorio
+                        $current_path = $upload['file'];
+                        $dir = dirname($current_path);
+                        $new_path = $dir . '/' . $slug_with_ext;
 
-                        //Nueva ruta física
-                        $new_path = $dir . '/' . $slug;
+                        // Evitar sobreescribir si el archivo ya existe físicamente
+                        $counter = 1;
+                        while (file_exists($new_path)) {
+                            $slug_final = $slug_base . '-' . $counter;
+                            $slug_with_ext = $slug_final . '.webp';
+                            $new_path = $dir . '/' . $slug_with_ext;
+                            $counter++;
+                        }
 
-                        //Renombrar el archivo en el servidor
+                        // Renombrar físicamente el archivo
                         if (rename($current_path, $new_path)) {
-                            //Construir nueva URL
-                            $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug;
-
-                            //Actualizar file y type
-                            $upload['file'] = $new_path; 
+                            $upload['url']  = trailingslashit(dirname($upload['url'])) . $slug_with_ext;
+                            $upload['file'] = $new_path;
                         } else {
                             error_log('Error al renombrar el archivo a: ' . $new_path);
-                        } 
+                        }
 
+                        // Guardar metadatos temporales de Gemini
                         $gemini_data = [
-                            'alt_temp'         => $geminiData['0']['alt'],
-                            'slug_temp'        => $geminiData['0']['slug'],
-                            'description_temp' => $geminiData['0']['description'],
-                            'title_temp'       => $geminiData['0']['title'],
-                        ]; 
+                            'alt_temp'         => $geminiData[0]['alt'],
+                            'slug_temp'        => $slug_final,
+                            'description_temp' => $geminiData[0]['description'],
+                            'title_temp'       => $geminiData[0]['title'],
+                        ];
                         $unique_key = 'gemini_' . md5($upload['url']); 
                         set_transient($unique_key, $gemini_data, 5 * MINUTE_IN_SECONDS);
                         $success = true;

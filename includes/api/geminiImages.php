@@ -53,6 +53,106 @@ function imageUrlToBase64(string $imageUrl): string {
 }
 
 function generateImageMetadata(string $imageUrl): array {
+
+    $prompt      = get_option('gemini_prompt');
+    $base64Image = imageUrlToBase64($imageUrl);
+
+    if(empty($prompt)) {
+        throw new Exception("Error al conectar con la API de Google Gemini. Verifica si se ha configurado la Apikey, la url de la Api o el prompt.");
+    }
+
+    $imageExtension = pathinfo($imageUrl, PATHINFO_EXTENSION);
+    $imageMimeType = 'image/jpeg'; // Valor por defecto
+    if ($imageExtension === 'png') {
+        $imageMimeType = 'image/png';
+    } elseif ($imageExtension === 'webp') {
+        $imageMimeType = 'image/webp';
+    } elseif ($imageExtension === 'gif') {
+        $imageMimeType = 'image/gif';
+    } elseif ($imageExtension === 'svg') {
+        $imageMimeType = 'image/svg+xml';
+    } elseif ($imageExtension === 'avif') {
+        $imageMimeType = 'image/avif';
+    } elseif ($imageExtension === 'heic') {
+        $imageMimeType = 'image/heic';
+    } elseif ($imageExtension === 'bmp') {
+        $imageMimeType = 'image/bmp';
+    } elseif ($imageExtension === 'tiff') {
+        $imageMimeType = 'image/tiff';
+    } elseif ($imageExtension === 'heif') {
+        $imageMimeType = 'image/heif';
+    } 
+
+    $requestBody = [
+        'contents' => [
+            [
+                'parts' => [
+                    [
+                        'text' => $prompt
+                    ],
+                    [
+                        'inline_data' => [
+                            'mime_type' => $imageMimeType,
+                            'data'      => $base64Image
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        'generationConfig' => [
+            'responseMimeType' => 'application/json',
+            'responseSchema' => [
+                'type' => 'OBJECT',
+                'properties' => [
+                    'title' => ['type' => 'STRING', 'description' => 'Título conciso y descriptivo de la imagen.'],
+                    'description' => ['type' => 'STRING', 'description' => 'Descripción detallada de la imagen.'],
+                    'alt' => ['type' => 'STRING', 'description' => 'Texto alternativo para la imagen, optimizado para SEO y accesibilidad.'],
+                    'slug' => ['type' => 'STRING', 'description' => 'Slug amigable para URL, en minúsculas y con guiones.']
+                ],
+                'required' => ['title', 'description', 'alt', 'slug']
+            ]
+        ]
+    ];
+
+     // OJO: el central espera { requestBody: ... }
+    $payload = array(
+        'requestBody' => $requestBody, 
+    );
+
+    $centralUrl = 'https://apicompressv2.strategee.us/gemini.php';
+
+    $args = array(
+        'headers' => array(
+            'Content-Type' => 'application/json', 
+        ),
+        'body'    => wp_json_encode($payload),
+        'timeout' => 300,
+    );
+
+    $res = wp_remote_post($centralUrl, $args);
+
+    if (is_wp_error($res)) {
+        throw new Exception('Error conectando al servidor central: ' . $res->get_error_message());
+    }
+
+    $code = wp_remote_retrieve_response_code($res);
+    $body = wp_remote_retrieve_body($res);
+
+    $data = json_decode($body, true);
+
+    if ($code !== 200) {
+        $msg = is_array($data) && isset($data['error']) ? $data['error'] : 'Error desconocido';
+        throw new Exception("Central API error: {$msg} (HTTP {$code})");
+    }
+
+    if (!is_array($data)) {
+        throw new Exception('Respuesta del central no es JSON válido: ' . substr($body, 0, 300));
+    }
+
+    return $data; 
+}
+
+function generateImageMetadata2(string $imageUrl): array {
     $promptV1 = 'Como experto en SEO y marketing digital especializado en contenido educativo para sitios web universitarios, analiza detalladamente la siguiente imagen. Genera un objeto JSON válido, sin texto adicional, que incluya las siguientes propiedades, optimizadas para el contexto de la Universidad EIA:
 
     - **title**: Un título corto, atractivo y descriptivo (máx. 60 caracteres) para uso en la meta-etiqueta <title> o como encabezado H1/H2, que refleje el contenido de la imagen y sea relevante para la Universidad EIA. Incorpora palabras clave relevantes para educación superior o áreas de estudio si aplica.

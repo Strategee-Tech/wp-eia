@@ -1,7 +1,5 @@
 <?php
-if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemini')) {
-    update_option('gemini_api_key', sanitize_text_field($_POST['gemini_api_key']));
-    update_option('gemini_api_url', sanitize_text_field($_POST['gemini_api_url']));
+if (check_admin_referer('guardar_config_gemini')) {
     update_option('user_auth', sanitize_text_field($_POST['user_auth']));
     update_option('pass_auth', sanitize_text_field($_POST['pass_auth']));
     update_option('gemini_prompt', wp_unslash($_POST['gemini_prompt']));
@@ -28,8 +26,6 @@ if (isset($_POST['gemini_api_key']) && check_admin_referer('guardar_config_gemin
 
     echo '<div class="notice notice-success is-dismissible"><p>¡Configuración guardada!</p></div>';
 }
-$api_key   = get_option('gemini_api_key', '');
-$api_url   = get_option('gemini_api_url', '');
 $prompt    = get_option('gemini_prompt', '');
 $user_auth = get_option('user_auth', '');
 $pass_auth = get_option('pass_auth', '');
@@ -106,16 +102,6 @@ $google_api_download_url = get_option('google_api_download_url');
         </div>
 
         <hr>
-
-        <div class="form-field" style="margin-top: 20px;">
-            <label for="gemini_api_key"><strong>API Key Gemini</strong></label><br>
-            <input type="text" name="gemini_api_key" id="gemini_api_key" class="regular-text" value="<?php echo esc_attr($api_key); ?>" />
-        </div>
-
-        <div class="form-field" style="margin-top: 20px;">
-            <label for="gemini_api_url"><strong>URL de la API de Gemini</strong><br><small>(e.g: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent)</small></label><br>
-            <input type="text" name="gemini_api_url" id="gemini_api_url" class="regular-text" value="<?php echo esc_attr($api_url); ?>" />
-        </div>
 
         <div class="form-field" style="margin-top: 20px;">
             <label for="gemini_prompt"><strong>Prompt de Gemini</strong></label><br>

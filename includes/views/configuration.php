@@ -1,5 +1,5 @@
 <?php
-if (check_admin_referer('guardar_config_gemini')) {
+if (isset($_POST['user_auth']) && check_admin_referer('guardar_config_gemini')) {
     update_option('user_auth', sanitize_text_field($_POST['user_auth']));
     update_option('pass_auth', sanitize_text_field($_POST['pass_auth']));
     update_option('gemini_prompt', wp_unslash($_POST['gemini_prompt']));
